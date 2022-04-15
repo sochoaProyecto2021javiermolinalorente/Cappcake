@@ -1,4 +1,4 @@
-package es.javier.cappcake.ui.theme
+package es.javier.cappcake.presentation.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
