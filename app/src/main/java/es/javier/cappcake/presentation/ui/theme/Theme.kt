@@ -13,9 +13,10 @@ private val DarkColorPalette = darkColors(
 )
 
 private val LightColorPalette = lightColors(
-    primary = Purple500,
-    primaryVariant = Purple700,
-    secondary = Teal200
+    primary = primary,
+    primaryVariant = primaryVariant,
+    secondary = Teal200,
+    error = error
 
     /* Other default colors to override
     background = Color.White,
@@ -36,7 +37,7 @@ fun CappcakeTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composab
     }
 
     MaterialTheme(
-        colors = colors,
+        colors = LightColorPalette,
         typography = Typography,
         shapes = Shapes,
         content = content

@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">Cappcake</string>
+
+    <!-- Login screen -->
+    <string name="login_title_text">Iniciar sesión</string>
+    <string name="welcome_text">Bienvenido a cappcake</string>
+    <string name="email_hint">Email</string>
+    <string name="password_hint">Contraseña</string>
+    <string name="login_button_text">Iniciar sesión</string>
+    <string name="have_no_account_text">¿No tienes una cuenta?</string>
+    <string name="signup_text">Regístrate aquí</string>
+
 </resources>
