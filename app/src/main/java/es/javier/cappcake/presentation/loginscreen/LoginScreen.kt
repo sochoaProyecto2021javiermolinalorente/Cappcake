@@ -11,6 +11,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -34,20 +35,28 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import es.javier.cappcake.R
 import es.javier.cappcake.presentation.ui.theme.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @Composable
 fun LoginScreen(navController: NavController, viewModel: LoginScreenViewModel) {
+
+    var userNotExistDialog = remember { mutableStateOf(false) }
 
     Box(modifier = Modifier
         .background(
             brush = Brush.verticalGradient(colors = listOf(primaryVariant, primary))
         )
         .fillMaxSize(), contentAlignment = Alignment.TopCenter) {
+
+        if (userNotExistDialog.value) UserIncorrectDialog(showDialog = userNotExistDialog)
 
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Spacer(modifier = Modifier.height(80.dp))
@@ -66,19 +75,28 @@ fun LoginScreen(navController: NavController, viewModel: LoginScreenViewModel) {
                     horizontalAlignment = Alignment.CenterHorizontally) {
                     EmailOutlinedTextField(modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 40.dp, end = 40.dp, top = 20.dp), value = "", onValueChange = { })
+                        .padding(start = 40.dp, end = 40.dp, top = 20.dp),
+                        value = viewModel.emailField.value,
+                        onValueChange = { viewModel.emailField.value = it })
                     Spacer(modifier = Modifier.height(10.dp))
                     PasswordOutlinedTextField(modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 40.dp, end = 40.dp), value = "", onValueChange = { })
+                        .padding(start = 40.dp, end = 40.dp),
+                        value = viewModel.passwordField.value,
+                        onValueChange = { viewModel.passwordField.value = it })
                     Spacer(modifier = Modifier.height(80.dp))
 
-                    Button(onClick = { /*TODO*/ },
+                    Button(onClick = {
+                                     CoroutineScope(Dispatchers.Main).launch {
+                                         userNotExistDialog.value = viewModel.validateUser()
+                                     }
+                    },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(40.dp)
                             .padding(horizontal = 80.dp),
-                        shape = RoundedCornerShape(8.dp)) {
+                        shape = RoundedCornerShape(8.dp),
+                        enabled = viewModel.loginButtonEnabled.value) {
                         Text(text = stringResource(id = R.string.login_button_text).uppercase())
                     }
                     Text(text = buildAnnotatedString {
@@ -90,14 +108,31 @@ fun LoginScreen(navController: NavController, viewModel: LoginScreenViewModel) {
                     Spacer(modifier = Modifier.height(100.dp))
                     Image(
                         painter = painterResource(id = R.drawable.logo_title),
-                        contentDescription = "",
+                        contentDescription  = "",
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 70.dp))
+
+
                 }
             }
         }
     }
+}
+
+@Composable
+fun UserIncorrectDialog(showDialog: MutableState<Boolean>) {
+    AlertDialog(title = {
+        Text(text = stringResource(id = R.string.user_incorrect_title_dialog))
+    }, text = {
+        Text(text = stringResource(id = R.string.user_incorrect_message_dialog))
+    }, buttons = {
+        Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
+            TextButton(onClick = { showDialog.value = false }) {
+                Text(text = "Aceptar")
+            }
+        }
+    }, onDismissRequest = { showDialog.value = false })
 }
 
 @Composable
@@ -106,8 +141,8 @@ fun EmailOutlinedTextField(modifier: Modifier = Modifier, value: String, onValue
     val focusManager = LocalFocusManager.current
 
     OutlinedTextField(
-        value = "",
-        onValueChange = { },
+        value = value,
+        onValueChange = onValueChange,
         enabled = true,
         readOnly = false,
         label = { Text(text = stringResource(id = R.string.email_hint)) },
@@ -156,8 +191,6 @@ fun PasswordOutlinedTextField(modifier: Modifier = Modifier, value: String, onVa
 
     )
 }
-
-
 
 @Preview(name = "Login screen preview", showBackground = true, showSystemUi = true)
 @Composable
