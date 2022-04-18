@@ -2,6 +2,7 @@ package es.javier.cappcake.presentation.loginscreen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.shape.ZeroCornerSize
@@ -40,6 +41,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import es.javier.cappcake.R
+import es.javier.cappcake.presentation.Navigation
 import es.javier.cappcake.presentation.ui.theme.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -48,7 +50,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun LoginScreen(navController: NavController, viewModel: LoginScreenViewModel) {
 
-    var userNotExistDialog = remember { mutableStateOf(false) }
+    val userNotExistDialog = remember { mutableStateOf(false) }
 
     Box(modifier = Modifier
         .background(
@@ -77,34 +79,46 @@ fun LoginScreen(navController: NavController, viewModel: LoginScreenViewModel) {
                         .fillMaxWidth()
                         .padding(start = 40.dp, end = 40.dp, top = 20.dp),
                         value = viewModel.emailField.value,
-                        onValueChange = { viewModel.emailField.value = it })
+                        onValueChange = {
+                            viewModel.emailField.value = it
+                            viewModel.shouldLoginButtonEnabled() },
+                        enabled = viewModel.emailFieldEnabled.value)
                     Spacer(modifier = Modifier.height(10.dp))
                     PasswordOutlinedTextField(modifier = Modifier
                         .fillMaxWidth()
                         .padding(start = 40.dp, end = 40.dp),
                         value = viewModel.passwordField.value,
-                        onValueChange = { viewModel.passwordField.value = it })
+                        onValueChange = {
+                            viewModel.passwordField.value = it
+                            viewModel.shouldLoginButtonEnabled() },
+                        enabled = viewModel.passwordFieldEnabled.value)
                     Spacer(modifier = Modifier.height(80.dp))
 
-                    Button(onClick = {
-                                     CoroutineScope(Dispatchers.Main).launch {
-                                         userNotExistDialog.value = viewModel.validateUser()
-                                     }
-                    },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(40.dp)
-                            .padding(horizontal = 80.dp),
-                        shape = RoundedCornerShape(8.dp),
-                        enabled = viewModel.loginButtonEnabled.value) {
-                        Text(text = stringResource(id = R.string.login_button_text).uppercase())
+                    Box(modifier = Modifier, contentAlignment = Alignment.Center) {
+                        Button(onClick = {
+                            CoroutineScope(Dispatchers.Main).launch {
+                                userNotExistDialog.value = viewModel.validateUser()
+                            }
+                        },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(40.dp)
+                                .padding(horizontal = 80.dp),
+                            shape = RoundedCornerShape(8.dp),
+                            enabled = viewModel.loginButtonEnabled.value) {
+                            Text(text = stringResource(id = R.string.login_button_text).uppercase())
+                        }
+                        if (viewModel.validatingUser.value) {
+                            CircularProgressIndicator()
+                        }
                     }
                     Text(text = buildAnnotatedString {
                         append(stringResource(id = R.string.have_no_account_text))
                         withStyle(style = SpanStyle(color = orangish)) {
                             append(" ${stringResource(id = R.string.signup_text)}")
-                        }}
-                    )
+                        }}, modifier = Modifier.clickable {
+                            navController.navigate(Navigation.RegisterScreen.navigationRoute)
+                    })
                     Spacer(modifier = Modifier.height(100.dp))
                     Image(
                         painter = painterResource(id = R.drawable.logo_title),
@@ -129,21 +143,21 @@ fun UserIncorrectDialog(showDialog: MutableState<Boolean>) {
     }, buttons = {
         Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
             TextButton(onClick = { showDialog.value = false }) {
-                Text(text = "Aceptar")
+                Text(text = stringResource(id = R.string.user_incorrect_accept_button_dialog))
             }
         }
     }, onDismissRequest = { showDialog.value = false })
 }
 
 @Composable
-fun EmailOutlinedTextField(modifier: Modifier = Modifier, value: String, onValueChange: (String) -> Unit) {
+fun EmailOutlinedTextField(modifier: Modifier = Modifier, value: String, onValueChange: (String) -> Unit, enabled: Boolean = true) {
     var isFocused = remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
 
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
-        enabled = true,
+        enabled = enabled,
         readOnly = false,
         label = { Text(text = stringResource(id = R.string.email_hint)) },
         leadingIcon = { Icon(Icons.Filled.Email, contentDescription = "") },
@@ -161,7 +175,7 @@ fun EmailOutlinedTextField(modifier: Modifier = Modifier, value: String, onValue
 }
 
 @Composable
-fun PasswordOutlinedTextField(modifier: Modifier = Modifier, value: String, onValueChange: (String) -> Unit) {
+fun PasswordOutlinedTextField(modifier: Modifier = Modifier, value: String, onValueChange: (String) -> Unit, enabled: Boolean = true) {
     val isFocused = remember { mutableStateOf(false) }
     val showPassword = remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
@@ -176,7 +190,7 @@ fun PasswordOutlinedTextField(modifier: Modifier = Modifier, value: String, onVa
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Done),
         keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
         visualTransformation = if (showPassword.value) VisualTransformation.None else PasswordVisualTransformation() ,
-        enabled = true,
+        enabled = enabled,
         readOnly = false,
         singleLine = true,
         modifier = modifier.onFocusChanged { focusState ->

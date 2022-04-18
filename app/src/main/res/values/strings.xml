@@ -12,5 +12,6 @@
     <!-- Login screen dialog -->
     <string name="user_incorrect_title_dialog">Usuario incorrecto</string>
     <string name="user_incorrect_message_dialog">El email o la contraseña son incorrectos</string>
+    <string name="user_incorrect_accept_button_dialog">Aceptar</string>
 
 </resources>
