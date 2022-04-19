@@ -52,60 +52,82 @@ fun LoginScreen(navController: NavController, viewModel: LoginScreenViewModel) {
 
     val userNotExistDialog = remember { mutableStateOf(false) }
 
-    Box(modifier = Modifier
-        .background(
-            brush = Brush.verticalGradient(colors = listOf(primaryVariant, primary))
-        )
-        .fillMaxSize(), contentAlignment = Alignment.TopCenter) {
+    Box(
+        modifier = Modifier
+            .background(
+                brush = Brush.verticalGradient(colors = listOf(primaryVariant, primary))
+            )
+            .fillMaxSize(), contentAlignment = Alignment.TopCenter
+    ) {
 
         if (userNotExistDialog.value) UserIncorrectDialog(showDialog = userNotExistDialog)
 
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Spacer(modifier = Modifier.height(80.dp))
-            Text(text = stringResource(id = R.string.login_title_text), fontSize = 50.sp, fontWeight = FontWeight.Bold, color = Color.White)
+            Text(
+                text = stringResource(id = R.string.login_title_text),
+                fontSize = 50.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.White
+            )
             Spacer(modifier = Modifier.height(50.dp))
             Text(text = stringResource(id = R.string.welcome_text), color = Color.White)
 
-            Surface(modifier = Modifier
-                .padding(top = 10.dp, start = 20.dp, end = 20.dp)
-                .fillMaxSize(),
-                shape = RoundedCornerShape(36.dp).copy(bottomEnd = ZeroCornerSize, bottomStart = ZeroCornerSize), elevation = 4.dp) {
+            Surface(
+                modifier = Modifier
+                    .padding(top = 10.dp, start = 20.dp, end = 20.dp)
+                    .fillMaxSize(),
+                shape = RoundedCornerShape(36.dp).copy(
+                    bottomEnd = ZeroCornerSize,
+                    bottomStart = ZeroCornerSize
+                ), elevation = 4.dp
+            ) {
 
 
-                Column(modifier = Modifier
-                    .fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally) {
-                    EmailOutlinedTextField(modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 40.dp, end = 40.dp, top = 20.dp),
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    EmailOutlinedTextField(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 40.dp, end = 40.dp, top = 20.dp),
                         value = viewModel.emailField.value,
                         onValueChange = {
                             viewModel.emailField.value = it
-                            viewModel.shouldLoginButtonEnabled() },
-                        enabled = viewModel.emailFieldEnabled.value)
+                            viewModel.shouldLoginButtonEnabled()
+                        },
+                        enabled = viewModel.emailFieldEnabled.value
+                    )
                     Spacer(modifier = Modifier.height(10.dp))
-                    PasswordOutlinedTextField(modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 40.dp, end = 40.dp),
+                    PasswordOutlinedTextField(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 40.dp, end = 40.dp),
                         value = viewModel.passwordField.value,
                         onValueChange = {
                             viewModel.passwordField.value = it
-                            viewModel.shouldLoginButtonEnabled() },
-                        enabled = viewModel.passwordFieldEnabled.value)
+                            viewModel.shouldLoginButtonEnabled()
+                        },
+                        enabled = viewModel.passwordFieldEnabled.value
+                    )
                     Spacer(modifier = Modifier.height(80.dp))
 
                     Box(modifier = Modifier, contentAlignment = Alignment.Center) {
-                        Button(onClick = {
-                            CoroutineScope(Dispatchers.Main).launch {
-                                userNotExistDialog.value = viewModel.validateUser()
-                            }
-                        },
+                        Button(
+                            onClick = {
+                                CoroutineScope(Dispatchers.Main).launch {
+                                    userNotExistDialog.value = viewModel.validateUser()
+                                }
+                            },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(40.dp)
                                 .padding(horizontal = 80.dp),
                             shape = RoundedCornerShape(8.dp),
-                            enabled = viewModel.loginButtonEnabled.value) {
+                            enabled = viewModel.loginButtonEnabled.value
+                        ) {
                             Text(text = stringResource(id = R.string.login_button_text).uppercase())
                         }
                         if (viewModel.validatingUser.value) {
@@ -116,16 +138,17 @@ fun LoginScreen(navController: NavController, viewModel: LoginScreenViewModel) {
                         append(stringResource(id = R.string.have_no_account_text))
                         withStyle(style = SpanStyle(color = orangish)) {
                             append(" ${stringResource(id = R.string.signup_text)}")
-                        }}, modifier = Modifier.clickable {
-                            navController.navigate(Navigation.RegisterScreen.navigationRoute)
-                    })
+                        }
+                    }, modifier = Modifier.clickable {
+                        if (!viewModel.validatingUser.value) navController.navigate(Navigation.RegisterScreen.navigationRoute) { launchSingleTop = true }})
                     Spacer(modifier = Modifier.height(100.dp))
                     Image(
                         painter = painterResource(id = R.drawable.logo_title),
-                        contentDescription  = "",
+                        contentDescription = "",
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 70.dp))
+                            .padding(horizontal = 70.dp)
+                    )
 
 
                 }
@@ -150,7 +173,12 @@ fun UserIncorrectDialog(showDialog: MutableState<Boolean>) {
 }
 
 @Composable
-fun EmailOutlinedTextField(modifier: Modifier = Modifier, value: String, onValueChange: (String) -> Unit, enabled: Boolean = true) {
+fun EmailOutlinedTextField(
+    modifier: Modifier = Modifier,
+    value: String,
+    onValueChange: (String) -> Unit,
+    enabled: Boolean = true
+) {
     var isFocused = remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
 
@@ -161,7 +189,10 @@ fun EmailOutlinedTextField(modifier: Modifier = Modifier, value: String, onValue
         readOnly = false,
         label = { Text(text = stringResource(id = R.string.email_hint)) },
         leadingIcon = { Icon(Icons.Filled.Email, contentDescription = "") },
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = ImeAction.Next),
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Email,
+            imeAction = ImeAction.Next
+        ),
         keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Down) }),
         singleLine = true,
         modifier = modifier.onFocusChanged { focusState ->
@@ -170,12 +201,19 @@ fun EmailOutlinedTextField(modifier: Modifier = Modifier, value: String, onValue
         colors = if (!isFocused.value) TextFieldDefaults.outlinedTextFieldColors() else {
             TextFieldDefaults.outlinedTextFieldColors(
                 focusedLabelColor = primary,
-                leadingIconColor = primary)
-        })
+                leadingIconColor = primary
+            )
+        }
+    )
 }
 
 @Composable
-fun PasswordOutlinedTextField(modifier: Modifier = Modifier, value: String, onValueChange: (String) -> Unit, enabled: Boolean = true) {
+fun PasswordOutlinedTextField(
+    modifier: Modifier = Modifier,
+    value: String,
+    onValueChange: (String) -> Unit,
+    enabled: Boolean = true
+) {
     val isFocused = remember { mutableStateOf(false) }
     val showPassword = remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
@@ -184,12 +222,20 @@ fun PasswordOutlinedTextField(modifier: Modifier = Modifier, value: String, onVa
         onValueChange = onValueChange,
         label = { Text(text = stringResource(id = R.string.password_hint)) },
         leadingIcon = { Icon(Icons.Filled.Lock, contentDescription = "password") },
-        trailingIcon = { IconButton(onClick = { showPassword.value = !showPassword.value }) {
-            Icon(if (showPassword.value) Icons.Filled.Visibility else Icons.Filled.VisibilityOff, contentDescription = "")
-        }},
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Done),
+        trailingIcon = {
+            IconButton(onClick = { showPassword.value = !showPassword.value }) {
+                Icon(
+                    if (showPassword.value) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
+                    contentDescription = ""
+                )
+            }
+        },
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Password,
+            imeAction = ImeAction.Done
+        ),
         keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
-        visualTransformation = if (showPassword.value) VisualTransformation.None else PasswordVisualTransformation() ,
+        visualTransformation = if (showPassword.value) VisualTransformation.None else PasswordVisualTransformation(),
         enabled = enabled,
         readOnly = false,
         singleLine = true,
@@ -200,7 +246,8 @@ fun PasswordOutlinedTextField(modifier: Modifier = Modifier, value: String, onVa
             TextFieldDefaults.outlinedTextFieldColors(
                 focusedLabelColor = primary,
                 leadingIconColor = primary,
-                trailingIconColor = primary)
+                trailingIconColor = primary
+            )
         }
 
     )
@@ -210,6 +257,9 @@ fun PasswordOutlinedTextField(modifier: Modifier = Modifier, value: String, onVa
 @Composable
 fun LoginScreenPreview() {
     CappcakeTheme {
-        LoginScreen(navController = NavHostController(context = LocalContext.current), viewModel = viewModel())
+        LoginScreen(
+            navController = NavHostController(context = LocalContext.current),
+            viewModel = viewModel()
+        )
     }
 }
