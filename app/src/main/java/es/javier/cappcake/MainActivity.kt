@@ -57,7 +57,7 @@ fun NavigationGraph() {
 }
 
 fun NavGraphBuilder.LoginGraph(navController: NavController) {
-    navigation(startDestination = Navigation.LoginScreen.navigationRoute, route = Navigation.AUTHENTCATION_GRAPH) {
+    navigation(startDestination = Navigation.RegisterScreen.navigationRoute, route = Navigation.AUTHENTCATION_GRAPH) {
         composable(route = Navigation.LoginScreen.navigationRoute) {
             val viewModel = viewModel<LoginScreenViewModel>()
             LoginScreen(navController = navController, viewModel = viewModel)
