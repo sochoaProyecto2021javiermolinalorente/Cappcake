@@ -13,9 +13,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -33,8 +31,6 @@ import es.javier.cappcake.R
 import es.javier.cappcake.presentation.ui.theme.orangish
 import es.javier.cappcake.presentation.ui.theme.primary
 import es.javier.cappcake.presentation.ui.theme.primaryVariant
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalFocusManager
@@ -43,9 +39,17 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import es.javier.cappcake.presentation.components.EmailOutlinedTextField
+import kotlinx.coroutines.flow.collect
 
 @Composable
 fun RegisterScreen(navController: NavController, viewModel: RegisterScreenViewModel) {
+
+    LaunchedEffect(key1 = Unit) {
+        viewModel.creatingUser.collect {
+            viewModel.setScreenState()
+        }
+    }
+
     Box(
         modifier = Modifier
             .background(
@@ -55,12 +59,15 @@ fun RegisterScreen(navController: NavController, viewModel: RegisterScreenViewMo
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
-            Box(contentAlignment = Alignment.TopCenter, modifier = Modifier.fillMaxWidth().padding(20.dp)) {
+            Box(contentAlignment = Alignment.TopCenter, modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp)) {
                 Icon(
                     imageVector = Icons.Filled.ArrowBack,
                     contentDescription = "",
                     tint = Color.White,
-                    modifier = Modifier.align(Alignment.TopStart)
+                    modifier = Modifier
+                        .align(Alignment.TopStart)
                         .clickable {
                             navController.popBackStack()
                         })
@@ -86,30 +93,31 @@ fun RegisterScreen(navController: NavController, viewModel: RegisterScreenViewMo
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
 
-                    UsernameTextField(value = "", onValueChange = {}, modifier = Modifier
-                        .fillMaxWidth())
+                    UsernameTextField(value = viewModel.usernameField, onValueChange = { viewModel.usernameField = it}, modifier = Modifier
+                        .fillMaxWidth(), enabled = viewModel.userFieldEnabled)
 
-                    EmailOutlinedTextField(value = "", onValueChange = {}, modifier = Modifier
-                        .fillMaxWidth())
+                    EmailOutlinedTextField(value = viewModel.emailField, onValueChange = { viewModel.emailField = it }, modifier = Modifier
+                        .fillMaxWidth(), enabled = viewModel.emailFieldEnabled)
 
-                    RegisterPasswordOutlinedTextField(value = "", onValueChange = {}, modifier = Modifier
-                        .fillMaxWidth())
+                    RegisterPasswordOutlinedTextField(value = viewModel.passwordField, onValueChange = { viewModel.passwordField = it }, modifier = Modifier
+                        .fillMaxWidth(), enabled = viewModel.passwordFieldEnabled)
 
-                    RepeatPasswordOutlinedTextField(value = "", onValueChange = {}, modifier = Modifier
-                        .fillMaxWidth())
+                    RepeatPasswordOutlinedTextField(value = viewModel.repeatPasswordField, onValueChange = { viewModel.repeatPasswordField = it }, modifier = Modifier
+                        .fillMaxWidth(), enabled = viewModel.repeatPasswordFieldEnabled)
 
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                         Button(
-                            onClick = { /* TODO register business logic */ },
+                            onClick = { viewModel.createUser() },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(40.dp)
                                 .padding(horizontal = 20.dp),
                             shape = RoundedCornerShape(8.dp),
-                            enabled = true
+                            enabled = viewModel.createUserButtonEnabled
                         ) {
                             Text(text = "crear cuenta".uppercase())
                         }
+
                     }
                 }
             }
@@ -140,7 +148,7 @@ fun ProfileImage(modifier: Modifier = Modifier, onClick: () -> Unit = {}) {
 }
 
 @Composable
-fun UsernameTextField(modifier: Modifier = Modifier, value: String, onValueChange: (String) -> Unit) {
+fun UsernameTextField(modifier: Modifier = Modifier, value: String, onValueChange: (String) -> Unit, enabled: Boolean = true) {
 
     var isFocused by remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
@@ -148,7 +156,8 @@ fun UsernameTextField(modifier: Modifier = Modifier, value: String, onValueChang
     OutlinedTextField(
         modifier = modifier.onFocusChanged { isFocused = it.isFocused },
         value = value,
-        onValueChange = onValueChange, 
+        onValueChange = onValueChange,
+        enabled = enabled,
         label = { Text(text = stringResource(id = R.string.register_username_hint)) },
         leadingIcon = { Icon(imageVector = Icons.Filled.Email, contentDescription = "") },
         keyboardActions = KeyboardActions(onNext = {focusManager.moveFocus(FocusDirection.Down)}),
