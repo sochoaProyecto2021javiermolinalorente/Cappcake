@@ -1,17 +1,30 @@
 <resources>
     <string name="app_name">Cappcake</string>
 
+    <!-- Error dialog -->
+    <string name="eror_dialog_accept_button">Aceptar</string>
+
     <!-- Login screen -->
     <string name="login_title_text">Iniciar sesión</string>
     <string name="welcome_text">Bienvenido a cappcake</string>
-    <string name="email_hint">Email</string>
-    <string name="password_hint">Contraseña</string>
+    <string name="login_email_hint">Email</string>
+    <string name="login_password_hint">Contraseña</string>
     <string name="login_button_text">Iniciar sesión</string>
     <string name="have_no_account_text">¿No tienes una cuenta?</string>
     <string name="signup_text">Regístrate aquí</string>
     <!-- Login screen dialog -->
     <string name="user_incorrect_title_dialog">Usuario incorrecto</string>
     <string name="user_incorrect_message_dialog">El email o la contraseña son incorrectos</string>
-    <string name="user_incorrect_accept_button_dialog">Aceptar</string>
+
+    <!-- Register screen -->
+    <string name="register_username_hint">Nombre de usuario</string>
+    <string name="register_email_hint">Email</string>
+    <string name="register_password_hint">Contraseña</string>
+    <string name="register_repeat_password_hint">Repetir contraseña</string>
+    <string name="register_create_account_text_button">Crear cuenta</string>
+    <!-- User not created error dialog -->
+    <string name="user_not_created_title_dialog">Error</string>
+    <string name="user_not_created_message_dialog">No se ha podido crear el usuario</string>
+
 
 </resources>

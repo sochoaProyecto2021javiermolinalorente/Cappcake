@@ -10,14 +10,12 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -36,21 +34,21 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import es.javier.cappcake.R
 import es.javier.cappcake.presentation.Navigation
 import es.javier.cappcake.presentation.ui.theme.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import es.javier.cappcake.presentation.components.EmailOutlinedTextField
+import es.javier.cappcake.presentation.components.ErrorDialog
 
 @Composable
 fun LoginScreen(navController: NavController, viewModel: LoginScreenViewModel) {
 
-    val userNotExistDialog = remember { mutableStateOf(false) }
+    val userNotExistAlert = remember { mutableStateOf(false) }
+    val coroutine = rememberCoroutineScope()
 
     Box(
         modifier = Modifier
@@ -60,7 +58,13 @@ fun LoginScreen(navController: NavController, viewModel: LoginScreenViewModel) {
             .fillMaxSize(), contentAlignment = Alignment.TopCenter
     ) {
 
-        if (userNotExistDialog.value) UserIncorrectDialog(showDialog = userNotExistDialog)
+        if (userNotExistAlert.value) {
+            ErrorDialog(
+                showDialog = userNotExistAlert,
+                title = R.string.user_incorrect_title_dialog,
+                text = R.string.user_incorrect_message_dialog
+            )
+        }
 
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Spacer(modifier = Modifier.height(80.dp))
@@ -101,7 +105,7 @@ fun LoginScreen(navController: NavController, viewModel: LoginScreenViewModel) {
                         enabled = viewModel.emailFieldEnabled.value
                     )
                     Spacer(modifier = Modifier.height(10.dp))
-                    PasswordOutlinedTextField(
+                    LoginPasswordOutlinedTextField(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(start = 40.dp, end = 40.dp),
@@ -117,8 +121,8 @@ fun LoginScreen(navController: NavController, viewModel: LoginScreenViewModel) {
                     Box(modifier = Modifier, contentAlignment = Alignment.Center) {
                         Button(
                             onClick = {
-                                CoroutineScope(Dispatchers.Main).launch {
-                                    userNotExistDialog.value = viewModel.validateUser()
+                                coroutine.launch {
+                                    userNotExistAlert.value = viewModel.validateUser()
                                 }
                             },
                             modifier = Modifier
@@ -158,74 +162,24 @@ fun LoginScreen(navController: NavController, viewModel: LoginScreenViewModel) {
 }
 
 @Composable
-fun UserIncorrectDialog(showDialog: MutableState<Boolean>) {
-    AlertDialog(title = {
-        Text(text = stringResource(id = R.string.user_incorrect_title_dialog))
-    }, text = {
-        Text(text = stringResource(id = R.string.user_incorrect_message_dialog))
-    }, buttons = {
-        Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
-            TextButton(onClick = { showDialog.value = false }) {
-                Text(text = stringResource(id = R.string.user_incorrect_accept_button_dialog))
-            }
-        }
-    }, onDismissRequest = { showDialog.value = false })
-}
-
-@Composable
-fun EmailOutlinedTextField(
+fun LoginPasswordOutlinedTextField(
     modifier: Modifier = Modifier,
     value: String,
     onValueChange: (String) -> Unit,
     enabled: Boolean = true
 ) {
-    var isFocused = remember { mutableStateOf(false) }
-    val focusManager = LocalFocusManager.current
-
-    OutlinedTextField(
-        value = value,
-        onValueChange = onValueChange,
-        enabled = enabled,
-        readOnly = false,
-        label = { Text(text = stringResource(id = R.string.email_hint)) },
-        leadingIcon = { Icon(Icons.Filled.Email, contentDescription = "") },
-        keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Email,
-            imeAction = ImeAction.Next
-        ),
-        keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Down) }),
-        singleLine = true,
-        modifier = modifier.onFocusChanged { focusState ->
-            isFocused.value = focusState.isFocused
-        },
-        colors = if (!isFocused.value) TextFieldDefaults.outlinedTextFieldColors() else {
-            TextFieldDefaults.outlinedTextFieldColors(
-                focusedLabelColor = primary,
-                leadingIconColor = primary
-            )
-        }
-    )
-}
-
-@Composable
-fun PasswordOutlinedTextField(
-    modifier: Modifier = Modifier,
-    value: String,
-    onValueChange: (String) -> Unit,
-    enabled: Boolean = true
-) {
-    val isFocused = remember { mutableStateOf(false) }
-    val showPassword = remember { mutableStateOf(false) }
+    var isFocused by remember { mutableStateOf(false) }
+    var showPassword by remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
-        label = { Text(text = stringResource(id = R.string.password_hint)) },
+        label = { Text(text = stringResource(id = R.string.login_password_hint)) },
         leadingIcon = { Icon(Icons.Filled.Lock, contentDescription = "password") },
         trailingIcon = {
-            IconButton(onClick = { showPassword.value = !showPassword.value }) {
+            IconButton(onClick = { showPassword = !showPassword }) {
                 Icon(
-                    if (showPassword.value) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
+                    if (showPassword) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
                     contentDescription = ""
                 )
             }
@@ -235,14 +189,14 @@ fun PasswordOutlinedTextField(
             imeAction = ImeAction.Done
         ),
         keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
-        visualTransformation = if (showPassword.value) VisualTransformation.None else PasswordVisualTransformation(),
+        visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
         enabled = enabled,
         readOnly = false,
         singleLine = true,
         modifier = modifier.onFocusChanged { focusState ->
-            isFocused.value = focusState.isFocused
+            isFocused = focusState.isFocused
         },
-        colors = if (!isFocused.value) TextFieldDefaults.outlinedTextFieldColors() else {
+        colors = if (!isFocused) TextFieldDefaults.outlinedTextFieldColors() else {
             TextFieldDefaults.outlinedTextFieldColors(
                 focusedLabelColor = primary,
                 leadingIconColor = primary,
