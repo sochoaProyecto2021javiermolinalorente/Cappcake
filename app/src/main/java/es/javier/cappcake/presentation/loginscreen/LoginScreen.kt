@@ -10,14 +10,12 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -36,7 +34,6 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
@@ -46,6 +43,7 @@ import es.javier.cappcake.presentation.ui.theme.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import es.javier.cappcake.presentation.components.EmailOutlinedTextField
 
 @Composable
 fun LoginScreen(navController: NavController, viewModel: LoginScreenViewModel) {
@@ -101,7 +99,7 @@ fun LoginScreen(navController: NavController, viewModel: LoginScreenViewModel) {
                         enabled = viewModel.emailFieldEnabled.value
                     )
                     Spacer(modifier = Modifier.height(10.dp))
-                    PasswordOutlinedTextField(
+                    LoginPasswordOutlinedTextField(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(start = 40.dp, end = 40.dp),
@@ -173,59 +171,24 @@ fun UserIncorrectDialog(showDialog: MutableState<Boolean>) {
 }
 
 @Composable
-fun EmailOutlinedTextField(
+fun LoginPasswordOutlinedTextField(
     modifier: Modifier = Modifier,
     value: String,
     onValueChange: (String) -> Unit,
     enabled: Boolean = true
 ) {
-    var isFocused = remember { mutableStateOf(false) }
-    val focusManager = LocalFocusManager.current
-
-    OutlinedTextField(
-        value = value,
-        onValueChange = onValueChange,
-        enabled = enabled,
-        readOnly = false,
-        label = { Text(text = stringResource(id = R.string.email_hint)) },
-        leadingIcon = { Icon(Icons.Filled.Email, contentDescription = "") },
-        keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Email,
-            imeAction = ImeAction.Next
-        ),
-        keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Down) }),
-        singleLine = true,
-        modifier = modifier.onFocusChanged { focusState ->
-            isFocused.value = focusState.isFocused
-        },
-        colors = if (!isFocused.value) TextFieldDefaults.outlinedTextFieldColors() else {
-            TextFieldDefaults.outlinedTextFieldColors(
-                focusedLabelColor = primary,
-                leadingIconColor = primary
-            )
-        }
-    )
-}
-
-@Composable
-fun PasswordOutlinedTextField(
-    modifier: Modifier = Modifier,
-    value: String,
-    onValueChange: (String) -> Unit,
-    enabled: Boolean = true
-) {
-    val isFocused = remember { mutableStateOf(false) }
-    val showPassword = remember { mutableStateOf(false) }
+    var isFocused by remember { mutableStateOf(false) }
+    var showPassword by remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
-        label = { Text(text = stringResource(id = R.string.password_hint)) },
+        label = { Text(text = stringResource(id = R.string.login_password_hint)) },
         leadingIcon = { Icon(Icons.Filled.Lock, contentDescription = "password") },
         trailingIcon = {
-            IconButton(onClick = { showPassword.value = !showPassword.value }) {
+            IconButton(onClick = { showPassword = !showPassword }) {
                 Icon(
-                    if (showPassword.value) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
+                    if (showPassword) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
                     contentDescription = ""
                 )
             }
@@ -235,14 +198,14 @@ fun PasswordOutlinedTextField(
             imeAction = ImeAction.Done
         ),
         keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
-        visualTransformation = if (showPassword.value) VisualTransformation.None else PasswordVisualTransformation(),
+        visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
         enabled = enabled,
         readOnly = false,
         singleLine = true,
         modifier = modifier.onFocusChanged { focusState ->
-            isFocused.value = focusState.isFocused
+            isFocused = focusState.isFocused
         },
-        colors = if (!isFocused.value) TextFieldDefaults.outlinedTextFieldColors() else {
+        colors = if (!isFocused) TextFieldDefaults.outlinedTextFieldColors() else {
             TextFieldDefaults.outlinedTextFieldColors(
                 focusedLabelColor = primary,
                 leadingIconColor = primary,

@@ -1,0 +1,57 @@
+package es.javier.cappcake.presentation.components
+
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
+import es.javier.cappcake.R
+import es.javier.cappcake.presentation.ui.theme.primary
+
+@Composable
+fun EmailOutlinedTextField(
+    modifier: Modifier = Modifier,
+    value: String,
+    onValueChange: (String) -> Unit,
+    enabled: Boolean = true
+) {
+    var isFocused by remember { mutableStateOf(false) }
+    val focusManager = LocalFocusManager.current
+
+    OutlinedTextField(
+        value = value,
+        onValueChange = onValueChange,
+        enabled = enabled,
+        readOnly = false,
+        label = { Text(text = stringResource(id = R.string.login_email_hint)) },
+        leadingIcon = { Icon(Icons.Filled.Email, contentDescription = "") },
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Email,
+            imeAction = ImeAction.Next
+        ),
+        keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Down) }),
+        singleLine = true,
+        modifier = modifier.onFocusChanged { focusState ->
+            isFocused = focusState.isFocused
+        },
+        colors = if (!isFocused) TextFieldDefaults.outlinedTextFieldColors() else {
+            TextFieldDefaults.outlinedTextFieldColors(
+                focusedLabelColor = MaterialTheme.colors.primary,
+                leadingIconColor = MaterialTheme.colors.primary
+            )
+        }
+    )
+}
