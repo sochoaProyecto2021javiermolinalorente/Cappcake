@@ -40,15 +40,15 @@ import androidx.navigation.NavHostController
 import es.javier.cappcake.R
 import es.javier.cappcake.presentation.Navigation
 import es.javier.cappcake.presentation.ui.theme.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import es.javier.cappcake.presentation.components.EmailOutlinedTextField
+import es.javier.cappcake.presentation.components.ErrorDialog
 
 @Composable
 fun LoginScreen(navController: NavController, viewModel: LoginScreenViewModel) {
 
-    val userNotExistDialog = remember { mutableStateOf(false) }
+    val userNotExistAlert = remember { mutableStateOf(false) }
+    val coroutine = rememberCoroutineScope()
 
     Box(
         modifier = Modifier
@@ -58,7 +58,13 @@ fun LoginScreen(navController: NavController, viewModel: LoginScreenViewModel) {
             .fillMaxSize(), contentAlignment = Alignment.TopCenter
     ) {
 
-        if (userNotExistDialog.value) UserIncorrectDialog(showDialog = userNotExistDialog)
+        if (userNotExistAlert.value) {
+            ErrorDialog(
+                showDialog = userNotExistAlert,
+                title = R.string.user_incorrect_title_dialog,
+                text = R.string.user_incorrect_message_dialog
+            )
+        }
 
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Spacer(modifier = Modifier.height(80.dp))
@@ -115,8 +121,8 @@ fun LoginScreen(navController: NavController, viewModel: LoginScreenViewModel) {
                     Box(modifier = Modifier, contentAlignment = Alignment.Center) {
                         Button(
                             onClick = {
-                                CoroutineScope(Dispatchers.Main).launch {
-                                    userNotExistDialog.value = viewModel.validateUser()
+                                coroutine.launch {
+                                    userNotExistAlert.value = viewModel.validateUser()
                                 }
                             },
                             modifier = Modifier
@@ -153,21 +159,6 @@ fun LoginScreen(navController: NavController, viewModel: LoginScreenViewModel) {
             }
         }
     }
-}
-
-@Composable
-fun UserIncorrectDialog(showDialog: MutableState<Boolean>) {
-    AlertDialog(title = {
-        Text(text = stringResource(id = R.string.user_incorrect_title_dialog))
-    }, text = {
-        Text(text = stringResource(id = R.string.user_incorrect_message_dialog))
-    }, buttons = {
-        Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
-            TextButton(onClick = { showDialog.value = false }) {
-                Text(text = stringResource(id = R.string.user_incorrect_accept_button_dialog))
-            }
-        }
-    }, onDismissRequest = { showDialog.value = false })
 }
 
 @Composable

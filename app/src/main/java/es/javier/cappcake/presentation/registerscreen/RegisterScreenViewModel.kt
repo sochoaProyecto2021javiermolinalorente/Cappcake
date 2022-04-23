@@ -8,6 +8,8 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 class RegisterScreenViewModel : ViewModel() {
 
@@ -31,11 +33,12 @@ class RegisterScreenViewModel : ViewModel() {
     var createUserButtonEnabled: Boolean by mutableStateOf(true)
         private set
 
-    fun createUser() {
+    suspend fun createUser() : Boolean {
         creatingUser.value = true
-        viewModelScope.launch {
-            delay(2_000)
+        delay(2_000)
+        return suspendCoroutine { continuation ->
             creatingUser.value = false
+            continuation.resume(true)
         }
     }
 

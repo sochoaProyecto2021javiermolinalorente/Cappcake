@@ -39,14 +39,21 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import es.javier.cappcake.presentation.components.EmailOutlinedTextField
+import es.javier.cappcake.presentation.components.ErrorDialog
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 @Composable
 fun RegisterScreen(navController: NavController, viewModel: RegisterScreenViewModel) {
 
+    val canNotCreateUserDialog = remember { mutableStateOf(false) }
+    var loading by remember { mutableStateOf(false) }
+    val coroutine = rememberCoroutineScope()
+
     LaunchedEffect(key1 = Unit) {
         viewModel.creatingUser.collect {
             viewModel.setScreenState()
+            loading = it
         }
     }
 
@@ -57,6 +64,15 @@ fun RegisterScreen(navController: NavController, viewModel: RegisterScreenViewMo
             )
             .fillMaxSize(), contentAlignment = Alignment.TopCenter
     ) {
+
+        if (canNotCreateUserDialog.value) {
+            ErrorDialog(
+                showDialog = canNotCreateUserDialog,
+                title = R.string.user_not_created_title_dialog,
+                text = R.string.user_not_created_message_dialog
+            )
+        }
+
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
             Box(contentAlignment = Alignment.TopCenter, modifier = Modifier
@@ -107,7 +123,9 @@ fun RegisterScreen(navController: NavController, viewModel: RegisterScreenViewMo
 
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                         Button(
-                            onClick = { viewModel.createUser() },
+                            onClick = { coroutine.launch {
+                                canNotCreateUserDialog.value = viewModel.createUser()
+                            } },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(40.dp)
@@ -117,7 +135,9 @@ fun RegisterScreen(navController: NavController, viewModel: RegisterScreenViewMo
                         ) {
                             Text(text = "crear cuenta".uppercase())
                         }
-
+                        if (loading) {
+                            CircularProgressIndicator()
+                        }
                     }
                 }
             }
