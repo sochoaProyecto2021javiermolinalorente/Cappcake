@@ -122,7 +122,13 @@ fun LoginScreen(navController: NavController, viewModel: LoginScreenViewModel) {
                         Button(
                             onClick = {
                                 coroutine.launch {
-                                    userNotExistAlert.value = viewModel.validateUser()
+                                    if (viewModel.validateUser()) {
+                                        navController.navigate(Navigation.APPLICATION_GRAPH) {
+                                            popUpTo(Navigation.AUTHENTCATION_GRAPH) { inclusive = true }
+                                        }
+                                    } else {
+                                        userNotExistAlert.value = true
+                                    }
                                 }
                             },
                             modifier = Modifier
