@@ -24,10 +24,6 @@ import androidx.navigation.compose.rememberNavController
 @Composable
 fun FeedScreen(navController: NavController, viewModel: FeedScreenViewModel) {
 
-    LaunchedEffect(key1 = Unit) {
-
-    }
-    
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Text(text = "Feed screen")
     }

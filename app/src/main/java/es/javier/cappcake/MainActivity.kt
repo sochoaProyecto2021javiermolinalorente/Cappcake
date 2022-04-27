@@ -4,12 +4,15 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -35,11 +38,13 @@ import es.javier.cappcake.presentation.ui.theme.CappcakeTheme
 
 class MainActivity : ComponentActivity() {
 
+    private lateinit var navController: NavHostController
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             CappcakeTheme {
-                val navController = rememberNavController()
+                navController = rememberNavController()
                 Scaffold(
                     bottomBar = {
                         val currentBackStackEntry by navController.currentBackStackEntryAsState()
@@ -53,7 +58,22 @@ class MainActivity : ComponentActivity() {
                                 BottomNavigationitems(navController = navController, currentBackStackEntry = currentBackStackEntry)
                         }
                     }) {
-                    NavHost(navController = navController, startDestination = Navigation.APPLICATION_GRAPH) {
+                    NavHost(navController = navController, startDestination = Navigation.LoadingScren.navigationRoute) {
+                        composable(route = Navigation.LoadingScren.navigationRoute) { backStackEntry ->
+
+                            LaunchedEffect(key1 = Unit) {
+                                val userLogged = backStackEntry.savedStateHandle.get<Boolean>(Navigation.USER_LOGGED)
+                                if (userLogged != true) {
+                                    navController.navigate(Navigation.AUTHENTCATION_GRAPH)
+                                } else {
+                                    navController.navigate(Navigation.APPLICATION_GRAPH)
+                                }
+                            }
+
+                            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                                CircularProgressIndicator()
+                            }
+                        }
                         LoginGraph(navController = navController)
                         ApplicationGraph(navController = navController)
                     }
@@ -61,6 +81,20 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
+    override fun onBackPressed() {
+        val destination = navController.currentDestination?.route
+        Log.i("Navigation", destination ?: "destination null")
+        destination?.let { currentDestination ->
+            when (currentDestination) {
+                Navigation.FeedScreen.navigationRoute -> finish()
+                Navigation.LoginScreen.navigationRoute -> finish()
+            }
+        }
+
+        super.onBackPressed()
+    }
+
 }
 
 fun NavGraphBuilder.LoginGraph(navController: NavController) {
@@ -104,8 +138,8 @@ fun BottomNavigationitems(navController: NavController, currentBackStackEntry: N
         BottomNavigationItem(
             selected = currentDestination?.hierarchy?.any { it.route == Navigation.FeedScreen.navigationRoute } == true,
             onClick = { navController.navigate(Navigation.FeedScreen.navigationRoute) {
-                popUpTo(navController.graph.findStartDestination().id) {
-                    inclusive = true
+                popUpTo(Navigation.FeedScreen.navigationRoute) {
+                    inclusive = false
                     this.saveState = true
                 }
                 launchSingleTop = true
@@ -116,8 +150,8 @@ fun BottomNavigationitems(navController: NavController, currentBackStackEntry: N
         BottomNavigationItem(
             selected = currentDestination?.hierarchy?.any { it.route == Navigation.SearchScreen.navigationRoute } == true,
             onClick = { navController.navigate(Navigation.SearchScreen.navigationRoute) {
-                popUpTo(navController.graph.findStartDestination().id) {
-                    inclusive = true
+                popUpTo(Navigation.FeedScreen.navigationRoute) {
+                    inclusive = false
                     this.saveState = true
                 }
                 launchSingleTop = true
@@ -128,8 +162,8 @@ fun BottomNavigationitems(navController: NavController, currentBackStackEntry: N
         BottomNavigationItem(
             selected = currentDestination?.hierarchy?.any { it.route == Navigation.AddRecipeScreen.navigationRoute } == true,
             onClick = { navController.navigate(Navigation.AddRecipeScreen.navigationRoute) {
-                popUpTo(navController.graph.findStartDestination().id) {
-                    inclusive
+                popUpTo(Navigation.FeedScreen.navigationRoute) {
+                    inclusive = false
                     this.saveState = true
                 }
                 launchSingleTop = true
@@ -140,8 +174,8 @@ fun BottomNavigationitems(navController: NavController, currentBackStackEntry: N
         BottomNavigationItem(
             selected = currentDestination?.hierarchy?.any { it.route == Navigation.ActivityScreen.navigationRoute } == true,
             onClick = { navController.navigate(Navigation.ActivityScreen.navigationRoute) {
-                popUpTo(navController.graph.findStartDestination().id) {
-                    inclusive
+                popUpTo(Navigation.FeedScreen.navigationRoute) {
+                    inclusive = false
                     this.saveState = true
                 }
                 launchSingleTop = true
@@ -152,8 +186,8 @@ fun BottomNavigationitems(navController: NavController, currentBackStackEntry: N
         BottomNavigationItem(
             selected = currentDestination?.hierarchy?.any { it.route == Navigation.ProfileScreen.navigationRoute } == true,
             onClick = { navController.navigate(Navigation.ProfileScreen.navigationRoute) {
-                popUpTo(navController.graph.findStartDestination().id) {
-                    inclusive
+                popUpTo(Navigation.FeedScreen.navigationRoute) {
+                    inclusive = false
                     this.saveState = true
                 }
                 launchSingleTop = true

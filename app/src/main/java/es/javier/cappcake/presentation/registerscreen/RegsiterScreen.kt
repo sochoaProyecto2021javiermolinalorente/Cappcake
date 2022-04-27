@@ -38,6 +38,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import es.javier.cappcake.presentation.Navigation
 import es.javier.cappcake.presentation.components.EmailOutlinedTextField
 import es.javier.cappcake.presentation.components.ErrorDialog
 import kotlinx.coroutines.flow.collect
@@ -124,7 +125,13 @@ fun RegisterScreen(navController: NavController, viewModel: RegisterScreenViewMo
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                         Button(
                             onClick = { coroutine.launch {
-                                canNotCreateUserDialog.value = viewModel.createUser()
+                                val userCreated = viewModel.createUser()
+                                if (userCreated) {
+                                    navController.getBackStackEntry(navController.graph.startDestinationId).savedStateHandle.set(Navigation.USER_LOGGED, true)
+                                    navController.popBackStack(Navigation.LoadingScren.navigationRoute, false)
+                                } else {
+                                    canNotCreateUserDialog.value = true
+                                }
                             } },
                             modifier = Modifier
                                 .fillMaxWidth()
