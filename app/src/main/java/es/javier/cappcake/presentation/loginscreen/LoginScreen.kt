@@ -126,14 +126,8 @@ fun LoginScreen(navController: NavController, viewModel: LoginScreenViewModel) {
                                     val userValidated = viewModel.validateUser()
                                     navController.previousBackStackEntry?.savedStateHandle?.set(
                                         Navigation.USER_LOGGED, userValidated)
-                                    if (userValidated) {
-                                        navController.popBackStack(navController.graph.findStartDestination().id, false)
-                                        /*navController.navigate(Navigation.APPLICATION_GRAPH) {
-                                            popUpTo(Navigation.AUTHENTCATION_GRAPH) { inclusive = true }
-                                        }*/
-                                    } else {
-                                        userNotExistAlert.value = true
-                                    }
+                                    if (userValidated) navController.popBackStack(navController.graph.findStartDestination().id, false)
+                                    else userNotExistAlert.value = true
                                 }
                             },
                             modifier = Modifier
