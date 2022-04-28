@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import es.javier.cappcake.R
 import es.javier.cappcake.presentation.Navigation
@@ -122,7 +123,11 @@ fun LoginScreen(navController: NavController, viewModel: LoginScreenViewModel) {
                         Button(
                             onClick = {
                                 coroutine.launch {
-                                    userNotExistAlert.value = viewModel.validateUser()
+                                    val userValidated = viewModel.validateUser()
+                                    navController.previousBackStackEntry?.savedStateHandle?.set(
+                                        Navigation.USER_LOGGED, userValidated)
+                                    if (userValidated) navController.popBackStack(navController.graph.findStartDestination().id, false)
+                                    else userNotExistAlert.value = true
                                 }
                             },
                             modifier = Modifier
@@ -144,7 +149,10 @@ fun LoginScreen(navController: NavController, viewModel: LoginScreenViewModel) {
                             append(" ${stringResource(id = R.string.signup_text)}")
                         }
                     }, modifier = Modifier.clickable {
-                        if (!viewModel.validatingUser.value) navController.navigate(Navigation.RegisterScreen.navigationRoute) { launchSingleTop = true }})
+                        if (!viewModel.validatingUser.value) {
+                            navController.navigate(Navigation.RegisterScreen.navigationRoute)
+                        }
+                    })
                     Spacer(modifier = Modifier.height(100.dp))
                     Image(
                         painter = painterResource(id = R.drawable.logo_title),

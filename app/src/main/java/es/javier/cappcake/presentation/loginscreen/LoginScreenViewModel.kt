@@ -40,7 +40,7 @@ class LoginScreenViewModel() : ViewModel() {
 
     suspend fun validateUser() : Boolean {
         setLoadingStateTrue()
-        delay(2000)
+        delay(1000)
         return suspendCoroutine {
             // Validating user buiseness logic
 
