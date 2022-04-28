@@ -29,7 +29,7 @@ fun ProfileImage(modifier: Modifier = Modifier, onClick: () -> Unit) {
 
 @Preview(showBackground = true)
 @Composable
-fun ThumbnailProfileImagePreview() {
+fun ProfileImagePreview() {
     CappcakeTheme {
         ProfileImage() {}
     }
