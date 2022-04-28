@@ -88,7 +88,7 @@ fun RegisterScreen(navController: NavController, viewModel: RegisterScreenViewMo
                         .clickable {
                             navController.popBackStack()
                         })
-                ProfileImage(modifier = Modifier
+                RegisterAddProfileImage(modifier = Modifier
                     .padding(vertical = 20.dp))
             }
 
@@ -153,7 +153,7 @@ fun RegisterScreen(navController: NavController, viewModel: RegisterScreenViewMo
 }
 
 @Composable
-fun ProfileImage(modifier: Modifier = Modifier, onClick: () -> Unit = {}) {
+fun RegisterAddProfileImage(modifier: Modifier = Modifier, onClick: () -> Unit = {}) {
     Box(modifier = modifier) {
         Surface(shape = CircleShape,
             modifier = Modifier
