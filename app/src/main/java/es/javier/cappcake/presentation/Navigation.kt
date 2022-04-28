@@ -10,7 +10,7 @@ sealed class Navigation(val navigationRoute: String) {
         const val USER_LOGGED = "user_logged"
     }
 
-    object LoadingScren: Navigation("loading_screen")
+    object LoadingScreen: Navigation("loading_screen")
     object LoginScreen: Navigation("login_screen")
     object RegisterScreen: Navigation("register_screen")
     object FeedScreen: Navigation("feed_screen")

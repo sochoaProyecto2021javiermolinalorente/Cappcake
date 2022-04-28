@@ -26,5 +26,7 @@
     <string name="user_not_created_title_dialog">Error</string>
     <string name="user_not_created_message_dialog">No se ha podido crear el usuario</string>
 
+    <!-- Search screen -->
+    <string name="search_search_hint">Buscar...</string>
 
 </resources>
