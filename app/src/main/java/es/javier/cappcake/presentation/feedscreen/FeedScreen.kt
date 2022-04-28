@@ -40,12 +40,14 @@ fun FeedScreen(navController: NavController, viewModel: FeedScreenViewModel) {
             LazyRow(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .height(70.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 items(100) {
                     ProfileImage(
                         modifier = Modifier
                             .size(65.dp)
-                            .padding(6.dp)
+                            .padding(5.dp)
                     ) {}
                 }
             }

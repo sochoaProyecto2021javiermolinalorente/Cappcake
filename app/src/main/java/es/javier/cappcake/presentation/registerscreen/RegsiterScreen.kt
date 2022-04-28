@@ -128,7 +128,7 @@ fun RegisterScreen(navController: NavController, viewModel: RegisterScreenViewMo
                                 val userCreated = viewModel.createUser()
                                 if (userCreated) {
                                     navController.getBackStackEntry(navController.graph.startDestinationId).savedStateHandle.set(Navigation.USER_LOGGED, true)
-                                    navController.popBackStack(Navigation.LoadingScren.navigationRoute, false)
+                                    navController.popBackStack(Navigation.LoadingScreen.navigationRoute, false)
                                 } else {
                                     canNotCreateUserDialog.value = true
                                 }
