@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "852632054802",
+    "project_id": "cappcake-r3st",
+    "storage_bucket": "cappcake-r3st.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:852632054802:android:22af64d26faaade5493ccb",
+        "android_client_info": {
+          "package_name": "es.javier.cappcake"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "852632054802-8s2mc186vcohkt0fr07lrf6jornh7o3s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCVr4yrDQGVpI0t1SbK0QLIFyPq9OkxZic"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "852632054802-8s2mc186vcohkt0fr07lrf6jornh7o3s.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
