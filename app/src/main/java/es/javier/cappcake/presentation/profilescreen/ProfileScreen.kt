@@ -10,7 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
-import com.google.firebase.auth.ktx.auth
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.ktx.Firebase
 
 @Composable
@@ -33,7 +33,7 @@ private fun signOut(navController: NavController) {
             }
         }*/
 
-    Firebase.auth.signOut()
+    FirebaseAuth.getInstance().signOut()
     navController.navigate(navController.graph.findStartDestination().id)
 
 }

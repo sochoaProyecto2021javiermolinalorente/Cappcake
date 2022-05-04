@@ -25,9 +25,11 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
+import es.javier.cappcake.data.data_sources.UserDataSource
+import es.javier.cappcake.data.repositories.ImplUserRepository
+import es.javier.cappcake.domain.use_cases.AuthenticateUserUseCase
 import es.javier.cappcake.presentation.Navigation
 import es.javier.cappcake.presentation.activityscreen.ActivityScreen
 import es.javier.cappcake.presentation.addrecipescreen.AddRecipeScreen
@@ -52,8 +54,8 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        //FirebaseAuth.getInstance().useEmulator(IP_ADDRESS, 9099)
-        //FirebaseFirestore.getInstance().useEmulator(IP_ADDRESS, 8080)
+        FirebaseAuth.getInstance().useEmulator(IP_ADDRESS, 9099)
+        FirebaseFirestore.getInstance().useEmulator(IP_ADDRESS, 8080)
 
         setContent {
 
@@ -76,7 +78,7 @@ class MainActivity : ComponentActivity() {
                         composable(route = Navigation.LoadingScreen.navigationRoute) { backStackEntry ->
 
                             LaunchedEffect(key1 = Unit) {
-                                val user = Firebase.auth.currentUser
+                                val user = FirebaseAuth.getInstance().currentUser
                                 //val userLogged = backStackEntry.savedStateHandle.get<Boolean>(Navigation.USER_LOGGED)
                                 if (user == null) {
                                     navController.navigate(Navigation.AUTHENTCATION_GRAPH)

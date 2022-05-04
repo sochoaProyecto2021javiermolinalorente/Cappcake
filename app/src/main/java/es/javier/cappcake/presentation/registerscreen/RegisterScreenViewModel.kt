@@ -4,14 +4,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
-import dagger.hilt.android.lifecycle.HiltViewModel
-import androidx.lifecycle.viewModelScope
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import es.javier.cappcake.domain.User
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import javax.inject.Inject
 import kotlin.coroutines.resume
@@ -22,8 +18,8 @@ class RegisterScreenViewModel @Inject constructor() : ViewModel() {
 
     // Fields
     var usernameField: String by mutableStateOf("")
-    var emailField: String by mutableStateOf("user_me@gmail.com")
-    var passwordField: String by mutableStateOf("123456 ")
+    var emailField: String by mutableStateOf("")
+    var passwordField: String by mutableStateOf("")
     var repeatPasswordField: String by mutableStateOf("")
     var creatingUser = MutableStateFlow(false)
         private set
@@ -45,8 +41,6 @@ class RegisterScreenViewModel @Inject constructor() : ViewModel() {
 
         val db = Firebase.firestore
 
-        val user = User("qwert", "UserMeName", emailField)
-
         val userRegistered = suspendCoroutine<Boolean> { continuation ->
             Firebase.auth.createUserWithEmailAndPassword(emailField, passwordField)
                 .addOnSuccessListener { authResult ->
@@ -58,6 +52,12 @@ class RegisterScreenViewModel @Inject constructor() : ViewModel() {
                     continuation.resume(false)
                 }
         }
+
+        val user = User(
+            Firebase.auth.currentUser?.uid ?: "",
+            usernameField,
+            emailField,
+            null)
 
         return if (userRegistered) {
             suspendCoroutine { continuation ->
