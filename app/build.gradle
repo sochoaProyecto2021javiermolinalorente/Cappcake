@@ -1,6 +1,8 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
+    id 'dagger.hilt.android.plugin'
 }
 
 android {
@@ -67,4 +69,9 @@ dependencies {
     implementation "androidx.compose.material:material-icons-core:$compose"
     implementation "androidx.compose.material:material-icons-extended:$compose"
     implementation "androidx.compose.runtime:runtime-livedata:$compose"
+
+    // Hilt
+    implementation "com.google.dagger:hilt-android:$hilt_dagger"
+    kapt "com.google.dagger:hilt-compiler:$hilt_dagger"
+    implementation "androidx.hilt:hilt-navigation-compose:$hilt_navigation"
 }

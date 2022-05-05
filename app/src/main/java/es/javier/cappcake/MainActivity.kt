@@ -15,6 +15,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.*
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -22,6 +23,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import dagger.hilt.android.AndroidEntryPoint
 import es.javier.cappcake.presentation.Navigation
 import es.javier.cappcake.presentation.activityscreen.ActivityScreen
 import es.javier.cappcake.presentation.addrecipescreen.AddRecipeScreen
@@ -34,6 +36,7 @@ import es.javier.cappcake.presentation.registerscreen.RegisterScreenViewModel
 import es.javier.cappcake.presentation.searchscreen.SearchScreen
 import es.javier.cappcake.presentation.ui.theme.CappcakeTheme
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     private lateinit var navController: NavHostController
@@ -98,12 +101,11 @@ class MainActivity : ComponentActivity() {
 fun NavGraphBuilder.LoginGraph(navController: NavController) {
     navigation(startDestination = Navigation.LoginScreen.navigationRoute, route = Navigation.AUTHENTCATION_GRAPH) {
         composable(route = Navigation.LoginScreen.navigationRoute) {
-            val viewModel = viewModel<LoginScreenViewModel>()
-            LoginScreen(navController = navController, viewModel = viewModel)
+            LoginScreen(navController = navController, viewModel = hiltViewModel())
         }
         composable(route = Navigation.RegisterScreen.navigationRoute) {
             val viewModel = viewModel<RegisterScreenViewModel>()
-            RegisterScreen(navController = navController, viewModel = viewModel)
+            RegisterScreen(navController = navController, viewModel = hiltViewModel())
         }
     }
 }
