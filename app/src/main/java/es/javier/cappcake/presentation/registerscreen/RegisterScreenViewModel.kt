@@ -4,17 +4,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
-import es.javier.cappcake.domain.User
+import dagger.hilt.android.lifecycle.HiltViewModel
+import es.javier.cappcake.domain.Response
+import es.javier.cappcake.domain.use_cases.RegisterUserUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import javax.inject.Inject
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
 @HiltViewModel
-class RegisterScreenViewModel @Inject constructor() : ViewModel() {
+class RegisterScreenViewModel @Inject constructor(
+    private val registerUserUseCase: RegisterUserUseCase) : ViewModel() {
 
     // Fields
     var usernameField: String by mutableStateOf("")
@@ -39,38 +37,17 @@ class RegisterScreenViewModel @Inject constructor() : ViewModel() {
     suspend fun createUser(): Boolean {
         creatingUser.value = true
 
-        val db = Firebase.firestore
+        val response = registerUserUseCase(username = usernameField, email = emailField, password = passwordField, image = null)
 
-        val userRegistered = suspendCoroutine<Boolean> { continuation ->
-            Firebase.auth.createUserWithEmailAndPassword(emailField, passwordField)
-                .addOnSuccessListener { authResult ->
-                    creatingUser.value = false
-                    continuation.resume(authResult.user != null)
-                }
-                .addOnFailureListener { exception ->
-                    creatingUser.value = false
-                    continuation.resume(false)
-                }
-        }
-
-        val user = User(
-            Firebase.auth.currentUser?.uid ?: "",
-            usernameField,
-            emailField,
-            null)
-
-        return if (userRegistered) {
-            suspendCoroutine { continuation ->
-                db.collection("users").document(user.userId).set(user)
-                    .addOnSuccessListener {
-                        continuation.resume(true)
-                    }
-                    .addOnFailureListener { exception ->
-                        continuation.resume(false)
-                    }
+        return when (response) {
+            is Response.Success -> {
+                creatingUser.value = false
+                response.data!!
             }
-        } else {
-            false
+            is Response.Failiure -> {
+                creatingUser.value = false
+                response.data!!
+            }
         }
     }
 

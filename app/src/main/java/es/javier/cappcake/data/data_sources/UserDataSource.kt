@@ -6,10 +6,11 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import es.javier.cappcake.domain.Response
 import es.javier.cappcake.domain.User
+import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-class UserDataSource {
+class UserDataSource @Inject constructor() {
 
     private val authentication = Firebase.auth
 

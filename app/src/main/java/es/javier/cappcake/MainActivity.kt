@@ -120,7 +120,6 @@ fun NavGraphBuilder.LoginGraph(navController: NavController) {
             LoginScreen(navController = navController, viewModel = hiltViewModel())
         }
         composable(route = Navigation.RegisterScreen.navigationRoute) {
-            val viewModel = viewModel<RegisterScreenViewModel>()
             RegisterScreen(navController = navController, viewModel = hiltViewModel())
         }
     }
