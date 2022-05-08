@@ -24,6 +24,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.ktx.Firebase
+import es.javier.cappcake.data.data_sources.UserDataSource
+import es.javier.cappcake.data.repositories.ImplUserRepository
+import es.javier.cappcake.domain.use_cases.AuthenticateUserUseCase
 import es.javier.cappcake.presentation.Navigation
 import es.javier.cappcake.presentation.activityscreen.ActivityScreen
 import es.javier.cappcake.presentation.addrecipescreen.AddRecipeScreen
@@ -39,11 +45,20 @@ import es.javier.cappcake.presentation.ui.theme.CappcakeTheme
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
+    companion object {
+        const val IP_ADDRESS = "10.0.2.2"
+    }
+
     private lateinit var navController: NavHostController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        FirebaseAuth.getInstance().useEmulator(IP_ADDRESS, 9099)
+        FirebaseFirestore.getInstance().useEmulator(IP_ADDRESS, 8080)
+
         setContent {
+
             CappcakeTheme {
                 navController = rememberNavController()
                 Scaffold(
@@ -63,8 +78,9 @@ class MainActivity : ComponentActivity() {
                         composable(route = Navigation.LoadingScreen.navigationRoute) { backStackEntry ->
 
                             LaunchedEffect(key1 = Unit) {
-                                val userLogged = backStackEntry.savedStateHandle.get<Boolean>(Navigation.USER_LOGGED)
-                                if (userLogged != true) {
+                                val user = FirebaseAuth.getInstance().currentUser
+                                //val userLogged = backStackEntry.savedStateHandle.get<Boolean>(Navigation.USER_LOGGED)
+                                if (user == null) {
                                     navController.navigate(Navigation.AUTHENTCATION_GRAPH)
                                 } else {
                                     navController.navigate(Navigation.APPLICATION_GRAPH)
@@ -104,7 +120,6 @@ fun NavGraphBuilder.LoginGraph(navController: NavController) {
             LoginScreen(navController = navController, viewModel = hiltViewModel())
         }
         composable(route = Navigation.RegisterScreen.navigationRoute) {
-            val viewModel = viewModel<RegisterScreenViewModel>()
             RegisterScreen(navController = navController, viewModel = hiltViewModel())
         }
     }

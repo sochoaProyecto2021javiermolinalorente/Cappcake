@@ -125,9 +125,9 @@ fun RegisterScreen(navController: NavController, viewModel: RegisterScreenViewMo
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                         Button(
                             onClick = { coroutine.launch {
-                                val userCreated = viewModel.createUser()
-                                if (userCreated) {
-                                    navController.getBackStackEntry(navController.graph.startDestinationId).savedStateHandle.set(Navigation.USER_LOGGED, true)
+                                //val userCreated = viewModel.createUser()
+                                if (viewModel.createUser()) {
+                                    //navController.getBackStackEntry(navController.graph.startDestinationId).savedStateHandle.set(Navigation.USER_LOGGED, true)
                                     navController.popBackStack(Navigation.LoadingScreen.navigationRoute, false)
                                 } else {
                                     canNotCreateUserDialog.value = true

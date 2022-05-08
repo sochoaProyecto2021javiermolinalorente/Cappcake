@@ -123,10 +123,10 @@ fun LoginScreen(navController: NavController, viewModel: LoginScreenViewModel) {
                         Button(
                             onClick = {
                                 coroutine.launch {
-                                    val userValidated = viewModel.validateUser()
+                                    /*val userValidated = viewModel.validateUser()
                                     navController.previousBackStackEntry?.savedStateHandle?.set(
-                                        Navigation.USER_LOGGED, userValidated)
-                                    if (userValidated) navController.popBackStack(navController.graph.findStartDestination().id, false)
+                                        Navigation.USER_LOGGED, userValidated)*/
+                                    if (viewModel.validateUser()) navController.popBackStack(navController.graph.findStartDestination().id, false)
                                     else userNotExistAlert.value = true
                                 }
                             },

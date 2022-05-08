@@ -5,14 +5,14 @@ import androidx.lifecycle.ViewModel
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
+import es.javier.cappcake.domain.Response
+import es.javier.cappcake.domain.use_cases.RegisterUserUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import javax.inject.Inject
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
 @HiltViewModel
-class RegisterScreenViewModel @Inject constructor() : ViewModel() {
+class RegisterScreenViewModel @Inject constructor(
+    private val registerUserUseCase: RegisterUserUseCase) : ViewModel() {
 
     // Fields
     var usernameField: String by mutableStateOf("")
@@ -34,12 +34,20 @@ class RegisterScreenViewModel @Inject constructor() : ViewModel() {
     var createUserButtonEnabled: Boolean by mutableStateOf(true)
         private set
 
-    suspend fun createUser() : Boolean {
+    suspend fun createUser(): Boolean {
         creatingUser.value = true
-        delay(2_000)
-        return suspendCoroutine { continuation ->
-            creatingUser.value = false
-            continuation.resume(true)
+
+        val response = registerUserUseCase(username = usernameField, email = emailField, password = passwordField, image = null)
+
+        return when (response) {
+            is Response.Success -> {
+                creatingUser.value = false
+                response.data!!
+            }
+            is Response.Failiure -> {
+                creatingUser.value = false
+                response.data!!
+            }
         }
     }
 

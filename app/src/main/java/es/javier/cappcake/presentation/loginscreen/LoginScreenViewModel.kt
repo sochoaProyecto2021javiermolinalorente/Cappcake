@@ -1,7 +1,7 @@
 package es.javier.cappcake.presentation.loginscreen
 
+import android.util.Log
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -11,9 +11,11 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
+import es.javier.cappcake.domain.Response
+import es.javier.cappcake.domain.use_cases.AuthenticateUserUseCase
 
 @HiltViewModel
-class LoginScreenViewModel @Inject constructor() : ViewModel() {
+class LoginScreenViewModel @Inject constructor(val autenticateUserUseCase: AuthenticateUserUseCase) : ViewModel() {
 
     val emailField: MutableState<String> = mutableStateOf("")
     val passwordField: MutableState<String> = mutableStateOf("")
@@ -43,12 +45,15 @@ class LoginScreenViewModel @Inject constructor() : ViewModel() {
 
     suspend fun validateUser() : Boolean {
         setLoadingStateTrue()
-        delay(1000)
-        return suspendCoroutine {
-            // Validating user buiseness logic
-
-            setLoadingStateFalse()
-            it.resume(true)
+        return when (val response = autenticateUserUseCase(emailField.value, passwordField.value)) {
+            is Response.Failiure -> {
+                setLoadingStateFalse()
+                response.data!!
+            }
+            is Response.Success ->  {
+                setLoadingStateFalse()
+                response.data!!
+            }
         }
     }
 
