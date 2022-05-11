@@ -6,6 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -73,8 +74,11 @@ class MainActivity : ComponentActivity() {
                             Navigation.ProfileScreen.navigationRoute ->
                                 BottomNavigationitems(navController = navController, currentBackStackEntry = currentBackStackEntry)
                         }
-                    }) {
-                    NavHost(navController = navController, startDestination = Navigation.LoadingScreen.navigationRoute) {
+                    }) { innerPadding ->
+                    NavHost(
+                        modifier = Modifier.padding(innerPadding),
+                        navController = navController,
+                        startDestination = Navigation.LoadingScreen.navigationRoute) {
                         composable(route = Navigation.LoadingScreen.navigationRoute) { backStackEntry ->
 
                             LaunchedEffect(key1 = Unit) {
@@ -134,7 +138,7 @@ fun NavGraphBuilder.ApplicationGraph(navController: NavController) {
             SearchScreen(navController = navController)
         }
         composable(Navigation.AddRecipeScreen.navigationRoute) {
-            AddRecipeScreen(navController = navController)
+            AddRecipeScreen(navController = navController, hiltViewModel())
         }
         composable(Navigation.ActivityScreen.navigationRoute) {
             ActivityScreen(navController = navController)
