@@ -9,16 +9,11 @@ import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 import android.provider.Settings
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -28,8 +23,6 @@ import androidx.compose.material.icons.filled.Save
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.asImageBitmap
@@ -37,20 +30,14 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.google.accompanist.pager.*
 import es.javier.cappcake.R
-import es.javier.cappcake.presentation.ui.theme.CappcakeTheme
 import es.javier.cappcake.presentation.ui.theme.notePageColor
 import es.javier.cappcake.presentation.ui.theme.primary
 import kotlinx.coroutines.launch
@@ -63,28 +50,9 @@ fun AddRecipeScreen(navController: NavController, viewModel: AddRecipeScreenView
     val pagerState = rememberPagerState()
     val scope = rememberCoroutineScope()
 
-    val context = LocalContext.current
-    var recipeImage: Bitmap? by remember { mutableStateOf(null) }
-
     val imageSelector = rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { imageUri ->
-        viewModel.recipeImage = imageUri
         imageUri?.let {
-            scope.launch {
-                recipeImage = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                    val source = ImageDecoder.createSource(context.contentResolver, it)
-                    val imageBitmap = ImageDecoder.decodeBitmap(source)
-                    val outputStream = ByteArrayOutputStream()
-                    imageBitmap.compress(Bitmap.CompressFormat.JPEG, 10, outputStream)
-                    val byteArray = outputStream.toByteArray()
-                    BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
-                } else {
-                    val imageBitmap = MediaStore.Images.Media.getBitmap(context.contentResolver, it)
-                    val outputStream = ByteArrayOutputStream()
-                    imageBitmap.compress(Bitmap.CompressFormat.JPEG, 10, outputStream)
-                    val byteArray = outputStream.toByteArray()
-                    BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
-                }
-            }
+            viewModel.updateRecipeImage(it)
         }
     }
 
@@ -131,7 +99,7 @@ fun AddRecipeScreen(navController: NavController, viewModel: AddRecipeScreenView
                 value = viewModel.recipeName,
                 onNameChange = { viewModel.setRecipeTitle(it) })
 
-            if (viewModel.recipeImage == null) {
+            if (viewModel.recipeImageUri == null) {
                 UploadRecipeImageField(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -140,7 +108,7 @@ fun AddRecipeScreen(navController: NavController, viewModel: AddRecipeScreenView
             } else {
                 ImageSelectedView(
                     modifier = Modifier.fillMaxWidth().padding(vertical = 5.dp, horizontal = 20.dp),
-                    image = recipeImage,
+                    image = viewModel.recipeImage,
                     viewModel = viewModel,
                     onClick = { storagePermission.launch(Manifest.permission.READ_EXTERNAL_STORAGE) })
             }
