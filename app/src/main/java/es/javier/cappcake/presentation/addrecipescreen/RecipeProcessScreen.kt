@@ -31,10 +31,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun RecipeProcessScreen(navController: NavController, viewModel: AddRecipeScreenViewModel) {
 
-    BackHandler {
-        navController.popBackStack()
-    }
-
     Scaffold(
         topBar = {
             TopAppBar {
