@@ -1,5 +1,6 @@
 package es.javier.cappcake.presentation.addrecipescreen
 
+import android.net.Uri
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateListOf
@@ -21,8 +22,11 @@ class AddRecipeScreenViewModel @Inject constructor() : ViewModel() {
 
     var recipeName by mutableStateOf("")
         private set
+    var recipeImage: Uri? by mutableStateOf(null)
     var recipeProcess by mutableStateOf("")
     val ingredients = mutableStateListOf(Ingredient(name = "", amount = 0f, amountType = AmountType.NONE))
+
+    var showStoragePermissionAlert = mutableStateOf(false)
 
 
     fun addIngredient() {

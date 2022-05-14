@@ -56,7 +56,7 @@ fun IngredientsTab(viewModel: AddRecipeScreenViewModel) {
                     modifier = Modifier.clickable { viewModel.addIngredient() },
                     imageVector = Icons.Filled.AddCircle,
                     contentDescription = null,
-                    tint = Color.Black
+                    tint = MaterialTheme.colors.primary
                 )
             }
         }

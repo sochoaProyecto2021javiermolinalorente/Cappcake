@@ -32,6 +32,8 @@
     <!-- Add recipe screen -->
     <string name="add_recipe_screen_title">Añadir receta</string>
     <string name="add_recipe_recipe_name_label">Nombre de la receta:</string>
+    <string name="add_recipe_upload_image_text">Subir imagen</string>
+    <string name="add_recipe_recipe_image_label">Imagen de la receta:</string>
     <string name="add_recipe_ingredients_tab_label">Ingredientes</string>
     <string name="add_recipe_process_tab_label">Elaboración</string>
     <string name="add_recipe_ingredient_name_hint">Nombre</string>
@@ -39,4 +41,9 @@
     <string name="add_recipe_process_note_label">Elaboración</string>
     <!-- Recipe process screen -->
     <string name="recipe_process_appbar_title">Elaboración</string>
+    <!-- Storage permisison alert -->
+    <string name="add_recipe_storage_alert_title">Permisos necesarios</string>
+    <string name="add_recipe_storage_alert_text">Se requieren permisos de almacenamiento para seleccionar una foto.</string>
+    <string name="add_recipe_storage_alert_confirm_button">Ir a configuración</string>
+    <string name="add_recipe_storage_alert_dismiss_button">Cancel</string>
 </resources>

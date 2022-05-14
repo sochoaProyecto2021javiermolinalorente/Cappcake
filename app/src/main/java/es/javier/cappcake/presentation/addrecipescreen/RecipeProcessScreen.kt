@@ -35,9 +35,6 @@ fun RecipeProcessScreen(navController: NavController, viewModel: AddRecipeScreen
         navController.popBackStack()
     }
 
-    val coroutineScope = rememberCoroutineScope()
-    val focusManager = LocalFocusManager.current
-
     Scaffold(
         topBar = {
             TopAppBar {
@@ -84,9 +81,7 @@ fun RecipeProcessScreen(navController: NavController, viewModel: AddRecipeScreen
                     value = viewModel.recipeProcess,
                     onValueChange = { viewModel.recipeProcess = it },
                     keyboardOptions = KeyboardOptions(
-                        capitalization = KeyboardCapitalization.Sentences,
-                        imeAction = ImeAction.Done),
-                    keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() })
+                        capitalization = KeyboardCapitalization.Sentences)
                 )
 
             }
