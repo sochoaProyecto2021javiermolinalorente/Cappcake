@@ -7,6 +7,7 @@ buildscript {
         activity = '1.4.0'
         hilt_dagger = '2.38.1'
         hilt_navigation = '1.0.0'
+        accompanist = "0.23.1"
 
         // test
         junit = '4.13.2'

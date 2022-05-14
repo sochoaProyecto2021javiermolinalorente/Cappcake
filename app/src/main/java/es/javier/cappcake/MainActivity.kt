@@ -1,17 +1,22 @@
+@file:OptIn(ExperimentalPagerApi::class)
+
 package es.javier.cappcake
 
 import android.os.Bundle
 import android.util.Log
+import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -23,6 +28,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.google.accompanist.pager.ExperimentalPagerApi
 import dagger.hilt.android.AndroidEntryPoint
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -33,6 +39,8 @@ import es.javier.cappcake.domain.use_cases.AuthenticateUserUseCase
 import es.javier.cappcake.presentation.Navigation
 import es.javier.cappcake.presentation.activityscreen.ActivityScreen
 import es.javier.cappcake.presentation.addrecipescreen.AddRecipeScreen
+import es.javier.cappcake.presentation.addrecipescreen.AddRecipeScreenViewModel
+import es.javier.cappcake.presentation.addrecipescreen.RecipeProcessScreen
 import es.javier.cappcake.presentation.feedscreen.FeedScreen
 import es.javier.cappcake.presentation.loginscreen.LoginScreen
 import es.javier.cappcake.presentation.loginscreen.LoginScreenViewModel
@@ -73,8 +81,11 @@ class MainActivity : ComponentActivity() {
                             Navigation.ProfileScreen.navigationRoute ->
                                 BottomNavigationitems(navController = navController, currentBackStackEntry = currentBackStackEntry)
                         }
-                    }) {
-                    NavHost(navController = navController, startDestination = Navigation.LoadingScreen.navigationRoute) {
+                    }) { innerPadding ->
+                    NavHost(
+                        modifier = Modifier.padding(innerPadding),
+                        navController = navController,
+                        startDestination = Navigation.LoadingScreen.navigationRoute) {
                         composable(route = Navigation.LoadingScreen.navigationRoute) { backStackEntry ->
 
                             LaunchedEffect(key1 = Unit) {
@@ -134,8 +145,18 @@ fun NavGraphBuilder.ApplicationGraph(navController: NavController) {
             SearchScreen(navController = navController)
         }
         composable(Navigation.AddRecipeScreen.navigationRoute) {
-            AddRecipeScreen(navController = navController)
+            AddRecipeScreen(navController = navController, hiltViewModel())
         }
+
+        composable(Navigation.RecipeProcessScreen.navigationRoute) { backStackEntry ->
+            val parentBackStackEntry = remember(backStackEntry) {
+                navController.getBackStackEntry(Navigation.AddRecipeScreen.navigationRoute)
+            }
+            val parentViewModel = hiltViewModel<AddRecipeScreenViewModel>(parentBackStackEntry)
+
+            RecipeProcessScreen(navController = navController, viewModel = parentViewModel)
+        }
+
         composable(Navigation.ActivityScreen.navigationRoute) {
             ActivityScreen(navController = navController)
         }
