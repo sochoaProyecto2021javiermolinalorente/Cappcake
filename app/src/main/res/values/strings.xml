@@ -39,6 +39,7 @@
     <string name="add_recipe_ingredient_name_hint">Nombre</string>
     <string name="add_recipe_ingredient_field_separator">-</string>
     <string name="add_recipe_process_note_label">Elaboración</string>
+    <string name="add_recipe_uploading_recipe_text">Subiendo receta</string>
     <!-- Recipe process screen -->
     <string name="recipe_process_appbar_title">Elaboración</string>
     <!-- Storage permisison alert -->
@@ -46,4 +47,9 @@
     <string name="add_recipe_storage_alert_text">Se requieren permisos de almacenamiento para seleccionar una foto.</string>
     <string name="add_recipe_storage_alert_confirm_button">Ir a configuración</string>
     <string name="add_recipe_storage_alert_dismiss_button">Cancel</string>
+    <!-- Recipe not valid alert -->
+    <string name="add_recipe_recipe_not_valid_alert_title">Receta no válida</string>
+    <string name="add_recipe_recipe_not_valid_alert_text">Hay algunos campos sin completar. Asegúrate de que no has dejado ningún ingrediente incompleto o dejado la imagen sin seleccionar.</string>
+    <string name="add_recipe_recipe_not_valid_alert_confirm_button">Aceptar</string>
+
 </resources>

@@ -69,17 +69,19 @@ fun IngredientField(modifier: Modifier = Modifier, ingredient: Ingredient, onDel
 
     var ingredientName by remember { mutableStateOf(ingredient.name) }
     var ingredientAmount by remember { mutableStateOf(ingredient.amount.toFormattedString()) }
-    var ingredientAmountType by remember { mutableStateOf(ingredient.amountType) }
 
     Surface(modifier = modifier, shape = RoundedCornerShape(8.dp), elevation = 4.dp) {
-        Row(modifier = Modifier.padding(2.dp), verticalAlignment = Alignment.CenterVertically) {
+        Row(modifier = Modifier.wrapContentSize().padding(2.dp), verticalAlignment = Alignment.CenterVertically) {
             Text(text = stringResource(id = R.string.add_recipe_ingredient_field_separator))
-            Box(modifier = Modifier.padding(5.dp), contentAlignment = Alignment.CenterStart) {
+            Box(modifier = Modifier.wrapContentSize().padding(5.dp), contentAlignment = Alignment.CenterStart) {
                 BasicTextField(
                     value = ingredientName,
                     onValueChange = {
-                        ingredientName = it
-                        ingredient.name = it},
+                        if (it.length <= 30) {
+                            ingredientName = it
+                            ingredient.name = it
+                        } },
+                    modifier = Modifier.width(120.dp),
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
                     keyboardActions = KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Next) })

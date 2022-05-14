@@ -3,11 +3,7 @@ package es.javier.cappcake.presentation.addrecipescreen
 import android.Manifest
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.ImageDecoder
 import android.net.Uri
-import android.os.Build
-import android.provider.MediaStore
 import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -35,13 +31,14 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import com.google.accompanist.pager.*
 import es.javier.cappcake.R
+import es.javier.cappcake.presentation.components.LoadingAlert
 import es.javier.cappcake.presentation.ui.theme.notePageColor
 import es.javier.cappcake.presentation.ui.theme.primary
 import kotlinx.coroutines.launch
-import java.io.ByteArrayOutputStream
 
 @ExperimentalPagerApi
 @Composable
@@ -67,6 +64,16 @@ fun AddRecipeScreen(navController: NavController, viewModel: AddRecipeScreenView
     if (viewModel.showStoragePermissionAlert.value) {
         StoragePermissionNotGrantedAlert(viewModel.showStoragePermissionAlert)
     }
+
+    if (viewModel.showLoadingAlert.value) {
+        LoadingAlert(
+            title = null,
+            text = { Text(text = stringResource(id = R.string.add_recipe_uploading_recipe_text)) })
+    }
+
+    if (viewModel.showInvalidRecipeAlert.value) {
+        InvalidRecipeAlert(showDialog = viewModel.showInvalidRecipeAlert)
+    }
     
     Scaffold(topBar = {
         TopAppBar {
@@ -83,7 +90,7 @@ fun AddRecipeScreen(navController: NavController, viewModel: AddRecipeScreenView
 
                 IconButton(
                     modifier = Modifier.padding(horizontal = 10.dp),
-                    onClick = { },
+                    onClick = { viewModel.uploadRecipe() },
                 ) {
                     Icon(imageVector = Icons.Filled.Save, contentDescription = null, tint = Color.White)
                 }
@@ -107,7 +114,9 @@ fun AddRecipeScreen(navController: NavController, viewModel: AddRecipeScreenView
                         .padding(vertical = 5.dp, horizontal = 20.dp)) { storagePermission.launch(Manifest.permission.READ_EXTERNAL_STORAGE) }
             } else {
                 ImageSelectedView(
-                    modifier = Modifier.fillMaxWidth().padding(vertical = 5.dp, horizontal = 20.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 5.dp, horizontal = 20.dp),
                     image = viewModel.recipeImage,
                     viewModel = viewModel,
                     onClick = { storagePermission.launch(Manifest.permission.READ_EXTERNAL_STORAGE) })
@@ -223,7 +232,9 @@ fun ImageSelectedView(modifier: Modifier, image: Bitmap?, onClick: () -> Unit, v
         Text(text = stringResource(id = R.string.add_recipe_recipe_image_label))
         Spacer(modifier = Modifier.width(10.dp))
         Surface(
-            modifier = Modifier.size(100.dp, 60.dp).clickable(onClick = onClick),
+            modifier = Modifier
+                .size(100.dp, 60.dp)
+                .clickable(onClick = onClick),
             shape = RoundedCornerShape(8.dp),
             border = BorderStroke(
                 width = 2.dp,
@@ -240,7 +251,25 @@ fun ImageSelectedView(modifier: Modifier, image: Bitmap?, onClick: () -> Unit, v
             }
         }
     }
+}
 
+@Composable
+fun InvalidRecipeAlert(showDialog: MutableState<Boolean>) {
+    AlertDialog(
+        title = {
+                Text(text = stringResource(id = R.string.add_recipe_recipe_not_valid_alert_title))
+        },
+        text = {
+               Text(text = stringResource(id = R.string.add_recipe_recipe_not_valid_alert_text))
+        },
+        confirmButton = {
+                        TextButton(onClick = { showDialog.value = false }) {
+                            Text(text = stringResource(id = R.string.add_recipe_recipe_not_valid_alert_confirm_button).uppercase())
+                        }
+        },
+        onDismissRequest = { },
+        properties = DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false)
+    )
 }
 
 @OptIn(ExperimentalPagerApi::class)

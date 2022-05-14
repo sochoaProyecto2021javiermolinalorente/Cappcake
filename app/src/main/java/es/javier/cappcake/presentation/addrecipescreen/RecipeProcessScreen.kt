@@ -61,10 +61,7 @@ fun RecipeProcessScreen(navController: NavController, viewModel: AddRecipeScreen
 
         Surface(modifier = Modifier
             .fillMaxSize()
-            .padding(10.dp)
-            .clickable {
-
-            },
+            .padding(10.dp),
             color = notePageColor,
             elevation = 4.dp) {
 
