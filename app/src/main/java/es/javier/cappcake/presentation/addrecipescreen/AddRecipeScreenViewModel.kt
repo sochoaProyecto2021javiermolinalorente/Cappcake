@@ -13,6 +13,7 @@ import es.javier.cappcake.domain.AmountType
 import es.javier.cappcake.domain.Ingredient
 import es.javier.cappcake.utils.ImageCompressor
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -33,9 +34,6 @@ class AddRecipeScreenViewModel @Inject constructor(
     var showLoadingAlert = mutableStateOf(false)
     var showStoragePermissionAlert = mutableStateOf(false)
     var showInvalidRecipeAlert = mutableStateOf(false)
-
-
-
 
     fun addIngredient() { ingredients.add(Ingredient(name = "", amount = 0f, amountType = AmountType.NONE)) }
 
@@ -81,7 +79,5 @@ class AddRecipeScreenViewModel @Inject constructor(
     private fun checkName() : Boolean = recipeName.isNotBlank()
     private fun checkImage() : Boolean = recipeImageUri != null
     private fun checkRecipeProcess() : Boolean = recipeProcess.isNotBlank()
-
-
 
 }
