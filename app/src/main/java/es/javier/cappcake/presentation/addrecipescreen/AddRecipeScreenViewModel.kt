@@ -20,6 +20,7 @@ import javax.inject.Inject
 class AddRecipeScreenViewModel @Inject constructor() : ViewModel() {
 
     var recipeName by mutableStateOf("")
+        private set
     var recipeProcess by mutableStateOf("")
     val ingredients = mutableStateListOf(Ingredient(name = "", amount = 0f, amountType = AmountType.NONE))
 
@@ -37,6 +38,11 @@ class AddRecipeScreenViewModel @Inject constructor() : ViewModel() {
         viewModelScope.launch {
 
         }
+    }
+
+    fun setRecipeTitle(newRecipeName: String) {
+        if (newRecipeName.length >= 70) return
+        else recipeName = newRecipeName
     }
 
 }

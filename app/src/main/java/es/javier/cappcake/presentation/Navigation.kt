@@ -15,7 +15,11 @@ sealed class Navigation(val navigationRoute: String) {
     object RegisterScreen: Navigation("register_screen")
     object FeedScreen: Navigation("feed_screen")
     object SearchScreen: Navigation("search_screen")
+
+    // Add recipe navigation
     object AddRecipeScreen: Navigation("add_recipe_screen")
+    object RecipeProcessScreen: Navigation("recipe_process_screen")
+
     object ActivityScreen: Navigation("activity_screen")
     object ProfileScreen: Navigation("profile_screen")
 }

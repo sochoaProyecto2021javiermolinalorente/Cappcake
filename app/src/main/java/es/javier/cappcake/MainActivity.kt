@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalPagerApi::class)
+
 package es.javier.cappcake
 
 import android.os.Bundle
@@ -13,6 +15,7 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -24,6 +27,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.google.accompanist.pager.ExperimentalPagerApi
 import dagger.hilt.android.AndroidEntryPoint
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -34,6 +38,8 @@ import es.javier.cappcake.domain.use_cases.AuthenticateUserUseCase
 import es.javier.cappcake.presentation.Navigation
 import es.javier.cappcake.presentation.activityscreen.ActivityScreen
 import es.javier.cappcake.presentation.addrecipescreen.AddRecipeScreen
+import es.javier.cappcake.presentation.addrecipescreen.AddRecipeScreenViewModel
+import es.javier.cappcake.presentation.addrecipescreen.RecipeProcessScreen
 import es.javier.cappcake.presentation.feedscreen.FeedScreen
 import es.javier.cappcake.presentation.loginscreen.LoginScreen
 import es.javier.cappcake.presentation.loginscreen.LoginScreenViewModel
@@ -140,6 +146,16 @@ fun NavGraphBuilder.ApplicationGraph(navController: NavController) {
         composable(Navigation.AddRecipeScreen.navigationRoute) {
             AddRecipeScreen(navController = navController, hiltViewModel())
         }
+
+        composable(Navigation.RecipeProcessScreen.navigationRoute) { backStackEntry ->
+            val parentBackStackEntry = remember(backStackEntry) {
+                navController.getBackStackEntry(Navigation.AddRecipeScreen.navigationRoute)
+            }
+            val parentViewModel = hiltViewModel<AddRecipeScreenViewModel>(parentBackStackEntry)
+
+            RecipeProcessScreen(navController = navController, viewModel = parentViewModel)
+        }
+
         composable(Navigation.ActivityScreen.navigationRoute) {
             ActivityScreen(navController = navController)
         }

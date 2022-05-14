@@ -27,6 +27,16 @@
     <string name="user_not_created_message_dialog">No se ha podido crear el usuario</string>
 
     <!-- Search screen -->
-    <string name="search_search_hint">Buscar...</string>
+    <string name="search_search_hint">Buscar…</string>
 
+    <!-- Add recipe screen -->
+    <string name="add_recipe_screen_title">Añadir receta</string>
+    <string name="add_recipe_recipe_name_label">Nombre de la receta:</string>
+    <string name="add_recipe_ingredients_tab_label">Ingredientes</string>
+    <string name="add_recipe_process_tab_label">Elaboración</string>
+    <string name="add_recipe_ingredient_name_hint">Nombre</string>
+    <string name="add_recipe_ingredient_field_separator">-</string>
+    <string name="add_recipe_process_note_label">Elaboración</string>
+    <!-- Recipe process screen -->
+    <string name="recipe_process_appbar_title">Elaboración</string>
 </resources>
