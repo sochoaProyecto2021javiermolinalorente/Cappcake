@@ -33,6 +33,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
 import es.javier.cappcake.data.data_sources.UserDataSource
 import es.javier.cappcake.data.repositories.ImplUserRepository
 import es.javier.cappcake.domain.use_cases.AuthenticateUserUseCase
@@ -64,6 +65,7 @@ class MainActivity : ComponentActivity() {
 
         FirebaseAuth.getInstance().useEmulator(IP_ADDRESS, 9099)
         FirebaseFirestore.getInstance().useEmulator(IP_ADDRESS, 8080)
+        FirebaseStorage.getInstance().useEmulator(IP_ADDRESS, 9199)
 
         setContent {
 

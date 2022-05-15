@@ -8,7 +8,7 @@ interface RecipeRepository {
 
     suspend fun uploadRecipe(
         recipeName: String,
-        recipeImage: Uri?,
+        recipeImageUri: Uri?,
         recipeProcess: String,
         ingredients: List<Ingredient>
     ) : Response<Boolean>

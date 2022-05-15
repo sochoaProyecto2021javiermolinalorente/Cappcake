@@ -11,10 +11,10 @@ class ImplRecipeRepository @Inject constructor(private val dataSource: RecipeDat
 
     override suspend fun uploadRecipe(
         recipeName: String,
-        recipeImage: Uri?,
+        recipeImageUri: Uri?,
         recipeProcess: String,
         ingredients: List<Ingredient>
     ): Response<Boolean> {
-        return dataSource.uploadRecipe(recipeName, recipeImage, recipeProcess, ingredients)
+        return dataSource.uploadRecipe(recipeName, recipeImageUri, recipeProcess, ingredients)
     }
 }
