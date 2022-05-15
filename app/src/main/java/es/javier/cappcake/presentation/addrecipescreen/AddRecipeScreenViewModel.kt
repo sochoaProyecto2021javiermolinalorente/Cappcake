@@ -11,6 +11,8 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import es.javier.cappcake.domain.AmountType
 import es.javier.cappcake.domain.Ingredient
+import es.javier.cappcake.domain.Response
+import es.javier.cappcake.domain.use_cases.UploadRecipeUseCase
 import es.javier.cappcake.utils.ImageCompressor
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,7 +21,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AddRecipeScreenViewModel @Inject constructor(
-    private val compressor: ImageCompressor
+    private val compressor: ImageCompressor,
+    private val uploadRecipeUseCase: UploadRecipeUseCase
 ) : ViewModel() {
 
     var recipeName by mutableStateOf("")
@@ -54,9 +57,18 @@ class AddRecipeScreenViewModel @Inject constructor(
     fun uploadRecipe() {
         viewModelScope.launch {
             showLoadingAlert.value = true
-            delay(2000L)
             if (checkValidRecipe()) {
-                showLoadingAlert.value = false
+                val response = uploadRecipeUseCase(recipeName = recipeName, recipeImage = recipeImageUri, ingredients = ingredients, recipeProcess = recipeProcess)
+
+                when (response) {
+                    is Response.Failiure -> {
+                        showInvalidRecipeAlert.value = true
+                        showLoadingAlert.value = false
+                    }
+                    is Response.Success -> {
+                        showLoadingAlert.value = false
+                    }
+                }
             } else {
                 showInvalidRecipeAlert.value = true
                 showLoadingAlert.value = false
