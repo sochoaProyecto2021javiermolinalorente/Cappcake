@@ -2,6 +2,7 @@ package es.javier.cappcake.presentation.addrecipescreen
 
 import android.graphics.Bitmap
 import android.net.Uri
+import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue
@@ -82,7 +83,9 @@ class AddRecipeScreenViewModel @Inject constructor(
 
     private fun checkIngredients() : Boolean {
         val invalidIngredients = ingredients.filter {
-            it.amountType == AmountType.NONE && it.name.isEmpty() && it.name.isEmpty() && it.amount == 0f
+            it.amountType == AmountType.NONE ||
+                    it.name.isBlank() ||
+                    it.amount == 0f
         }
 
         return invalidIngredients.isEmpty()
