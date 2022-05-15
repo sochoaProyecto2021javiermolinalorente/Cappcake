@@ -18,13 +18,8 @@ import kotlin.coroutines.suspendCoroutine
 
 class RecipeDataSource @Inject constructor(private val imageCompressor: ImageCompressor) {
 
-    companion object {
-        const val IMAGE_NOT_UPLOADED = "image_not_uploaded"
-    }
-
     suspend fun uploadRecipe(recipeName: String, recipeImageUri: Uri?, recipeProcess: String, ingredients: List<Ingredient>) : Response<Boolean> {
 
-        val storage = Firebase.storage
         val firestore = Firebase.firestore
         val auth = Firebase.auth
 
@@ -41,7 +36,7 @@ class RecipeDataSource @Inject constructor(private val imageCompressor: ImageCom
         )
 
         return suspendCoroutine { continuation ->
-            firestore.collection("recipes").document().set(data).addOnCompleteListener { task ->
+            recipeDocumentRef.set(data).addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     continuation.resume(Response.Success(data = true))
                 } else {
