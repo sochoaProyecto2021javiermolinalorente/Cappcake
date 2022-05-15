@@ -1,4 +1,4 @@
-package es.javier.cappcake.presentation.addrecipescreen
+package es.javier.cappcake.presentation.components
 
 import android.content.Intent
 import android.net.Uri
@@ -10,7 +10,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.window.DialogProperties
 import es.javier.cappcake.R
 
 @Composable
@@ -44,24 +43,5 @@ fun StoragePermissionNotGrantedAlert(showAlert: MutableState<Boolean>) {
                 Text(text = stringResource(id = R.string.add_recipe_storage_alert_dismiss_button).uppercase())
             }
         }
-    )
-}
-
-@Composable
-fun InvalidRecipeAlert(showDialog: MutableState<Boolean>) {
-    AlertDialog(
-        title = {
-            Text(text = stringResource(id = R.string.add_recipe_recipe_not_valid_alert_title))
-        },
-        text = {
-            Text(text = stringResource(id = R.string.add_recipe_recipe_not_valid_alert_text))
-        },
-        confirmButton = {
-            TextButton(onClick = { showDialog.value = false }) {
-                Text(text = stringResource(id = R.string.add_recipe_recipe_not_valid_alert_confirm_button).uppercase())
-            }
-        },
-        onDismissRequest = { },
-        properties = DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false)
     )
 }

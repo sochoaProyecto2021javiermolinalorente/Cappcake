@@ -1,5 +1,9 @@
 package es.javier.cappcake.presentation.registerscreen
 
+import android.Manifest
+import android.graphics.Bitmap
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -33,6 +37,8 @@ import es.javier.cappcake.presentation.ui.theme.primary
 import es.javier.cappcake.presentation.ui.theme.primaryVariant
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -41,21 +47,46 @@ import androidx.compose.ui.text.input.VisualTransformation
 import es.javier.cappcake.presentation.Navigation
 import es.javier.cappcake.presentation.components.EmailOutlinedTextField
 import es.javier.cappcake.presentation.components.ErrorDialog
+import es.javier.cappcake.presentation.components.StoragePermissionNotGrantedAlert
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 @Composable
 fun RegisterScreen(navController: NavController, viewModel: RegisterScreenViewModel) {
 
-    val canNotCreateUserDialog = remember { mutableStateOf(false) }
-    var loading by remember { mutableStateOf(false) }
+    val loading by  viewModel.creatingUser.collectAsState()
     val coroutine = rememberCoroutineScope()
+
+    val imageSelector = rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { imageUri ->
+        imageUri?.let {
+            viewModel.updateProfileImage(imageUri = it)
+        }
+    }
+
+    val storagePermission = rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestPermission()) { isGranted ->
+        if (isGranted) {
+            imageSelector.launch("image/*")
+        } else {
+            viewModel.showStoragePermissionAlert.value = true
+        }
+    }
 
     LaunchedEffect(key1 = Unit) {
         viewModel.creatingUser.collect {
             viewModel.setScreenState()
-            loading = it
         }
+    }
+
+    if (viewModel.showUserNotCreatedAlert.value) {
+        ErrorDialog(
+            showDialog = viewModel.showUserNotCreatedAlert,
+            title = R.string.user_not_created_title_dialog,
+            text = R.string.user_not_created_message_dialog
+        )
+    }
+
+    if (viewModel.showStoragePermissionAlert.value) {
+        StoragePermissionNotGrantedAlert(showAlert = viewModel.showStoragePermissionAlert)
     }
 
     Box(
@@ -65,14 +96,6 @@ fun RegisterScreen(navController: NavController, viewModel: RegisterScreenViewMo
             )
             .fillMaxSize(), contentAlignment = Alignment.TopCenter
     ) {
-
-        if (canNotCreateUserDialog.value) {
-            ErrorDialog(
-                showDialog = canNotCreateUserDialog,
-                title = R.string.user_not_created_title_dialog,
-                text = R.string.user_not_created_message_dialog
-            )
-        }
 
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
@@ -89,7 +112,7 @@ fun RegisterScreen(navController: NavController, viewModel: RegisterScreenViewMo
                             navController.popBackStack()
                         })
                 RegisterAddProfileImage(modifier = Modifier
-                    .padding(vertical = 20.dp))
+                    .padding(vertical = 20.dp), profileImage = viewModel.profileImage) { storagePermission.launch(Manifest.permission.READ_EXTERNAL_STORAGE) }
             }
 
             Surface(
@@ -110,27 +133,46 @@ fun RegisterScreen(navController: NavController, viewModel: RegisterScreenViewMo
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
 
-                    UsernameTextField(value = viewModel.usernameField, onValueChange = { viewModel.usernameField = it}, modifier = Modifier
-                        .fillMaxWidth(), enabled = viewModel.userFieldEnabled)
+                    UsernameTextField(
+                        value = viewModel.usernameField,
+                        onValueChange = {
+                            viewModel.usernameField = it
+                            viewModel.checkAllFieldsAreFilled() },
+                        modifier = Modifier.fillMaxWidth(), enabled = viewModel.userFieldEnabled)
 
-                    EmailOutlinedTextField(value = viewModel.emailField, onValueChange = { viewModel.emailField = it }, modifier = Modifier
-                        .fillMaxWidth(), enabled = viewModel.emailFieldEnabled)
+                    EmailOutlinedTextField(
+                        value = viewModel.emailField,
+                        onValueChange = {
+                            viewModel.emailField = it
+                            viewModel.checkAllFieldsAreFilled() },
+                        modifier = Modifier.fillMaxWidth(), enabled = viewModel.emailFieldEnabled
+                    )
 
-                    RegisterPasswordOutlinedTextField(value = viewModel.passwordField, onValueChange = { viewModel.passwordField = it }, modifier = Modifier
-                        .fillMaxWidth(), enabled = viewModel.passwordFieldEnabled)
+                    RegisterPasswordOutlinedTextField(value = viewModel.passwordField,
+                        onValueChange = {
+                            viewModel.passwordField = it
+                            viewModel.checkAllFieldsAreFilled() },
+                        modifier = Modifier.fillMaxWidth(),
+                        enabled = viewModel.passwordFieldEnabled,
+                        error = viewModel.notEqualPasswordError)
 
-                    RepeatPasswordOutlinedTextField(value = viewModel.repeatPasswordField, onValueChange = { viewModel.repeatPasswordField = it }, modifier = Modifier
-                        .fillMaxWidth(), enabled = viewModel.repeatPasswordFieldEnabled)
+                    RepeatPasswordOutlinedTextField(
+                        value = viewModel.repeatPasswordField,
+                        onValueChange = {
+                            viewModel.repeatPasswordField = it
+                            viewModel.checkAllFieldsAreFilled() },
+                        modifier = Modifier.fillMaxWidth(),
+                        enabled = viewModel.repeatPasswordFieldEnabled,
+                        error = viewModel.notEqualPasswordError)
 
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                         Button(
                             onClick = { coroutine.launch {
-                                //val userCreated = viewModel.createUser()
+                                viewModel.checkPasswordsAreEqual()
                                 if (viewModel.createUser()) {
-                                    //navController.getBackStackEntry(navController.graph.startDestinationId).savedStateHandle.set(Navigation.USER_LOGGED, true)
                                     navController.popBackStack(Navigation.LoadingScreen.navigationRoute, false)
                                 } else {
-                                    canNotCreateUserDialog.value = true
+                                    viewModel.showUserNotCreatedAlert.value = true
                                 }
                             } },
                             modifier = Modifier
@@ -140,7 +182,7 @@ fun RegisterScreen(navController: NavController, viewModel: RegisterScreenViewMo
                             shape = RoundedCornerShape(8.dp),
                             enabled = viewModel.createUserButtonEnabled
                         ) {
-                            Text(text = "crear cuenta".uppercase())
+                            Text(text = stringResource(id = R.string.register_create_account_text_button).uppercase())
                         }
                         if (loading) {
                             CircularProgressIndicator()
@@ -153,7 +195,7 @@ fun RegisterScreen(navController: NavController, viewModel: RegisterScreenViewMo
 }
 
 @Composable
-fun RegisterAddProfileImage(modifier: Modifier = Modifier, onClick: () -> Unit = {}) {
+fun RegisterAddProfileImage(modifier: Modifier = Modifier, profileImage: Bitmap?, onClick: () -> Unit) {
     Box(modifier = modifier) {
         Surface(shape = CircleShape,
             modifier = Modifier
@@ -161,10 +203,19 @@ fun RegisterAddProfileImage(modifier: Modifier = Modifier, onClick: () -> Unit =
                 .border(width = 5.dp, color = orangish, shape = CircleShape)
                 .clickable(enabled = true, role = Role.Image, onClick = onClick)) {
 
-            Image(
-                modifier = Modifier.fillMaxSize(),
-                painter = painterResource(id = R.drawable.profile),
-                contentDescription = "empty profile image")
+            if (profileImage != null) {
+                Image(
+                    modifier = Modifier.fillMaxSize(),
+                    bitmap = profileImage.asImageBitmap(),
+                    contentScale = ContentScale.Crop,
+                    contentDescription = null)
+            } else {
+                Image(
+                    modifier = Modifier.fillMaxSize(),
+                    painter = painterResource(id = R.drawable.profile),
+                    contentScale = ContentScale.Crop,
+                    contentDescription = null)
+            }
         }
         Box(modifier = Modifier
             .align(alignment = Alignment.BottomEnd)
@@ -186,7 +237,7 @@ fun UsernameTextField(modifier: Modifier = Modifier, value: String, onValueChang
         onValueChange = onValueChange,
         enabled = enabled,
         label = { Text(text = stringResource(id = R.string.register_username_hint)) },
-        leadingIcon = { Icon(imageVector = Icons.Filled.Email, contentDescription = "") },
+        leadingIcon = { Icon(imageVector = Icons.Filled.Person, contentDescription = "") },
         keyboardActions = KeyboardActions(onNext = {focusManager.moveFocus(FocusDirection.Down)}),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Next),
         singleLine = true,
@@ -202,7 +253,8 @@ fun RegisterPasswordOutlinedTextField(
     modifier: Modifier = Modifier,
     value: String,
     onValueChange: (String) -> Unit,
-    enabled: Boolean = true
+    enabled: Boolean = true,
+    error: Boolean = false
 ) {
     var isFocused by remember { mutableStateOf(false) }
     var showPassword by remember { mutableStateOf(false) }
@@ -232,6 +284,7 @@ fun RegisterPasswordOutlinedTextField(
         modifier = modifier.onFocusChanged { focusState ->
             isFocused = focusState.isFocused
         },
+        isError = error,
         colors = if (!isFocused) TextFieldDefaults.outlinedTextFieldColors() else {
             TextFieldDefaults.outlinedTextFieldColors(
                 focusedLabelColor = MaterialTheme.colors.primary,
@@ -248,7 +301,8 @@ fun RepeatPasswordOutlinedTextField(
     modifier: Modifier = Modifier,
     value: String,
     onValueChange: (String) -> Unit,
-    enabled: Boolean = true
+    enabled: Boolean = true,
+    error: Boolean = false
 ) {
     var isFocused by remember { mutableStateOf(false) }
     var showPassword by remember { mutableStateOf(false) }
@@ -275,6 +329,7 @@ fun RepeatPasswordOutlinedTextField(
         enabled = enabled,
         readOnly = false,
         singleLine = true,
+        isError = error,
         modifier = modifier.onFocusChanged { focusState ->
             isFocused = focusState.isFocused
         },

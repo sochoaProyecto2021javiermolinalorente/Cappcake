@@ -1,23 +1,27 @@
 package es.javier.cappcake.data.data_sources
 
 import android.graphics.Bitmap
+import android.net.Uri
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import dagger.hilt.android.scopes.ViewModelScoped
+import com.google.firebase.storage.ktx.storage
 import es.javier.cappcake.domain.Response
-import es.javier.cappcake.domain.User
+import es.javier.cappcake.utils.ImageCompressor
+import java.io.ByteArrayOutputStream
 import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-class UserDataSource @Inject constructor() {
+class UserDataSource @Inject constructor(private val compressor: ImageCompressor) {
 
-    private val authentication = Firebase.auth
+    private val auth = Firebase.auth
+    private val firestore = Firebase.firestore
+    private val storage = Firebase.storage
 
     suspend fun authenticateUser(email: String, password: String) : Response<Boolean> {
         return suspendCoroutine { continuation ->
-            authentication.signInWithEmailAndPassword(email, password)
+            auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         continuation.resume(Response.Success(true))
@@ -28,10 +32,10 @@ class UserDataSource @Inject constructor() {
         }
     }
 
-    suspend fun registerUser(username: String, email: String, password: String, image: Bitmap?) : Response<Boolean> {
+    suspend fun registerUser(username: String, email: String, password: String, profileImage: Uri?) : Response<Boolean> {
         val response = suspendCoroutine<Response<Boolean>> { continuation ->
 
-            authentication.createUserWithEmailAndPassword(email, password)
+            auth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         continuation.resume(Response.Success(data = true))
@@ -46,7 +50,7 @@ class UserDataSource @Inject constructor() {
                 response
             }
             is Response.Success -> {
-                if (adduserToFirestore(username, email, authentication.currentUser!!.uid))
+                if (adduserToFirestore(username, email, auth.currentUser!!.uid, profileImage))
                     Response.Success(data = true)
                 else
                     Response.Failiure(message = null, data = false)
@@ -54,11 +58,18 @@ class UserDataSource @Inject constructor() {
         }
     }
 
-    private suspend fun adduserToFirestore(username: String, email: String, uid: String) : Boolean {
-        val db = Firebase.firestore
+    private suspend fun adduserToFirestore(username: String, email: String, uid: String, profileImage: Uri?) : Boolean {
+
+        val imageUrl = uploadProfileImage(profileImage)
+
+        val data = hashMapOf(
+            "email" to email,
+            "username" to username,
+            "profileImage" to imageUrl.data
+        )
 
         return suspendCoroutine<Boolean> { continuation ->
-            db.collection("User").document(uid).set(User(userId = uid, username = username, email = email, profileImage = null))
+            firestore.collection("users").document(uid).set(data)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         continuation.resume(true)
@@ -68,7 +79,42 @@ class UserDataSource @Inject constructor() {
                     }
                 }
         }
+    }
 
+    private suspend fun uploadProfileImage(recipeImageUri: Uri?) : Response<Uri?> {
+
+        val recipeImageRef = storage.reference.child("${auth.uid}/profile_image/profile-image.jpg")
+
+        if (recipeImageUri == null) return Response.Failiure(data = null, message = null)
+
+        val recipeImage = compressor.comporessBitmap(ImageCompressor.LOW_QUALITY, recipeImageUri)
+        val outputStream = ByteArrayOutputStream()
+        recipeImage.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+        val imageByteArray = outputStream.toByteArray()
+
+        val uploadTask = recipeImageRef.putBytes(imageByteArray)
+
+        return suspendCoroutine { continuation ->
+
+            uploadTask.continueWithTask { task ->
+                if (task.isSuccessful) {
+                    recipeImageRef.downloadUrl
+                } else {
+                    task.exception?.let {
+                        throw it
+                    }
+                }
+            }.addOnSuccessListener { urlTask ->
+                if (urlTask.path != null) {
+                    continuation.resume(Response.Success(data = urlTask))
+                } else {
+                    continuation.resume(Response.Failiure(data = null, message = null))
+                }
+            }.addOnFailureListener {
+                continuation.resume(Response.Failiure(data = null, message = null))
+            }
+
+        }
     }
 
 }

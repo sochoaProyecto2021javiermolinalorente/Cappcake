@@ -18,14 +18,15 @@ import kotlin.coroutines.suspendCoroutine
 
 class RecipeDataSource @Inject constructor(private val imageCompressor: ImageCompressor) {
 
-    suspend fun uploadRecipe(recipeName: String, recipeImageUri: Uri?, recipeProcess: String, ingredients: List<Ingredient>) : Response<Boolean> {
+    private val auth = Firebase.auth
+    private val firestore = Firebase.firestore
+    private val storage = Firebase.storage
 
-        val firestore = Firebase.firestore
-        val auth = Firebase.auth
+    suspend fun uploadRecipe(recipeName: String, recipeImageUri: Uri?, recipeProcess: String, ingredients: List<Ingredient>) : Response<Boolean> {
 
         val recipeDocumentRef = firestore.collection("recipes").document()
 
-        val imageUrl = uploadRecipeImage(recipeName, recipeImageUri)
+        val imageUrl = uploadRecipeImage(recipeImageUri)
 
         val data = hashMapOf(
             "user" to auth.uid,
@@ -51,9 +52,7 @@ class RecipeDataSource @Inject constructor(private val imageCompressor: ImageCom
 
     }
 
-    private suspend fun uploadRecipeImage(recipeName: String, recipeImageUri: Uri?) : Response<Uri?> {
-        val auth = Firebase.auth
-        val storage = Firebase.storage
+    private suspend fun uploadRecipeImage(recipeImageUri: Uri?) : Response<Uri?> {
 
         val recipeImageRef = storage.reference.child("${auth.uid}/recipes/${UUID.randomUUID()}.jpg")
 
