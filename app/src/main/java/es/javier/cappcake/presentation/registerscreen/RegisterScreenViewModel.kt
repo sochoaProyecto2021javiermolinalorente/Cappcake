@@ -59,7 +59,7 @@ class RegisterScreenViewModel @Inject constructor(
             return false
         }
 
-        val response = registerUserUseCase(username = usernameField, email = emailField, password = passwordField, image = null)
+        val response = registerUserUseCase(username = usernameField, email = emailField, password = passwordField, image = profileImageUri)
 
         return when (response) {
             is Response.Success -> {

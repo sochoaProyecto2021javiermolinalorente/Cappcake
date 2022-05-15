@@ -25,7 +25,7 @@ class RecipeDataSource @Inject constructor(private val imageCompressor: ImageCom
 
         val recipeDocumentRef = firestore.collection("recipes").document()
 
-        val imageUrl = uploadRecipeImage(recipeName, recipeImageUri)
+        val imageUrl = uploadRecipeImage(recipeImageUri)
 
         val data = hashMapOf(
             "user" to auth.uid,
@@ -51,7 +51,7 @@ class RecipeDataSource @Inject constructor(private val imageCompressor: ImageCom
 
     }
 
-    private suspend fun uploadRecipeImage(recipeName: String, recipeImageUri: Uri?) : Response<Uri?> {
+    private suspend fun uploadRecipeImage(recipeImageUri: Uri?) : Response<Uri?> {
         val auth = Firebase.auth
         val storage = Firebase.storage
 
