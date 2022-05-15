@@ -1,6 +1,7 @@
 package es.javier.cappcake.data.repositories
 
 import android.graphics.Bitmap
+import android.net.Uri
 import es.javier.cappcake.data.data_sources.UserDataSource
 import es.javier.cappcake.domain.Response
 import es.javier.cappcake.domain.User
@@ -12,6 +13,6 @@ class ImplUserRepository @Inject constructor(private val userDataSource: UserDat
     override suspend fun authenticateUser(email: String, password: String) : Response<Boolean> =
         userDataSource.authenticateUser(email, password)
 
-    override suspend fun registerUser(username: String, email: String, password: String, image: Bitmap?) : Response<Boolean> =
+    override suspend fun registerUser(username: String, email: String, password: String, image: Uri?) : Response<Boolean> =
         userDataSource.registerUser(username, email, password, image)
 }

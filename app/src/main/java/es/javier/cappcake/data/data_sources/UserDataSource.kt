@@ -1,6 +1,7 @@
 package es.javier.cappcake.data.data_sources
 
 import android.graphics.Bitmap
+import android.net.Uri
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -28,7 +29,7 @@ class UserDataSource @Inject constructor() {
         }
     }
 
-    suspend fun registerUser(username: String, email: String, password: String, image: Bitmap?) : Response<Boolean> {
+    suspend fun registerUser(username: String, email: String, password: String, image: Uri?) : Response<Boolean> {
         val response = suspendCoroutine<Response<Boolean>> { continuation ->
 
             authentication.createUserWithEmailAndPassword(email, password)

@@ -37,6 +37,7 @@ import androidx.navigation.NavController
 import com.google.accompanist.pager.*
 import es.javier.cappcake.R
 import es.javier.cappcake.presentation.components.LoadingAlert
+import es.javier.cappcake.presentation.components.StoragePermissionNotGrantedAlert
 import es.javier.cappcake.presentation.ui.theme.notePageColor
 import es.javier.cappcake.presentation.ui.theme.primary
 import kotlinx.coroutines.launch
