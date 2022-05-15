@@ -53,20 +53,3 @@ fun EmailOutlinedTextField(
         }
     )
 }
-
-@Composable
-fun ErrorDialog(showDialog: MutableState<Boolean>,
-                @StringRes title: Int,
-                @StringRes text: Int) {
-    AlertDialog(title = {
-        Text(text = stringResource(id = title))
-    }, text = {
-        Text(text = stringResource(id = text))
-    }, buttons = {
-        Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
-            TextButton(onClick = { showDialog.value = false }) {
-                Text(text = stringResource(id = R.string.eror_dialog_accept_button))
-            }
-        }
-    }, onDismissRequest = { showDialog.value = false })
-}

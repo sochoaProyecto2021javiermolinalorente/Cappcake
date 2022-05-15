@@ -36,6 +36,7 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import com.google.accompanist.pager.*
 import es.javier.cappcake.R
+import es.javier.cappcake.presentation.components.ErrorDialog
 import es.javier.cappcake.presentation.components.LoadingAlert
 import es.javier.cappcake.presentation.components.StoragePermissionNotGrantedAlert
 import es.javier.cappcake.presentation.ui.theme.notePageColor
@@ -74,7 +75,10 @@ fun AddRecipeScreen(navController: NavController, viewModel: AddRecipeScreenView
     }
 
     if (viewModel.showInvalidRecipeAlert.value) {
-        InvalidRecipeAlert(showDialog = viewModel.showInvalidRecipeAlert)
+        ErrorDialog(
+            showDialog = viewModel.showInvalidRecipeAlert,
+            title = R.string.add_recipe_recipe_not_valid_alert_title,
+            text = R.string.add_recipe_recipe_not_valid_alert_text)
     }
 
     Scaffold(topBar = {
