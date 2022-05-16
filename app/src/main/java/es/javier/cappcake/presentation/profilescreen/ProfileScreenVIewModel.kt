@@ -16,6 +16,7 @@ class ProfileScreenVIewModel @Inject constructor(
 ) : ViewModel() {
 
     var username by mutableStateOf("")
+    var profileImageUri: String? by mutableStateOf(null)
 
     suspend fun loadProfileImage(uid: String) {
 
@@ -27,6 +28,7 @@ class ProfileScreenVIewModel @Inject constructor(
                 val user = response.data
                 user?.let {
                     username = it.username
+                    profileImageUri = it.profileImage
                 }
             }
         }

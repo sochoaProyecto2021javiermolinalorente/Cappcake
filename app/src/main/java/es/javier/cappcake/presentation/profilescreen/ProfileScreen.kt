@@ -1,6 +1,7 @@
 package es.javier.cappcake.presentation.profilescreen
 
 import android.graphics.Bitmap
+import android.net.Uri
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -14,10 +15,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import coil.compose.AsyncImage
+import coil.compose.SubcomposeAsyncImage
+import coil.request.ImageRequest
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.ktx.Firebase
 import es.javier.cappcake.R
@@ -35,7 +40,7 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileScreenVIewMode
             Column(modifier = Modifier.padding(top = 10.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                 ProfileScreenProfileImage(
                     modifier = Modifier.size(90.dp),
-                    profileImage = null)
+                    profileImage = viewModel.profileImageUri)
 
                 if (viewModel.username.isBlank()) {
                     Text(text = "Username", modifier = Modifier.padding(vertical = 10.dp))
@@ -75,15 +80,19 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileScreenVIewMode
 }
 
 @Composable
-fun ProfileScreenProfileImage(modifier: Modifier, profileImage: Bitmap?) {
+fun ProfileScreenProfileImage(modifier: Modifier, profileImage: String?) {
     Surface(modifier = modifier,
         shape = CircleShape,
         border = BorderStroke(width = 2.dp, color = MaterialTheme.colors.primary)) {
         if (profileImage != null) {
-            Image(
-                bitmap = profileImage.asImageBitmap(),
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(profileImage)
+                    .crossfade(true)
+                    .build(),
                 contentDescription = null,
                 contentScale = ContentScale.Crop)
+
         } else {
             Image(
                 painter = painterResource(id = R.drawable.profile),
@@ -92,11 +101,6 @@ fun ProfileScreenProfileImage(modifier: Modifier, profileImage: Bitmap?) {
         }
 
     }
-}
-
-@Composable
-fun ProfileScreenDrawer() {
-
 }
 
 private fun signOut(navController: NavController) {
