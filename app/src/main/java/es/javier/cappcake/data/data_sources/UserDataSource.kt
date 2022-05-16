@@ -3,11 +3,14 @@ package es.javier.cappcake.data.data_sources
 import android.graphics.Bitmap
 import android.net.Uri
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.Source
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import es.javier.cappcake.domain.Response
+import es.javier.cappcake.domain.User
 import es.javier.cappcake.utils.ImageCompressor
+import kotlinx.coroutines.coroutineScope
 import java.io.ByteArrayOutputStream
 import javax.inject.Inject
 import kotlin.coroutines.resume
@@ -115,6 +118,23 @@ class UserDataSource @Inject constructor(private val compressor: ImageCompressor
             }
 
         }
+    }
+
+    suspend fun getUserProfile(uid: String) : Response<User?> {
+       return suspendCoroutine {  continuation ->
+           firestore.collection("users").document(uid).get(Source.SERVER).addOnCompleteListener { task ->
+               if (task.isSuccessful) {
+                   continuation.resume(Response.Success(data = User(
+                       userId = task.result.id,
+                       username = task.result.getString("username")!!,
+                       email = task.result.getString("email")!!,
+                       profileImage = task.result.getString("profileImage"),
+                   )))
+               } else {
+                   continuation.resume(Response.Failiure(data = null, message = null))
+               }
+           }
+       }
     }
 
 }

@@ -31,6 +31,7 @@ import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.pager.ExperimentalPagerApi
 import dagger.hilt.android.AndroidEntryPoint
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
@@ -50,6 +51,8 @@ import es.javier.cappcake.presentation.registerscreen.RegisterScreen
 import es.javier.cappcake.presentation.registerscreen.RegisterScreenViewModel
 import es.javier.cappcake.presentation.searchscreen.SearchScreen
 import es.javier.cappcake.presentation.ui.theme.CappcakeTheme
+import java.util.*
+import kotlin.coroutines.suspendCoroutine
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -91,7 +94,7 @@ class MainActivity : ComponentActivity() {
                         composable(route = Navigation.LoadingScreen.navigationRoute) { backStackEntry ->
 
                             LaunchedEffect(key1 = Unit) {
-                                val user = FirebaseAuth.getInstance().currentUser
+                                val user = Firebase.auth.currentUser
                                 //val userLogged = backStackEntry.savedStateHandle.get<Boolean>(Navigation.USER_LOGGED)
                                 if (user == null) {
                                     navController.navigate(Navigation.AUTHENTCATION_GRAPH)
@@ -162,8 +165,13 @@ fun NavGraphBuilder.ApplicationGraph(navController: NavController) {
         composable(Navigation.ActivityScreen.navigationRoute) {
             ActivityScreen(navController = navController)
         }
-        composable(Navigation.ProfileScreen.navigationRoute) {
-            ProfileScreen(navController = navController)
+        composable("${Navigation.ProfileScreen.navigationRoute}/{userId}", arguments = listOf(navArgument(name = "userId") {
+            type = NavType.StringType
+        })) { backStackEntry ->
+            val userId = backStackEntry.arguments?.getString("userId")
+            userId?.let {
+                ProfileScreen(navController = navController, viewModel = hiltViewModel(), uid = it)
+            }
         }
     }
 }
@@ -222,7 +230,7 @@ fun BottomNavigationitems(navController: NavController, currentBackStackEntry: N
 
         BottomNavigationItem(
             selected = currentDestination?.hierarchy?.any { it.route == Navigation.ProfileScreen.navigationRoute } == true,
-            onClick = { navController.navigate(Navigation.ProfileScreen.navigationRoute) {
+            onClick = { navController.navigate("${Navigation.ProfileScreen.navigationRoute}/${Firebase.auth.uid!!}") {
                 popUpTo(Navigation.FeedScreen.navigationRoute) {
                     inclusive = false
                     this.saveState = true
