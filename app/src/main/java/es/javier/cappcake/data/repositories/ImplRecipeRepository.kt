@@ -3,6 +3,7 @@ package es.javier.cappcake.data.repositories
 import android.net.Uri
 import es.javier.cappcake.data.data_sources.RecipeDataSource
 import es.javier.cappcake.domain.Ingredient
+import es.javier.cappcake.domain.Recipe
 import es.javier.cappcake.domain.Response
 import es.javier.cappcake.domain.repositories.RecipeRepository
 import javax.inject.Inject
@@ -16,5 +17,9 @@ class ImplRecipeRepository @Inject constructor(private val dataSource: RecipeDat
         ingredients: List<Ingredient>
     ): Response<Boolean> {
         return dataSource.uploadRecipe(recipeName, recipeImageUri, recipeProcess, ingredients)
+    }
+
+    override suspend fun getRecipesOf(uid: String): Response<List<Recipe>?> {
+        return dataSource.getRecipesOf(uid)
     }
 }

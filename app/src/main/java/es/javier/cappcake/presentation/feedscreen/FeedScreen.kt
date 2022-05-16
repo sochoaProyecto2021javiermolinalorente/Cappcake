@@ -47,7 +47,8 @@ fun FeedScreen(navController: NavController, viewModel: FeedScreenViewModel) {
                     ProfileImage(
                         modifier = Modifier
                             .size(65.dp)
-                            .padding(5.dp)
+                            .padding(5.dp),
+                        imagePath = null
                     ) {}
                 }
             }

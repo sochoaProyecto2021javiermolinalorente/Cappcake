@@ -4,15 +4,20 @@ import android.graphics.Bitmap
 import android.net.Uri
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.Source
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import es.javier.cappcake.domain.AmountType
 import es.javier.cappcake.domain.Ingredient
+import es.javier.cappcake.domain.Recipe
 import es.javier.cappcake.domain.Response
 import es.javier.cappcake.utils.ImageCompressor
 import java.io.ByteArrayOutputStream
 import java.util.*
 import javax.inject.Inject
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -29,7 +34,7 @@ class RecipeDataSource @Inject constructor(private val imageCompressor: ImageCom
         val imageUrl = uploadRecipeImage(recipeImageUri)
 
         val data = hashMapOf(
-            "user" to auth.uid,
+            "userId" to auth.uid,
             "recipeName" to recipeName,
             "imagePath" to imageUrl.data,
             "ingredients" to ingredients,
@@ -86,6 +91,40 @@ class RecipeDataSource @Inject constructor(private val imageCompressor: ImageCom
             }
 
         }
+    }
+
+    suspend fun getRecipesOf(uid: String) : Response<List<Recipe>?> {
+        val recipesRef = firestore.collection("recipes")
+
+        val query = recipesRef.whereEqualTo("userId", auth.uid)
+
+        return suspendCoroutine { continuation ->
+            query.get().addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val recipeList = task.result.documents.map { document ->
+                        val recipeId = document.id
+                        val userId = document.getString("userId")
+                        val recipeName = document.getString("recipeName")
+                        val imagePath = document.getString("imagePath")
+                        val recipeProcess = document.getString("recipeProcess")
+                        val ingrediets = (document["ingredients"] as ArrayList<HashMap<String, Any>>).map {
+                            val ingredientId = it["id"] as String
+                            val amount = it["amount"] as Double
+                            val amountType = it["amountType"] as String
+                            val name = it["name"] as String
+                            Ingredient(id = ingredientId, name = name, amount = amount.toFloat(), amountType = AmountType.valueOf(amountType))
+                        }
+                        Recipe(recipeId = recipeId, userId = userId!!, image = imagePath, ingredients = ingrediets, title = recipeName!!, recipeProcess = recipeProcess!!)
+                    }
+                    continuation.resume(Response.Success(data = recipeList))
+                } else {
+                    continuation.resume(Response.Failiure(data = null, message = null))
+                }
+            }
+        }
+
+
+
     }
 
 }

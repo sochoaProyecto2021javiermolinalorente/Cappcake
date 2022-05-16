@@ -40,7 +40,7 @@ fun RecipeComponent(
         Column(modifier = Modifier.fillMaxWidth()) {
             Column(modifier = Modifier.fillMaxWidth()) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    ProfileImage(modifier = Modifier.size(50.dp).padding(5.dp), onClick = {})
+                    ProfileImage(modifier = Modifier.size(50.dp).padding(5.dp), imagePath = null, onClick = {})
                     Text(text = userName, style = MaterialTheme.typography.body1)
                 }
                 Divider(color = Color.Black)
