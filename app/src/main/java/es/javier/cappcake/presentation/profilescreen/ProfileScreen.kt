@@ -1,7 +1,5 @@
 package es.javier.cappcake.presentation.profilescreen
 
-import android.graphics.Bitmap
-import android.net.Uri
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -9,15 +7,23 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.*
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Button
+import androidx.compose.material.Text
+import androidx.compose.material.Divider
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Surface
+import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -25,20 +31,20 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import coil.compose.AsyncImage
-import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.ktx.Firebase
 import es.javier.cappcake.R
 import es.javier.cappcake.domain.Recipe
+import es.javier.cappcake.domain.User
 import es.javier.cappcake.presentation.components.ProfileImage
 import es.javier.cappcake.presentation.components.RecipeComponent
+import kotlinx.coroutines.CoroutineScope
 
 @Composable
 fun ProfileScreen(navController: NavController, viewModel: ProfileScreenVIewModel, uid: String) {
 
     LaunchedEffect(key1 = Unit) {
-        viewModel.loadProfileImage(uid = uid)
+        viewModel.loadUser(uid = uid)
         viewModel.loadRecipes(uid = uid)
     }
 
@@ -56,12 +62,12 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileScreenVIewMode
                 Column(modifier = Modifier.padding(top = 10.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                     ProfileScreenProfileImage(
                         modifier = Modifier.size(90.dp),
-                        profileImage = viewModel.profileImageUri)
+                        profileImage = viewModel.user?.profileImage)
 
-                    if (viewModel.username.isBlank()) {
+                    if (viewModel.user == null) {
                         Text(text = "Username", modifier = Modifier.padding(vertical = 10.dp))
                     } else {
-                        Text(text = viewModel.username, modifier = Modifier.padding(vertical = 10.dp))
+                        Text(text = viewModel.user!!.username, modifier = Modifier.padding(vertical = 10.dp))
                     }
 
                     Row(modifier = Modifier
@@ -94,11 +100,10 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileScreenVIewMode
 
                     items(viewModel.recipes!!, key = { it.recipeId }) {
 
-                        ProfileScreenRecipeComponent(
+                        RecipeComponent(
                             modifier = Modifier.padding(20.dp),
                             recipe = it,
-                            userName = viewModel.username,
-                            userImage = viewModel.profileImageUri
+                            loadUser = { viewModel.user }
                         )
                     }
                 }
@@ -135,62 +140,7 @@ fun ProfileScreenProfileImage(modifier: Modifier, profileImage: String?) {
     }
 }
 
-@Composable
-fun ProfileScreenRecipeComponent(modifier: Modifier, recipe: Recipe, userName: String, userImage: String?) {
-    Surface(
-        shape = RectangleShape,
-        elevation = 5.dp,
-        border = BorderStroke(width = 0.dp, color = Color.Gray),
-        modifier = modifier
-    ) {
-        Column(modifier = Modifier.fillMaxWidth()) {
-            Column(modifier = Modifier.fillMaxWidth()) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    ProfileImage(
-                        modifier = Modifier
-                            .size(50.dp)
-                            .padding(5.dp),
-                        imagePath = userImage,
-                        onClick = {})
-                    Text(text = userName, style = MaterialTheme.typography.body1)
-                }
-                Divider(color = Color.Black)
-            }
 
-            if (recipe.image != null) {
-                AsyncImage(
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data(recipe.image)
-                        .crossfade(true)
-                        .build(),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(180.dp))
-
-            } else {
-                Image(
-                    painter = painterResource(id = R.drawable.burgir),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(180.dp)
-                )
-            }
-
-            Divider(thickness = 0.dp, color = Color.Black)
-
-            Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                Text(
-                    text = recipe.title,
-                    style = MaterialTheme.typography.body1,
-                    modifier = Modifier.padding(10.dp))
-            }
-        }
-    }
-}
 
 private fun signOut(navController: NavController) {
     FirebaseAuth.getInstance().signOut()

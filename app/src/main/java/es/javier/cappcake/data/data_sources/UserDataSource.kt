@@ -7,6 +7,7 @@ import com.google.firebase.firestore.Source
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import es.javier.cappcake.domain.Recipe
 import es.javier.cappcake.domain.Response
 import es.javier.cappcake.domain.User
 import es.javier.cappcake.utils.ImageCompressor
@@ -124,12 +125,17 @@ class UserDataSource @Inject constructor(private val compressor: ImageCompressor
        return suspendCoroutine {  continuation ->
            firestore.collection("users").document(uid).get(Source.SERVER).addOnCompleteListener { task ->
                if (task.isSuccessful) {
-                   continuation.resume(Response.Success(data = User(
-                       userId = task.result.id,
-                       username = task.result.getString("username")!!,
-                       email = task.result.getString("email")!!,
-                       profileImage = task.result.getString("profileImage"),
-                   )))
+                   if (task.result.exists()) {
+                       continuation.resume(Response.Success(data = User(
+                           userId = task.result.id,
+                           username = task.result.getString("username") ?: "Unknown",
+                           email = task.result.getString("email") ?: "Unknown",
+                           profileImage = task.result.getString("profileImage"),
+                       )))
+                   } else {
+                       continuation.resume(Response.Failiure(data = null, message = null))
+                   }
+
                } else {
                    continuation.resume(Response.Failiure(data = null, message = null))
                }

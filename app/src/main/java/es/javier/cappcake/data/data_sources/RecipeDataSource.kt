@@ -122,9 +122,36 @@ class RecipeDataSource @Inject constructor(private val imageCompressor: ImageCom
                 }
             }
         }
+    }
 
+    suspend fun getAllRecipes() : Response<List<Recipe>?> {
+        val ref = firestore.collection("recipes")
+        val query = ref.limit(10).get(Source.SERVER)
 
-
+        return suspendCoroutine { continuation ->
+            query.addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val recipeList = task.result.documents.filter { it.exists() }.map { document ->
+                        val recipeId = document.id
+                        val userId = document.getString("userId")
+                        val recipeName = document.getString("recipeName")
+                        val imagePath = document.getString("imagePath")
+                        val recipeProcess = document.getString("recipeProcess")
+                        val ingrediets = (document["ingredients"] as ArrayList<HashMap<String, Any>>).map {
+                            val ingredientId = it["id"] as String
+                            val amount = it["amount"] as Double
+                            val amountType = it["amountType"] as String
+                            val name = it["name"] as String
+                            Ingredient(id = ingredientId, name = name, amount = amount.toFloat(), amountType = AmountType.valueOf(amountType))
+                        }
+                        Recipe(recipeId = recipeId, userId = userId!!, image = imagePath, ingredients = ingrediets, title = recipeName!!, recipeProcess = recipeProcess!!)
+                    }
+                    continuation.resume(Response.Success(data = recipeList))
+                } else {
+                    continuation.resume(Response.Failiure(data = null, message = null))
+                }
+            }
+        }
     }
 
 }

@@ -18,22 +18,17 @@ class ProfileScreenVIewModel @Inject constructor(
     private val getRecipesOfUseCase: GetRecipesOfUseCase
 ) : ViewModel() {
 
-    var username by mutableStateOf("")
-    var profileImageUri: String? by mutableStateOf(null)
+    var user: User? by mutableStateOf(null)
     var recipes: List<Recipe>? by mutableStateOf(null)
 
-    suspend fun loadProfileImage(uid: String) {
+    suspend fun loadUser(uid: String) {
 
         val response = getUserProfileUseCase.invoke(uid)
 
-        when (response) {
-            is Response.Failiure -> {}
+        return when (response) {
+            is Response.Failiure -> { }
             is Response.Success -> {
-                val user = response.data
-                user?.let {
-                    username = it.username
-                    profileImageUri = it.profileImage
-                }
+                user = response.data
             }
         }
     }

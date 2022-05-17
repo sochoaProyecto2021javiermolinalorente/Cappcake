@@ -20,11 +20,10 @@ import es.javier.cappcake.presentation.ui.theme.CappcakeTheme
 
 @Composable
 fun ProfileImage(modifier: Modifier = Modifier,
-                 imagePath: String?,
-                 onClick: () -> Unit) {
+                 imagePath: String?) {
 
     Surface(
-        modifier = modifier.clickable(enabled = true, onClick = onClick),
+        modifier = modifier,
         shape = CircleShape,
         border = BorderStroke(width = 2.dp, color = MaterialTheme.colors.primary)
     ) {
@@ -51,6 +50,6 @@ fun ProfileImage(modifier: Modifier = Modifier,
 @Composable
 fun ProfileImagePreview() {
     CappcakeTheme {
-        ProfileImage(imagePath = null) {}
+        ProfileImage(imagePath = null)
     }
 }
