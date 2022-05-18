@@ -24,6 +24,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.*
 import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -33,6 +34,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import es.javier.cappcake.data.data_sources.UserDataSource
@@ -51,7 +53,9 @@ import es.javier.cappcake.presentation.registerscreen.RegisterScreen
 import es.javier.cappcake.presentation.registerscreen.RegisterScreenViewModel
 import es.javier.cappcake.presentation.searchscreen.SearchScreen
 import es.javier.cappcake.presentation.ui.theme.CappcakeTheme
+import java.lang.Exception
 import java.util.*
+import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 @AndroidEntryPoint
@@ -63,14 +67,26 @@ class MainActivity : ComponentActivity() {
 
     private lateinit var navController: NavHostController
 
+    init {
+        try {
+            FirebaseAuth.getInstance().useEmulator(IP_ADDRESS, 9099)
+            FirebaseFirestore.getInstance().useEmulator(IP_ADDRESS, 8080)
+            FirebaseStorage.getInstance().useEmulator(IP_ADDRESS, 9199)
+        } catch(e: Exception) { }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        FirebaseAuth.getInstance().useEmulator(IP_ADDRESS, 9099)
-        FirebaseFirestore.getInstance().useEmulator(IP_ADDRESS, 8080)
-        FirebaseStorage.getInstance().useEmulator(IP_ADDRESS, 9199)
-
         setContent {
+
+            LaunchedEffect(key1 = Unit) {
+                suspendCoroutine<Unit> { continuation ->
+                    Firebase.firestore.clearPersistence().addOnCompleteListener {
+                        continuation.resume(Unit)
+                    }
+                }
+            }
 
             CappcakeTheme {
                 navController = rememberNavController()
@@ -83,7 +99,7 @@ class MainActivity : ComponentActivity() {
                             Navigation.SearchScreen.navigationRoute,
                             Navigation.AddRecipeScreen.navigationRoute,
                             Navigation.ActivityScreen.navigationRoute,
-                            Navigation.ProfileScreen.navigationRoute ->
+                            "${Navigation.ProfileScreen.navigationRoute}?userId={userId}" ->
                                 BottomNavigationitems(navController = navController, currentBackStackEntry = currentBackStackEntry)
                         }
                     }) { innerPadding ->
@@ -147,7 +163,7 @@ fun NavGraphBuilder.ApplicationGraph(navController: NavController) {
             FeedScreen(navController = navController, viewModel = viewModel())
         }
         composable(Navigation.SearchScreen.navigationRoute) {
-            SearchScreen(navController = navController)
+            SearchScreen(navController = navController, viewModel = hiltViewModel())
         }
         composable(Navigation.AddRecipeScreen.navigationRoute) {
             AddRecipeScreen(navController = navController, hiltViewModel())
@@ -165,8 +181,10 @@ fun NavGraphBuilder.ApplicationGraph(navController: NavController) {
         composable(Navigation.ActivityScreen.navigationRoute) {
             ActivityScreen(navController = navController)
         }
-        composable("${Navigation.ProfileScreen.navigationRoute}/{userId}", arguments = listOf(navArgument(name = "userId") {
+        composable("${Navigation.ProfileScreen.navigationRoute}?userId={userId}", arguments = listOf(navArgument(name = "userId") {
             type = NavType.StringType
+            defaultValue = Firebase.auth.uid
+            nullable = true
         })) { backStackEntry ->
             val userId = backStackEntry.arguments?.getString("userId")
             userId?.let {
@@ -179,6 +197,7 @@ fun NavGraphBuilder.ApplicationGraph(navController: NavController) {
 @Composable
 fun BottomNavigationitems(navController: NavController, currentBackStackEntry: NavBackStackEntry?) {
     val currentDestination = currentBackStackEntry?.destination
+
     BottomNavigation(elevation = 4.dp) {
         BottomNavigationItem(
             selected = currentDestination?.hierarchy?.any { it.route == Navigation.FeedScreen.navigationRoute } == true,
@@ -230,11 +249,12 @@ fun BottomNavigationitems(navController: NavController, currentBackStackEntry: N
 
         BottomNavigationItem(
             selected = currentDestination?.hierarchy?.any { it.route == Navigation.ProfileScreen.navigationRoute } == true,
-            onClick = { navController.navigate("${Navigation.ProfileScreen.navigationRoute}/${Firebase.auth.uid!!}") {
+            onClick = { navController.navigate(Navigation.ProfileScreen.navigationRoute) {
                 popUpTo(Navigation.FeedScreen.navigationRoute) {
                     inclusive = false
                     this.saveState = true
                 }
+
                 launchSingleTop = true
                 restoreState = true
             } },

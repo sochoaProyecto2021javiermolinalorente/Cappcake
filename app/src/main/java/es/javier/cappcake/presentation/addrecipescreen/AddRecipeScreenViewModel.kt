@@ -34,6 +34,7 @@ class AddRecipeScreenViewModel @Inject constructor(
         private set
     var recipeProcess by mutableStateOf("")
     val ingredients = mutableStateListOf(Ingredient(name = "", amount = 0f, amountType = AmountType.NONE))
+    var recipeFinished by mutableStateOf(false)
 
     var showLoadingAlert = mutableStateOf(false)
     var showStoragePermissionAlert = mutableStateOf(false)
@@ -68,6 +69,7 @@ class AddRecipeScreenViewModel @Inject constructor(
                     }
                     is Response.Success -> {
                         showLoadingAlert.value = false
+                        recipeFinished = true
                     }
                 }
             } else {

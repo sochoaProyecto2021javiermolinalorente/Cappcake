@@ -1,5 +1,6 @@
 package es.javier.cappcake.presentation.profilescreen
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -36,6 +37,7 @@ import com.google.firebase.auth.FirebaseAuth
 import es.javier.cappcake.R
 import es.javier.cappcake.domain.Recipe
 import es.javier.cappcake.domain.User
+import es.javier.cappcake.presentation.Navigation
 import es.javier.cappcake.presentation.components.ProfileImage
 import es.javier.cappcake.presentation.components.RecipeComponent
 import kotlinx.coroutines.CoroutineScope
@@ -46,6 +48,10 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileScreenVIewMode
     LaunchedEffect(key1 = Unit) {
         viewModel.loadUser(uid = uid)
         viewModel.loadRecipes(uid = uid)
+    }
+
+    BackHandler(enabled = true) {
+        navController.popBackStack(Navigation.FeedScreen.navigationRoute, inclusive = false, true)
     }
 
     Scaffold(
@@ -144,5 +150,6 @@ fun ProfileScreenProfileImage(modifier: Modifier, profileImage: String?) {
 
 private fun signOut(navController: NavController) {
     FirebaseAuth.getInstance().signOut()
+    navController.clearBackStack(Navigation.APPLICATION_GRAPH)
     navController.navigate(navController.graph.findStartDestination().id)
 }

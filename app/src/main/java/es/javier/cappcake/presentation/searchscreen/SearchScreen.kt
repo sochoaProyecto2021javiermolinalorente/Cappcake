@@ -1,8 +1,10 @@
 package es.javier.cappcake.presentation.searchscreen
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.BasicTextField
@@ -12,6 +14,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,10 +25,20 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import es.javier.cappcake.R
+import es.javier.cappcake.presentation.Navigation
 import es.javier.cappcake.presentation.components.RecipeComponent
 
 @Composable
-fun SearchScreen(navController: NavController) {
+fun SearchScreen(navController: NavController, viewModel: SearchScreenViewModel) {
+
+    LaunchedEffect(key1 = Unit) {
+        viewModel.loadAllRecipes()
+    }
+
+    BackHandler(enabled = true) {
+        navController.popBackStack(Navigation.FeedScreen.navigationRoute, inclusive = false, true)
+    }
+
     Column(modifier = Modifier.fillMaxSize()) {
         SearchBar(modifier = Modifier
             .fillMaxWidth()
@@ -34,9 +47,19 @@ fun SearchScreen(navController: NavController) {
 
         Divider(thickness = 1.dp, color = Color.Black)
 
-        LazyColumn(modifier = Modifier.fillMaxSize()) {
-            items(100) {
-                RecipeComponent(modifier = Modifier.padding(20.dp), title = "Hamburguesa con queso", userName = "User_cooker123") {}
+        if (viewModel.recipes.isNotEmpty()) {
+            LazyColumn(modifier = Modifier.fillMaxSize()) {
+                items(viewModel.recipes, key = { it.recipeId }) {
+                    RecipeComponent(
+                        modifier = Modifier.padding(20.dp),
+                        recipe = it,
+                        loadUser = { viewModel.loadUser(it.userId) }
+                    )
+                }
+            }
+        } else {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
             }
         }
 
@@ -45,8 +68,6 @@ fun SearchScreen(navController: NavController) {
 
 @Composable
 fun SearchBar(modifier: Modifier = Modifier, onClick: () -> Unit) {
-
-    val focusManager = LocalFocusManager.current
 
     Box(modifier = modifier, contentAlignment = Alignment.Center) {
         Surface(

@@ -1,4 +1,48 @@
 package es.javier.cappcake.presentation.searchscreen
 
-class SearchScreenViewModel {
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
+import es.javier.cappcake.domain.Recipe
+import es.javier.cappcake.domain.Response
+import es.javier.cappcake.domain.User
+import es.javier.cappcake.domain.use_cases.GetAllRecipesUseCase
+import es.javier.cappcake.domain.use_cases.GetUserProfileUseCase
+import kotlinx.coroutines.launch
+import javax.inject.Inject
+
+@HiltViewModel
+class SearchScreenViewModel @Inject constructor(
+    private val getAllRecipesUseCase: GetAllRecipesUseCase,
+    private val getUserProfileUseCase: GetUserProfileUseCase
+) : ViewModel() {
+
+    var recipes: List<Recipe> by mutableStateOf(emptyList())
+
+    fun loadAllRecipes() {
+        viewModelScope.launch {
+            val response = getAllRecipesUseCase()
+
+            when (response) {
+                is Response.Failiure -> Unit
+                is Response.Success -> {
+                    recipes = response.data!!
+                }
+            }
+        }
+    }
+
+    suspend fun loadUser(uid: String) : User? {
+        val response = getUserProfileUseCase(uid = uid)
+
+        return when (response) {
+            is Response.Failiure -> null
+            is Response.Success -> response.data
+        }
+    }
+
+
 }
