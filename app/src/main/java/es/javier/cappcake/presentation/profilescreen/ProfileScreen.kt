@@ -150,6 +150,9 @@ fun ProfileScreenProfileImage(modifier: Modifier, profileImage: String?) {
 
 private fun signOut(navController: NavController) {
     FirebaseAuth.getInstance().signOut()
-    navController.clearBackStack(Navigation.APPLICATION_GRAPH)
+    navController.clearBackStack(Navigation.FeedScreen.navigationRoute)
+    navController.clearBackStack(Navigation.SearchScreen.navigationRoute)
+    navController.clearBackStack(Navigation.AddRecipeScreen.navigationRoute)
+    navController.clearBackStack(Navigation.ProfileScreen.navigationRoute)
     navController.navigate(navController.graph.findStartDestination().id)
 }
