@@ -7,6 +7,7 @@ import com.google.firebase.firestore.Source
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import es.javier.cappcake.data.entities.FirebaseContracts
 import es.javier.cappcake.domain.Recipe
 import es.javier.cappcake.domain.Response
 import es.javier.cappcake.domain.User
@@ -67,13 +68,13 @@ class UserDataSource @Inject constructor(private val compressor: ImageCompressor
         val imageUrl = uploadProfileImage(profileImage)
 
         val data = hashMapOf(
-            "email" to email,
-            "username" to username,
-            "profileImage" to imageUrl.data
+            FirebaseContracts.USER_EMAIL to email,
+            FirebaseContracts.USER_NAME to username,
+            FirebaseContracts.USER_PROFILE_IMAGE to imageUrl.data
         )
 
         return suspendCoroutine<Boolean> { continuation ->
-            firestore.collection("users").document(uid).set(data)
+            firestore.collection(FirebaseContracts.USER_COLLECTION).document(uid).set(data)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         continuation.resume(true)
@@ -123,14 +124,14 @@ class UserDataSource @Inject constructor(private val compressor: ImageCompressor
 
     suspend fun getUserProfile(uid: String) : Response<User?> {
        return suspendCoroutine {  continuation ->
-           firestore.collection("users").document(uid).get(Source.SERVER).addOnCompleteListener { task ->
+           firestore.collection(FirebaseContracts.USER_COLLECTION).document(uid).get(Source.SERVER).addOnCompleteListener { task ->
                if (task.isSuccessful) {
                    if (task.result.exists()) {
                        continuation.resume(Response.Success(data = User(
                            userId = task.result.id,
-                           username = task.result.getString("username") ?: "Unknown",
-                           email = task.result.getString("email") ?: "Unknown",
-                           profileImage = task.result.getString("profileImage"),
+                           username = task.result.getString(FirebaseContracts.USER_NAME) ?: FirebaseContracts.UNKNOWN,
+                           email = task.result.getString(FirebaseContracts.USER_EMAIL) ?: FirebaseContracts.UNKNOWN,
+                           profileImage = task.result.getString(FirebaseContracts.USER_PROFILE_IMAGE),
                        )))
                    } else {
                        continuation.resume(Response.Failiure(data = null, message = null))

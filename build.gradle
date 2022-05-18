@@ -8,6 +8,7 @@ buildscript {
         hilt_dagger = '2.38.1'
         hilt_navigation = '1.0.0'
         accompanist = "0.23.1"
+        coil = "2.0.0"
 
         // test
         junit = '4.13.2'
