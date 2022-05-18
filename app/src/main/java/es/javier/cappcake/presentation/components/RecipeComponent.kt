@@ -9,77 +9,91 @@ import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import es.javier.cappcake.R
+import es.javier.cappcake.domain.Recipe
+import es.javier.cappcake.domain.User
 import es.javier.cappcake.presentation.ui.theme.CappcakeTheme
+import kotlinx.coroutines.CoroutineScope
 
 @Composable
-fun RecipeComponent(
-    modifier: Modifier = Modifier,
-    userName: String,
-    title: String,
-    recipeImage: Bitmap? = null,
-    onClick: () -> Unit
-) {
+fun RecipeComponent(modifier: Modifier,
+                    recipe: Recipe,
+                    loadUser: suspend CoroutineScope.() -> User?,
+                    onUserClick: () -> Unit = {},
+                    onRecipeClick: () -> Unit = {}) {
+
+    var user: User? by remember { mutableStateOf(null) }
+
+    LaunchedEffect(key1 = Unit) {
+        user = loadUser()
+    }
 
     Surface(
         shape = RectangleShape,
         elevation = 5.dp,
         border = BorderStroke(width = 0.dp, color = Color.Gray),
-        modifier = modifier.clickable(onClick = onClick)
+        modifier = modifier.clickable(onClick = {})
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
-            Column(modifier = Modifier.fillMaxWidth()) {
+            Column(modifier = Modifier
+                .fillMaxWidth()
+                .clickable(onClick = onUserClick)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    ProfileImage(modifier = Modifier.size(50.dp).padding(5.dp), onClick = {})
-                    Text(text = userName, style = MaterialTheme.typography.body1)
+                    ProfileImage(
+                        modifier = Modifier
+                            .size(50.dp)
+                            .padding(5.dp),
+                        imagePath = user?.profileImage)
+                    Text(text = user?.username ?: "Username", style = MaterialTheme.typography.body1)
                 }
                 Divider(color = Color.Black)
             }
 
-            recipeImage?.let {
-                Image(
-                    bitmap = it.asImageBitmap(),
+            if (recipe.image != null) {
+                AsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(recipe.image)
+                        .crossfade(true)
+                        .build(),
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
-                    modifier = modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(180.dp))
+
+            } else {
+                Image(
+                    painter = painterResource(id = R.drawable.burgir),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    alpha = 0.7f,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(180.dp)
                 )
             }
 
-            Image(
-                painter = painterResource(id = R.drawable.burgir),
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(180.dp)
-            )
             Divider(thickness = 0.dp, color = Color.Black)
 
             Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    text = title,
+                    text = recipe.title,
                     style = MaterialTheme.typography.body1,
                     modifier = Modifier.padding(10.dp))
             }
-
         }
-    }
-}
-
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun RecipeComponentPreview() {
-    CappcakeTheme {
-        RecipeComponent(userName = "User_cooker123", title = "Hamburguesa con queso") {}
     }
 }

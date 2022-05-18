@@ -1,6 +1,7 @@
 package es.javier.cappcake.presentation.feedscreen
 
 import android.graphics.Bitmap
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -28,6 +29,9 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import es.javier.cappcake.R
+import es.javier.cappcake.domain.Recipe
+import es.javier.cappcake.domain.User
+import es.javier.cappcake.presentation.Navigation
 import es.javier.cappcake.presentation.components.ProfileImage
 import es.javier.cappcake.presentation.components.RecipeComponent
 import es.javier.cappcake.presentation.ui.theme.CappcakeTheme
@@ -47,8 +51,9 @@ fun FeedScreen(navController: NavController, viewModel: FeedScreenViewModel) {
                     ProfileImage(
                         modifier = Modifier
                             .size(65.dp)
-                            .padding(5.dp)
-                    ) {}
+                            .padding(5.dp),
+                        imagePath = null
+                    )
                 }
             }
             Divider(color = Color.Black, thickness = 1.dp)
@@ -56,7 +61,11 @@ fun FeedScreen(navController: NavController, viewModel: FeedScreenViewModel) {
 
         LazyColumn(modifier = Modifier.fillMaxSize()) {
             items(100) {
-                RecipeComponent(modifier = Modifier.padding(20.dp), title = "Hamburguesa con queso", userName = "User_cooker123") {}
+                RecipeComponent(
+                    modifier = Modifier.padding(20.dp),
+                    recipe = Recipe(recipeId = "", recipeProcess = "", ingredients = emptyList(), userId = "", title = "Unknown"),
+                    loadUser = { User(profileImage = null, email = "unknown", username = "Unknown", userId = "") }
+                )
             }
         }
     }

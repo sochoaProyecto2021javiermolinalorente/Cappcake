@@ -13,10 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -24,6 +21,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.*
 import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -31,12 +29,11 @@ import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.pager.ExperimentalPagerApi
 import dagger.hilt.android.AndroidEntryPoint
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
-import es.javier.cappcake.data.data_sources.UserDataSource
-import es.javier.cappcake.data.repositories.ImplUserRepository
-import es.javier.cappcake.domain.use_cases.AuthenticateUserUseCase
 import es.javier.cappcake.presentation.Navigation
 import es.javier.cappcake.presentation.activityscreen.ActivityScreen
 import es.javier.cappcake.presentation.addrecipescreen.AddRecipeScreen
@@ -44,12 +41,14 @@ import es.javier.cappcake.presentation.addrecipescreen.AddRecipeScreenViewModel
 import es.javier.cappcake.presentation.addrecipescreen.RecipeProcessScreen
 import es.javier.cappcake.presentation.feedscreen.FeedScreen
 import es.javier.cappcake.presentation.loginscreen.LoginScreen
-import es.javier.cappcake.presentation.loginscreen.LoginScreenViewModel
 import es.javier.cappcake.presentation.profilescreen.ProfileScreen
 import es.javier.cappcake.presentation.registerscreen.RegisterScreen
-import es.javier.cappcake.presentation.registerscreen.RegisterScreenViewModel
 import es.javier.cappcake.presentation.searchscreen.SearchScreen
 import es.javier.cappcake.presentation.ui.theme.CappcakeTheme
+import java.lang.Exception
+import javax.inject.Inject
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -60,14 +59,26 @@ class MainActivity : ComponentActivity() {
 
     private lateinit var navController: NavHostController
 
+    init {
+        try {
+            FirebaseAuth.getInstance().useEmulator(IP_ADDRESS, 9099)
+            FirebaseFirestore.getInstance().useEmulator(IP_ADDRESS, 8080)
+            FirebaseStorage.getInstance().useEmulator(IP_ADDRESS, 9199)
+        } catch (e: Exception) { }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        FirebaseAuth.getInstance().useEmulator(IP_ADDRESS, 9099)
-        FirebaseFirestore.getInstance().useEmulator(IP_ADDRESS, 8080)
-        FirebaseStorage.getInstance().useEmulator(IP_ADDRESS, 9199)
-
         setContent {
+
+            LaunchedEffect(key1 = Unit) {
+                suspendCoroutine<Unit> { continuation ->
+                    Firebase.firestore.clearPersistence().addOnCompleteListener {
+                        continuation.resume(Unit)
+                    }
+                }
+            }
 
             CappcakeTheme {
                 navController = rememberNavController()
@@ -79,9 +90,19 @@ class MainActivity : ComponentActivity() {
                             Navigation.FeedScreen.navigationRoute,
                             Navigation.SearchScreen.navigationRoute,
                             Navigation.AddRecipeScreen.navigationRoute,
-                            Navigation.ActivityScreen.navigationRoute,
-                            Navigation.ProfileScreen.navigationRoute ->
-                                BottomNavigationitems(navController = navController, currentBackStackEntry = currentBackStackEntry)
+                            Navigation.ActivityScreen.navigationRoute ->
+                                BottomNavigationitems(
+                                    navController = navController,
+                                    currentBackStackEntry = currentBackStackEntry
+                                )
+                            "${Navigation.ProfileScreen.navigationRoute}?userId={userId}" -> {
+                                if (currentBackStackEntry?.arguments?.getString("userId") == Firebase.auth.currentUser?.uid) {
+                                    BottomNavigationitems(
+                                        navController = navController,
+                                        currentBackStackEntry = currentBackStackEntry
+                                    )
+                                }
+                            }
                         }
                     }) { innerPadding ->
                     NavHost(
@@ -91,7 +112,7 @@ class MainActivity : ComponentActivity() {
                         composable(route = Navigation.LoadingScreen.navigationRoute) { backStackEntry ->
 
                             LaunchedEffect(key1 = Unit) {
-                                val user = FirebaseAuth.getInstance().currentUser
+                                val user = Firebase.auth.currentUser
                                 //val userLogged = backStackEntry.savedStateHandle.get<Boolean>(Navigation.USER_LOGGED)
                                 if (user == null) {
                                     navController.navigate(Navigation.AUTHENTCATION_GRAPH)
@@ -144,7 +165,7 @@ fun NavGraphBuilder.ApplicationGraph(navController: NavController) {
             FeedScreen(navController = navController, viewModel = viewModel())
         }
         composable(Navigation.SearchScreen.navigationRoute) {
-            SearchScreen(navController = navController)
+            SearchScreen(navController = navController, viewModel = hiltViewModel())
         }
         composable(Navigation.AddRecipeScreen.navigationRoute) {
             AddRecipeScreen(navController = navController, hiltViewModel())
@@ -162,8 +183,15 @@ fun NavGraphBuilder.ApplicationGraph(navController: NavController) {
         composable(Navigation.ActivityScreen.navigationRoute) {
             ActivityScreen(navController = navController)
         }
-        composable(Navigation.ProfileScreen.navigationRoute) {
-            ProfileScreen(navController = navController)
+        composable("${Navigation.ProfileScreen.navigationRoute}?userId={userId}", arguments = listOf(navArgument(name = "userId") {
+            type = NavType.StringType
+            defaultValue = Firebase.auth.uid
+            nullable = true
+        })) { backStackEntry ->
+            val userId = backStackEntry.arguments?.getString("userId")
+            userId?.let {
+                ProfileScreen(navController = navController, viewModel = hiltViewModel(), uid = it)
+            }
         }
     }
 }
@@ -171,6 +199,7 @@ fun NavGraphBuilder.ApplicationGraph(navController: NavController) {
 @Composable
 fun BottomNavigationitems(navController: NavController, currentBackStackEntry: NavBackStackEntry?) {
     val currentDestination = currentBackStackEntry?.destination
+
     BottomNavigation(elevation = 4.dp) {
         BottomNavigationItem(
             selected = currentDestination?.hierarchy?.any { it.route == Navigation.FeedScreen.navigationRoute } == true,
@@ -227,6 +256,7 @@ fun BottomNavigationitems(navController: NavController, currentBackStackEntry: N
                     inclusive = false
                     this.saveState = true
                 }
+
                 launchSingleTop = true
                 restoreState = true
             } },

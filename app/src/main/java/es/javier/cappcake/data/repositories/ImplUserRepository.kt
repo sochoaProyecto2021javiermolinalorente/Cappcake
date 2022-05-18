@@ -15,4 +15,6 @@ class ImplUserRepository @Inject constructor(private val userDataSource: UserDat
 
     override suspend fun registerUser(username: String, email: String, password: String, image: Uri?) : Response<Boolean> =
         userDataSource.registerUser(username, email, password, image)
+
+    override suspend fun getUserProfile(uid: String): Response<User?> = userDataSource.getUserProfile(uid = uid)
 }
