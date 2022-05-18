@@ -53,7 +53,12 @@ fun SearchScreen(navController: NavController, viewModel: SearchScreenViewModel)
                     RecipeComponent(
                         modifier = Modifier.padding(20.dp),
                         recipe = it,
-                        loadUser = { viewModel.loadUser(it.userId) }
+                        loadUser = { viewModel.loadUser(it.userId) },
+                        onUserClick = {
+                            navController.navigate(Navigation.ProfileScreen.navigationRoute + "?userId=${it.userId}") {
+                                popUpTo(Navigation.SearchScreen.navigationRoute)
+                            }
+                        }
                     )
                 }
             }

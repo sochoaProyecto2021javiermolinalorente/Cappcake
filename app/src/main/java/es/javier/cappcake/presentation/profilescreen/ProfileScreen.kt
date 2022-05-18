@@ -50,10 +50,6 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileScreenVIewMode
         viewModel.loadRecipes(uid = uid)
     }
 
-    BackHandler(enabled = true) {
-        navController.popBackStack(Navigation.FeedScreen.navigationRoute, inclusive = false, true)
-    }
-
     Scaffold(
         drawerContent = {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {

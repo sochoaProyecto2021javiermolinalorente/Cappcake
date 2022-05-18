@@ -50,7 +50,7 @@ fun RecipeComponent(modifier: Modifier,
         Column(modifier = Modifier.fillMaxWidth()) {
             Column(modifier = Modifier
                 .fillMaxWidth()
-                .clickable { }) {
+                .clickable(onClick = onUserClick)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     ProfileImage(
                         modifier = Modifier

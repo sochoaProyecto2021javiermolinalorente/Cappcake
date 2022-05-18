@@ -96,7 +96,7 @@ class RecipeDataSource @Inject constructor(private val imageCompressor: ImageCom
     suspend fun getRecipesOf(uid: String) : Response<List<Recipe>?> {
         val recipesRef = firestore.collection("recipes")
 
-        val query = recipesRef.whereEqualTo("userId", auth.uid)
+        val query = recipesRef.whereEqualTo("userId", uid)
 
         return suspendCoroutine { continuation ->
             query.get().addOnCompleteListener { task ->
