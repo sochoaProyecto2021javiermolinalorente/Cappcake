@@ -36,6 +36,7 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import com.google.accompanist.pager.*
 import es.javier.cappcake.R
+import es.javier.cappcake.presentation.Navigation
 import es.javier.cappcake.presentation.components.ErrorDialog
 import es.javier.cappcake.presentation.components.LoadingAlert
 import es.javier.cappcake.presentation.components.StoragePermissionNotGrantedAlert
