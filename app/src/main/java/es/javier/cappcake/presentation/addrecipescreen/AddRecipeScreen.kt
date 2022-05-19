@@ -1,11 +1,7 @@
 package es.javier.cappcake.presentation.addrecipescreen
 
 import android.Manifest
-import android.content.Intent
 import android.graphics.Bitmap
-import android.net.Uri
-import android.provider.Settings
-import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.*
@@ -25,24 +21,25 @@ import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import com.google.accompanist.pager.*
 import es.javier.cappcake.R
-import es.javier.cappcake.presentation.Navigation
 import es.javier.cappcake.presentation.components.ErrorDialog
 import es.javier.cappcake.presentation.components.LoadingAlert
 import es.javier.cappcake.presentation.components.StoragePermissionNotGrantedAlert
 import es.javier.cappcake.presentation.ui.theme.notePageColor
 import es.javier.cappcake.presentation.ui.theme.primary
 import kotlinx.coroutines.launch
+
+private const val INGREDIENTS_TAB = 0
+private const val PROCESS_TAB = 1
+private const val TABS = 2
 
 @ExperimentalPagerApi
 @Composable
@@ -136,20 +133,20 @@ fun AddRecipeScreen(navController: NavController, viewModel: AddRecipeScreenView
                 },
                 backgroundColor = Color.White) {
 
-                Tab(selected = pagerState.currentPage == 0 ,
-                    onClick = { scope.launch { pagerState.animateScrollToPage(0) } },
+                Tab(selected = pagerState.currentPage == INGREDIENTS_TAB,
+                    onClick = { scope.launch { pagerState.animateScrollToPage(INGREDIENTS_TAB) } },
                     text = { Text(text = stringResource(id = R.string.add_recipe_ingredients_tab_label).uppercase(),
                         color = MaterialTheme.colors.onSurface) })
 
-                Tab(selected = pagerState.currentPage == 1,
-                    onClick = { scope.launch { pagerState.animateScrollToPage(1) } },
+                Tab(selected = pagerState.currentPage == PROCESS_TAB,
+                    onClick = { scope.launch { pagerState.animateScrollToPage(PROCESS_TAB) } },
                     text = { Text(text = stringResource(id = R.string.add_recipe_process_tab_label).uppercase(),
                         color = MaterialTheme.colors.onSurface) })
 
 
             }
 
-            TabScreenContent(pagerState = pagerState, navController = navController, viewModel = viewModel)
+            AddRecipeScreenTabContent(pagerState = pagerState, navController = navController, viewModel = viewModel)
 
         }
     }
@@ -228,11 +225,11 @@ fun ImageSelectedView(modifier: Modifier, image: Bitmap?, onClick: () -> Unit, v
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun TabScreenContent(pagerState: PagerState, navController: NavController, viewModel: AddRecipeScreenViewModel) {
-    HorizontalPager(count = 2, state = pagerState) { page ->
+fun AddRecipeScreenTabContent(pagerState: PagerState, navController: NavController, viewModel: AddRecipeScreenViewModel) {
+    HorizontalPager(count = TABS, state = pagerState) { page ->
         when (page) {
-            0 -> IngredientsTab(viewModel = viewModel)
-            1 -> ProcessTab(navController = navController, viewModel = viewModel)
+            INGREDIENTS_TAB -> IngredientsTab(viewModel = viewModel)
+            PROCESS_TAB -> ProcessTab(navController = navController, viewModel = viewModel)
         }
     }
 }

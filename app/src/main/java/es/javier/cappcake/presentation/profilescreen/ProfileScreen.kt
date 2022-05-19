@@ -1,9 +1,7 @@
 package es.javier.cappcake.presentation.profilescreen
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -17,14 +15,8 @@ import androidx.compose.material.Surface
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -35,12 +27,8 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.google.firebase.auth.FirebaseAuth
 import es.javier.cappcake.R
-import es.javier.cappcake.domain.Recipe
-import es.javier.cappcake.domain.User
 import es.javier.cappcake.presentation.Navigation
-import es.javier.cappcake.presentation.components.ProfileImage
 import es.javier.cappcake.presentation.components.RecipeComponent
-import kotlinx.coroutines.CoroutineScope
 
 @Composable
 fun ProfileScreen(navController: NavController, viewModel: ProfileScreenVIewModel, uid: String) {
@@ -105,7 +93,8 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileScreenVIewMode
                         RecipeComponent(
                             modifier = Modifier.padding(20.dp),
                             recipe = it,
-                            loadUser = { viewModel.user }
+                            loadUser = { viewModel.user },
+                            onRecipeClick = { navController.navigate(Navigation.RecipeDetailScreen.navigationRoute + "?recipeId=${it.recipeId}") }
                         )
                     }
                 }

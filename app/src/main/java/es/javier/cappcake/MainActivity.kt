@@ -42,6 +42,7 @@ import es.javier.cappcake.presentation.addrecipescreen.RecipeProcessScreen
 import es.javier.cappcake.presentation.feedscreen.FeedScreen
 import es.javier.cappcake.presentation.loginscreen.LoginScreen
 import es.javier.cappcake.presentation.profilescreen.ProfileScreen
+import es.javier.cappcake.presentation.recipedetailscreen.RecipeDetailScreen
 import es.javier.cappcake.presentation.registerscreen.RegisterScreen
 import es.javier.cappcake.presentation.searchscreen.SearchScreen
 import es.javier.cappcake.presentation.ui.theme.CappcakeTheme
@@ -191,6 +192,17 @@ fun NavGraphBuilder.ApplicationGraph(navController: NavController) {
             val userId = backStackEntry.arguments?.getString("userId")
             userId?.let {
                 ProfileScreen(navController = navController, viewModel = hiltViewModel(), uid = it)
+            }
+        }
+
+        composable("${Navigation.RecipeDetailScreen.navigationRoute}?recipeId={recipeId}", arguments = listOf(
+            navArgument(name = "recipeId") {
+                type = NavType.StringType
+                nullable = true
+            })) { backStackEntry ->
+            val recipeId = backStackEntry.arguments?.getString("recipeId")
+            recipeId?.let {
+                RecipeDetailScreen(navController = navController, viewModel = hiltViewModel(), recipeId = it)
             }
         }
     }

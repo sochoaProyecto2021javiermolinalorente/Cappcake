@@ -22,4 +22,6 @@ sealed class Navigation(val navigationRoute: String) {
 
     object ActivityScreen: Navigation("activity_screen")
     object ProfileScreen: Navigation("profile_screen")
+
+    object RecipeDetailScreen: Navigation("recipeDetailScreen")
 }
