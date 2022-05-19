@@ -1,9 +1,8 @@
 package es.javier.cappcake.domain.repositories
 
-import android.graphics.Bitmap
 import android.net.Uri
 import es.javier.cappcake.domain.Response
-import es.javier.cappcake.domain.User
+import es.javier.cappcake.domain.user.User
 
 interface UserRepository {
     suspend fun authenticateUser(email: String, password: String) : Response<Boolean>

@@ -2,7 +2,6 @@ package es.javier.cappcake.presentation.addrecipescreen
 
 import android.graphics.Bitmap
 import android.net.Uri
-import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue
@@ -13,10 +12,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import es.javier.cappcake.domain.AmountType
 import es.javier.cappcake.domain.Ingredient
 import es.javier.cappcake.domain.Response
-import es.javier.cappcake.domain.use_cases.UploadRecipeUseCase
+import es.javier.cappcake.domain.recipe.use_cases.UploadRecipeUseCase
 import es.javier.cappcake.utils.ImageCompressor
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 

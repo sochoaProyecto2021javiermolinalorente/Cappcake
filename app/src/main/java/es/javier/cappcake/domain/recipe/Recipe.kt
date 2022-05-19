@@ -1,6 +1,6 @@
-package es.javier.cappcake.domain
+package es.javier.cappcake.domain.recipe
 
-import android.graphics.Bitmap
+import es.javier.cappcake.domain.Ingredient
 
 data class Recipe(val recipeId: String,
                   val userId: String,

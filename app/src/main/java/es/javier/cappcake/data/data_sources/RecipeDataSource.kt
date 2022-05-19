@@ -2,7 +2,6 @@ package es.javier.cappcake.data.data_sources
 
 import android.graphics.Bitmap
 import android.net.Uri
-import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.Source
 import com.google.firebase.firestore.ktx.firestore
@@ -11,7 +10,7 @@ import com.google.firebase.storage.ktx.storage
 import es.javier.cappcake.data.entities.FirebaseContracts
 import es.javier.cappcake.domain.AmountType
 import es.javier.cappcake.domain.Ingredient
-import es.javier.cappcake.domain.Recipe
+import es.javier.cappcake.domain.recipe.Recipe
 import es.javier.cappcake.domain.Response
 import es.javier.cappcake.utils.ImageCompressor
 import java.io.ByteArrayOutputStream
@@ -35,7 +34,7 @@ class RecipeDataSource @Inject constructor(private val imageCompressor: ImageCom
         val imageUrl = uploadRecipeImage(recipeImageUri)
 
         val data = hashMapOf(
-            FirebaseContracts.RECIPE_COLLECTION to auth.uid,
+            FirebaseContracts.RECIPE_USER_ID to auth.uid,
             FirebaseContracts.RECIPE_NAME to recipeName,
             FirebaseContracts.RECIPE_IMAGE to imageUrl.data,
             FirebaseContracts.RECIPE_INGREDIENTS to ingredients,
@@ -148,6 +147,34 @@ class RecipeDataSource @Inject constructor(private val imageCompressor: ImageCom
                         Recipe(recipeId = recipeId, userId = userId!!, image = imagePath, ingredients = ingrediets, title = recipeName!!, recipeProcess = recipeProcess!!)
                     }
                     continuation.resume(Response.Success(data = recipeList))
+                } else {
+                    continuation.resume(Response.Failiure(data = null, message = null))
+                }
+            }
+        }
+    }
+
+    suspend fun getRecipe(recipeId: String) : Response<Recipe?> {
+        val ref = firestore.collection(FirebaseContracts.RECIPE_COLLECTION).document(recipeId)
+        val query = ref.get(Source.SERVER)
+
+        return suspendCoroutine { continuation ->
+            query.addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val document = task.result
+                    val userId = document.getString(FirebaseContracts.RECIPE_USER_ID)
+                    val recipeName = document.getString(FirebaseContracts.RECIPE_NAME)
+                    val imagePath = document.getString(FirebaseContracts.RECIPE_IMAGE)
+                    val recipeProcess = document.getString(FirebaseContracts.RECIPE_PROCESS)
+                    val ingrediets = (document[FirebaseContracts.RECIPE_INGREDIENTS] as ArrayList<HashMap<String, Any>>).map {
+                        val ingredientId = it[FirebaseContracts.INGREDIENT_ID] as String
+                        val amount = it[FirebaseContracts.INGREDIENT_AMOUNT] as Double
+                        val amountType = it[FirebaseContracts.INGREDIENT_AMOUNT_TYPE] as String
+                        val name = it[FirebaseContracts.INGREDIENT_NAME] as String
+                        Ingredient(id = ingredientId, name = name, amount = amount.toFloat(), amountType = AmountType.valueOf(amountType))
+                    }
+                    val recipe = Recipe(recipeId = recipeId, userId = userId!!, image = imagePath, ingredients = ingrediets, title = recipeName!!, recipeProcess = recipeProcess!!)
+                    continuation.resume(Response.Success(data = recipe))
                 } else {
                     continuation.resume(Response.Failiure(data = null, message = null))
                 }
