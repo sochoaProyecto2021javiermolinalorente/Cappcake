@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import es.javier.cappcake.domain.Ingredient
 import es.javier.cappcake.presentation.ui.theme.notePageColor
+import es.javier.cappcake.presentation.ui.theme.noteRedLine
 
 @Composable
 fun IngredientsTab(viewModel: RecipeDetailScreenViewModel) {
@@ -39,7 +40,7 @@ fun IngredientsTab(viewModel: RecipeDetailScreenViewModel) {
                     viewModel.recipe!!.ingredients.forEach {
 
                         if (viewModel.recipe!!.ingredients.first() != it) {
-                            Divider(color = Color(0xFFFF7575))
+                            Divider(color = noteRedLine)
                         }
 
                         Ingredient(
