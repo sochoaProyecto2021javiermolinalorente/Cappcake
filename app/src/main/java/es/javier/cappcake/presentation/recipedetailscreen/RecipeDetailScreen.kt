@@ -38,7 +38,7 @@ fun RecipeDetailScreen(navController: NavController, viewModel: RecipeDetailScre
     }
 
     if (viewModel.recipe == null) {
-        Box(modifier = Modifier.fillMaxSize()) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             CircularProgressIndicator()
         }
     } else {
