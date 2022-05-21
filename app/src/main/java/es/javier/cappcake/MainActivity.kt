@@ -32,6 +32,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.ktx.firestoreSettings
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import es.javier.cappcake.presentation.Navigation
@@ -42,6 +43,7 @@ import es.javier.cappcake.presentation.addrecipescreen.RecipeProcessScreen
 import es.javier.cappcake.presentation.feedscreen.FeedScreen
 import es.javier.cappcake.presentation.loginscreen.LoginScreen
 import es.javier.cappcake.presentation.profilescreen.ProfileScreen
+import es.javier.cappcake.presentation.recipedetailscreen.RecipeDetailScreen
 import es.javier.cappcake.presentation.registerscreen.RegisterScreen
 import es.javier.cappcake.presentation.searchscreen.SearchScreen
 import es.javier.cappcake.presentation.ui.theme.CappcakeTheme
@@ -61,8 +63,12 @@ class MainActivity : ComponentActivity() {
 
     init {
         try {
+
             FirebaseAuth.getInstance().useEmulator(IP_ADDRESS, 9099)
             FirebaseFirestore.getInstance().useEmulator(IP_ADDRESS, 8080)
+            Firebase.firestore.firestoreSettings = firestoreSettings {
+                isPersistenceEnabled = false
+            }
             FirebaseStorage.getInstance().useEmulator(IP_ADDRESS, 9199)
         } catch (e: Exception) { }
     }
@@ -71,14 +77,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-
-            LaunchedEffect(key1 = Unit) {
-                suspendCoroutine<Unit> { continuation ->
-                    Firebase.firestore.clearPersistence().addOnCompleteListener {
-                        continuation.resume(Unit)
-                    }
-                }
-            }
 
             CappcakeTheme {
                 navController = rememberNavController()
@@ -191,6 +189,17 @@ fun NavGraphBuilder.ApplicationGraph(navController: NavController) {
             val userId = backStackEntry.arguments?.getString("userId")
             userId?.let {
                 ProfileScreen(navController = navController, viewModel = hiltViewModel(), uid = it)
+            }
+        }
+
+        composable("${Navigation.RecipeDetailScreen.navigationRoute}?recipeId={recipeId}", arguments = listOf(
+            navArgument(name = "recipeId") {
+                type = NavType.StringType
+                nullable = true
+            })) { backStackEntry ->
+            val recipeId = backStackEntry.arguments?.getString("recipeId")
+            recipeId?.let {
+                RecipeDetailScreen(navController = navController, viewModel = hiltViewModel(), recipeId = it)
             }
         }
     }

@@ -1,4 +1,4 @@
-package es.javier.cappcake.domain
+package es.javier.cappcake.domain.user
 
 import android.graphics.Bitmap
 

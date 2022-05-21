@@ -1,4 +1,4 @@
-package es.javier.cappcake.domain.use_cases
+package es.javier.cappcake.domain.recipe.use_cases
 
 import android.net.Uri
 import es.javier.cappcake.domain.Ingredient

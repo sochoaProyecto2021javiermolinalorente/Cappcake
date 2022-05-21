@@ -5,11 +5,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import es.javier.cappcake.domain.Recipe
+import es.javier.cappcake.domain.recipe.Recipe
 import es.javier.cappcake.domain.Response
-import es.javier.cappcake.domain.User
-import es.javier.cappcake.domain.use_cases.GetRecipesOfUseCase
-import es.javier.cappcake.domain.use_cases.GetUserProfileUseCase
+import es.javier.cappcake.domain.recipe.use_cases.GetRecipeUseCase
+import es.javier.cappcake.domain.user.User
+import es.javier.cappcake.domain.recipe.use_cases.GetRecipesOfUseCase
+import es.javier.cappcake.domain.user.use_cases.GetUserProfileUseCase
 import javax.inject.Inject
 
 @HiltViewModel

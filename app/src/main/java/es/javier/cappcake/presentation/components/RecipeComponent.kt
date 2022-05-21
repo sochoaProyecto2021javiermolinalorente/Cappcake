@@ -1,6 +1,5 @@
 package es.javier.cappcake.presentation.components
 
-import android.graphics.Bitmap
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -14,18 +13,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import es.javier.cappcake.R
-import es.javier.cappcake.domain.Recipe
-import es.javier.cappcake.domain.User
-import es.javier.cappcake.presentation.ui.theme.CappcakeTheme
+import es.javier.cappcake.domain.recipe.Recipe
+import es.javier.cappcake.domain.user.User
 import kotlinx.coroutines.CoroutineScope
 
 @Composable
@@ -45,7 +41,7 @@ fun RecipeComponent(modifier: Modifier,
         shape = RectangleShape,
         elevation = 5.dp,
         border = BorderStroke(width = 0.dp, color = Color.Gray),
-        modifier = modifier.clickable(onClick = {})
+        modifier = modifier.clickable(onClick = onRecipeClick)
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
             Column(modifier = Modifier

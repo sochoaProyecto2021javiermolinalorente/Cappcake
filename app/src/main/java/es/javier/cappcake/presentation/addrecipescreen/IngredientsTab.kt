@@ -109,8 +109,13 @@ fun IngredientField(modifier: Modifier = Modifier, ingredient: Ingredient, onDel
                             ingredientAmount = "0"
                             ingredient.amount = 0f
                         } else {
-                            ingredientAmount = value
-                            ingredient.amount = ingredientAmount.toFormattedFloat()
+                            if (ingredient.amount == 0f) {
+                                ingredientAmount = value.replace("0", "")
+                                ingredient.amount = ingredientAmount.toFormattedFloat()
+                            } else {
+                                ingredientAmount = value
+                                ingredient.amount = ingredientAmount.toFormattedFloat()
+                            }
                         }
                     } catch (exception: Exception) {}
 

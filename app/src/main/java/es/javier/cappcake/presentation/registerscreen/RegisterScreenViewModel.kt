@@ -5,12 +5,11 @@ import android.net.Uri
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import es.javier.cappcake.domain.Response
-import es.javier.cappcake.domain.use_cases.RegisterUserUseCase
+import es.javier.cappcake.domain.user.use_cases.RegisterUserUseCase
 import es.javier.cappcake.utils.ImageCompressor
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch

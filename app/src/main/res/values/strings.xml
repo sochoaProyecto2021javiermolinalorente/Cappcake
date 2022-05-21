@@ -52,4 +52,8 @@
     <string name="add_recipe_recipe_not_valid_alert_text">Hay algunos campos sin completar. Asegúrate de que no has dejado ningún ingrediente incompleto o dejado la imagen sin seleccionar.</string>
     <string name="add_recipe_recipe_not_valid_alert_confirm_button">Aceptar</string>
 
+    <!-- Recipe detail screen -->
+    <string name="recipe_detail_screen_ingredients_tab_label">Ingredientes</string>
+    <string name="recipe_detail_screen_process_tab_label">Elaboración</string>
+
 </resources>

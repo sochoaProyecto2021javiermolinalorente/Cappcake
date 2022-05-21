@@ -8,11 +8,9 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import es.javier.cappcake.data.entities.FirebaseContracts
-import es.javier.cappcake.domain.Recipe
 import es.javier.cappcake.domain.Response
-import es.javier.cappcake.domain.User
+import es.javier.cappcake.domain.user.User
 import es.javier.cappcake.utils.ImageCompressor
-import kotlinx.coroutines.coroutineScope
 import java.io.ByteArrayOutputStream
 import javax.inject.Inject
 import kotlin.coroutines.resume
@@ -132,7 +130,8 @@ class UserDataSource @Inject constructor(private val compressor: ImageCompressor
                            username = task.result.getString(FirebaseContracts.USER_NAME) ?: FirebaseContracts.UNKNOWN,
                            email = task.result.getString(FirebaseContracts.USER_EMAIL) ?: FirebaseContracts.UNKNOWN,
                            profileImage = task.result.getString(FirebaseContracts.USER_PROFILE_IMAGE),
-                       )))
+                       )
+                       ))
                    } else {
                        continuation.resume(Response.Failiure(data = null, message = null))
                    }

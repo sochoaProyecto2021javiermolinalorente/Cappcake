@@ -6,11 +6,11 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import es.javier.cappcake.domain.Recipe
+import es.javier.cappcake.domain.recipe.Recipe
 import es.javier.cappcake.domain.Response
-import es.javier.cappcake.domain.User
-import es.javier.cappcake.domain.use_cases.GetAllRecipesUseCase
-import es.javier.cappcake.domain.use_cases.GetUserProfileUseCase
+import es.javier.cappcake.domain.user.User
+import es.javier.cappcake.domain.recipe.use_cases.GetAllRecipesUseCase
+import es.javier.cappcake.domain.user.use_cases.GetUserProfileUseCase
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 

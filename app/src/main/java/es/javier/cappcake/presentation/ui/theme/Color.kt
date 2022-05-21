@@ -7,6 +7,7 @@ val primaryVariant = Color(0xFF8FF395)
 val error = Color(0xFFCF2A2A)
 val orangish = Color(0xFFEC9D26)
 val notePageColor = Color(0xFFF6FA84)
+val noteRedLine = Color(0xFFFF7575)
 
 val Purple200 = Color(0xFFBB86FC)
 val Purple500 = Color(0xFF6200EE)
