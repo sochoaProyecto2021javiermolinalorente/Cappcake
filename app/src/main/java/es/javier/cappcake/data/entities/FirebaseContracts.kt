@@ -28,6 +28,7 @@ object FirebaseContracts {
     const val RECIPE_IMAGE = "imagePath"
     const val RECIPE_INGREDIENTS = "ingredients"
     const val RECIPE_PROCESS = "recipeProcess"
+    const val RECIPE_TIMESTAMP = "recipeTimestamp"
 
     // Ingredients
     const val INGREDIENT_ID = "id"

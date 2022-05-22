@@ -17,13 +17,13 @@ class ImageUploader @Inject constructor(private val compressor: ImageCompressor)
     private val storage = Firebase.storage
     private val auth = Firebase.auth
 
-    suspend fun uploadImage(recipeImageUri: Uri?, referencePath: String, quality: Int) : Response<Uri?> {
+    suspend fun uploadImage(imageUri: Uri?, referencePath: String, quality: Int) : Response<Uri?> {
 
         val recipeImageRef = storage.reference.child("${auth.uid}" + referencePath)
 
-        if (recipeImageUri == null) return Response.Failiure(data = null, message = null)
+        if (imageUri == null) return Response.Failiure(data = null, message = null)
 
-        val recipeImage = compressor.comporessBitmap(quality = quality, recipeImageUri)
+        val recipeImage = compressor.comporessBitmap(quality = quality, imageUri)
         val outputStream = ByteArrayOutputStream()
         recipeImage.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
         val imageByteArray = outputStream.toByteArray()

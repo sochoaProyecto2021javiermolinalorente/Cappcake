@@ -33,7 +33,7 @@ class RegisterUserDataSource @Inject constructor(private val imageUploader: Imag
         }
 
         if (response is Response.Success) {
-            val imagePath = imageUploader.uploadImage(recipeImageUri = profileImage, referencePath = FirebaseContracts.USER_PROFILE_IMAGE_REFERENCE, quality = ImageCompressor.LOW_QUALITY)
+            val imagePath = imageUploader.uploadImage(imageUri = profileImage, referencePath = FirebaseContracts.USER_PROFILE_IMAGE_REFERENCE, quality = ImageCompressor.LOW_QUALITY)
 
             val userData = hashMapOf(
                 FirebaseContracts.USER_NAME to username,
