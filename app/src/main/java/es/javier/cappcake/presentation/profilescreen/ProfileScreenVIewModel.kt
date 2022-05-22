@@ -10,13 +10,15 @@ import es.javier.cappcake.domain.Response
 import es.javier.cappcake.domain.recipe.use_cases.GetRecipeUseCase
 import es.javier.cappcake.domain.user.User
 import es.javier.cappcake.domain.recipe.use_cases.GetRecipesOfUseCase
+import es.javier.cappcake.domain.user.use_cases.GetCurrentUserIdUseCase
 import es.javier.cappcake.domain.user.use_cases.GetUserProfileUseCase
 import javax.inject.Inject
 
 @HiltViewModel
 class ProfileScreenVIewModel @Inject constructor(
     private val getUserProfileUseCase: GetUserProfileUseCase,
-    private val getRecipesOfUseCase: GetRecipesOfUseCase
+    private val getRecipesOfUseCase: GetRecipesOfUseCase,
+    private val getCurrentUserIdUseCase: GetCurrentUserIdUseCase
 ) : ViewModel() {
 
     var user: User? by mutableStateOf(null)
@@ -44,6 +46,8 @@ class ProfileScreenVIewModel @Inject constructor(
             }
         }
     }
+
+    fun getCurrentUserId() : String? = getCurrentUserIdUseCase()
 
 
 }

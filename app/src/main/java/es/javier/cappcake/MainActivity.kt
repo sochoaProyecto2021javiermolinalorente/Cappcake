@@ -41,6 +41,7 @@ import es.javier.cappcake.presentation.addrecipescreen.AddRecipeScreen
 import es.javier.cappcake.presentation.addrecipescreen.AddRecipeScreenViewModel
 import es.javier.cappcake.presentation.addrecipescreen.RecipeProcessScreen
 import es.javier.cappcake.presentation.feedscreen.FeedScreen
+import es.javier.cappcake.presentation.loadingscreen.LoadingScreen
 import es.javier.cappcake.presentation.loginscreen.LoginScreen
 import es.javier.cappcake.presentation.profilescreen.ProfileScreen
 import es.javier.cappcake.presentation.recipedetailscreen.RecipeDetailScreen
@@ -108,20 +109,7 @@ class MainActivity : ComponentActivity() {
                         navController = navController,
                         startDestination = Navigation.LoadingScreen.navigationRoute) {
                         composable(route = Navigation.LoadingScreen.navigationRoute) { backStackEntry ->
-
-                            LaunchedEffect(key1 = Unit) {
-                                val user = Firebase.auth.currentUser
-                                //val userLogged = backStackEntry.savedStateHandle.get<Boolean>(Navigation.USER_LOGGED)
-                                if (user == null) {
-                                    navController.navigate(Navigation.AUTHENTCATION_GRAPH)
-                                } else {
-                                    navController.navigate(Navigation.APPLICATION_GRAPH)
-                                }
-                            }
-
-                            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                                CircularProgressIndicator()
-                            }
+                            LoadingScreen(navController = navController, viewModel = hiltViewModel())
                         }
                         LoginGraph(navController = navController)
                         ApplicationGraph(navController = navController)

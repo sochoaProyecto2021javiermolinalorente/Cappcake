@@ -41,71 +41,71 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileScreenVIewMode
         viewModel.loadRecipes(uid = uid)
     }
 
-    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
-        Scaffold(
-            drawerContent = {
+    Scaffold(
+        drawerContent = if (viewModel.getCurrentUserId() == uid) {
+            {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     Button(onClick = { signOut(navController = navController) }) {
                         Text(text = "Cerrar sesión".uppercase())
                     }
                 }
             }
-        ) {
-            Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
-                Box {
-                    Column(modifier = Modifier.padding(top = 10.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-                        ProfileScreenProfileImage(
-                            modifier = Modifier.size(90.dp),
-                            profileImage = viewModel.user?.profileImage)
+        } else null
+    ) {
+        Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
+            Box {
+                Column(modifier = Modifier.padding(top = 10.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                    ProfileScreenProfileImage(
+                        modifier = Modifier.size(90.dp),
+                        profileImage = viewModel.user?.profileImage)
 
-                        if (viewModel.user == null) {
-                            Text(text = "Username", modifier = Modifier.padding(vertical = 10.dp))
-                        } else {
-                            Text(text = viewModel.user!!.username, modifier = Modifier.padding(vertical = 10.dp))
+                    if (viewModel.user == null) {
+                        Text(text = "Username", modifier = Modifier.padding(vertical = 10.dp))
+                    } else {
+                        Text(text = viewModel.user!!.username, modifier = Modifier.padding(vertical = 10.dp))
+                    }
+
+                    Row(modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 10.dp), verticalAlignment = Alignment.CenterVertically){
+                        Column(modifier = Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(text = "Post")
+                            Text(text = viewModel.user?.posts.toString() ?: "0")
                         }
 
-                        Row(modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 10.dp), verticalAlignment = Alignment.CenterVertically){
-                            Column(modifier = Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
-                                Text(text = "Post")
-                                Text(text = "1")
-                            }
-
-                            Column(modifier = Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
-                                Text(text = "Following")
-                                Text(text = "1")
-                            }
-
-                            Column(modifier = Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
-                                Text(text = "Followers")
-                                Text(text = "1")
-                            }
+                        Column(modifier = Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(text = "Following")
+                            Text(text = viewModel.user?.following.toString() ?: "0")
                         }
 
-                        Divider()
+                        Column(modifier = Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(text = "Followers")
+                            Text(text = viewModel.user?.followers.toString() ?: "0")
+                        }
+                    }
+
+                    Divider()
+                }
+            }
+
+            if (viewModel.recipes != null) {
+                LazyColumn(modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)) {
+
+                    items(viewModel.recipes!!, key = { it.recipeId }) {
+
+                        RecipeComponent(
+                            modifier = Modifier.padding(20.dp),
+                            recipe = it,
+                            loadUser = { viewModel.user },
+                            onRecipeClick = { navController.navigate(Navigation.RecipeDetailScreen.navigationRoute + "?recipeId=${it.recipeId}") }
+                        )
                     }
                 }
-
-                if (viewModel.recipes != null) {
-                    LazyColumn(modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)) {
-
-                        items(viewModel.recipes!!, key = { it.recipeId }) {
-
-                            RecipeComponent(
-                                modifier = Modifier.padding(20.dp),
-                                recipe = it,
-                                loadUser = { viewModel.user },
-                                onRecipeClick = { navController.navigate(Navigation.RecipeDetailScreen.navigationRoute + "?recipeId=${it.recipeId}") }
-                            )
-                        }
-                    }
-                } else {
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        CircularProgressIndicator()
-                    }
+            } else {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator()
                 }
             }
         }
