@@ -12,7 +12,7 @@ import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-class RegisterUserDataSource @Inject constructor(private val imageUploader: ImageUploader) {
+class RegisterUser @Inject constructor(private val imageUploader: ImageUploader) {
 
     private val auth = Firebase.auth
     private val firestore = Firebase.firestore

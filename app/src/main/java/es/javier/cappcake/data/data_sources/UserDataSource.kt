@@ -1,24 +1,16 @@
 package es.javier.cappcake.data.data_sources
 
-import android.graphics.Bitmap
 import android.net.Uri
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.firestore.DocumentReference
-import com.google.firebase.firestore.Source
-import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.ktx.storage
-import es.javier.cappcake.data.entities.FirebaseContracts
 import es.javier.cappcake.domain.Response
 import es.javier.cappcake.domain.user.User
-import es.javier.cappcake.utils.ImageCompressor
-import java.io.ByteArrayOutputStream
 import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 class UserDataSource @Inject constructor(
-    private val registerUserDataSource: RegisterUserDataSource,
+    private val registerUser: RegisterUser,
     private val getProfile: GetProfile
 ) {
 
@@ -40,7 +32,7 @@ class UserDataSource @Inject constructor(
     }
 
     suspend fun registerUser(username: String, email: String, password: String, profileImage: Uri?) : Response<Boolean> {
-        return registerUserDataSource.registerUser(username, email, password, profileImage)
+        return registerUser.registerUser(username, email, password, profileImage)
     }
 
     suspend fun getUserProfile(uid: String) : Response<User?> {
