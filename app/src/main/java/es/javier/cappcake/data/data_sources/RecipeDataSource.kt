@@ -3,6 +3,7 @@ package es.javier.cappcake.data.data_sources
 import android.graphics.Bitmap
 import android.net.Uri
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.Source
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -103,6 +104,7 @@ class RecipeDataSource @Inject constructor(
         val recipesRef = firestore.collection(FirebaseContracts.RECIPE_COLLECTION)
 
         val query = recipesRef.whereEqualTo(FirebaseContracts.RECIPE_USER_ID, uid)
+            .orderBy(FirebaseContracts.RECIPE_TIMESTAMP, Query.Direction.DESCENDING).limit(10)
 
         return suspendCoroutine { continuation ->
             query.get().addOnCompleteListener { task ->
@@ -132,7 +134,7 @@ class RecipeDataSource @Inject constructor(
 
     suspend fun getAllRecipes() : Response<List<Recipe>?> {
         val ref = firestore.collection(FirebaseContracts.RECIPE_COLLECTION)
-        val query = ref.limit(10).get(Source.SERVER)
+        val query = ref.orderBy(FirebaseContracts.RECIPE_TIMESTAMP, Query.Direction.DESCENDING).limit(10).get(Source.SERVER)
 
         return suspendCoroutine { continuation ->
             query.addOnCompleteListener { task ->
