@@ -3,6 +3,7 @@ package es.javier.cappcake.data.data_sources
 import android.graphics.Bitmap
 import android.net.Uri
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.Source
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -16,11 +17,14 @@ import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-class UserDataSource @Inject constructor(private val compressor: ImageCompressor) {
+class UserDataSource @Inject constructor(
+    private val registerUserDataSource: RegisterUserDataSource,
+    private val getProfile: GetProfile
+) {
 
     private val auth = Firebase.auth
-    private val firestore = Firebase.firestore
-    private val storage = Firebase.storage
+
+    fun getCurrentUserId() : String? = auth.uid
 
     suspend fun authenticateUser(email: String, password: String) : Response<Boolean> {
         return suspendCoroutine { continuation ->
@@ -36,91 +40,15 @@ class UserDataSource @Inject constructor(private val compressor: ImageCompressor
     }
 
     suspend fun registerUser(username: String, email: String, password: String, profileImage: Uri?) : Response<Boolean> {
-        val response = suspendCoroutine<Response<Boolean>> { continuation ->
-
-            auth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        continuation.resume(Response.Success(data = true))
-                    } else {
-                        continuation.resume(Response.Failiure(message = null, data = false))
-                    }
-                }
-        }
-
-        return when (response) {
-            is Response.Failiure -> {
-                response
-            }
-            is Response.Success -> {
-                if (adduserToFirestore(username, email, auth.currentUser!!.uid, profileImage))
-                    Response.Success(data = true)
-                else
-                    Response.Failiure(message = null, data = false)
-            }
-        }
-    }
-
-    private suspend fun adduserToFirestore(username: String, email: String, uid: String, profileImage: Uri?) : Boolean {
-
-        val imageUrl = uploadProfileImage(profileImage)
-
-        val data = hashMapOf(
-            FirebaseContracts.USER_EMAIL to email,
-            FirebaseContracts.USER_NAME to username,
-            FirebaseContracts.USER_PROFILE_IMAGE to imageUrl.data
-        )
-
-        return suspendCoroutine<Boolean> { continuation ->
-            firestore.collection(FirebaseContracts.USER_COLLECTION).document(uid).set(data)
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        continuation.resume(true)
-                    } else {
-                        Firebase.auth.currentUser!!.delete()
-                        continuation.resume(false)
-                    }
-                }
-        }
-    }
-
-    private suspend fun uploadProfileImage(recipeImageUri: Uri?) : Response<Uri?> {
-
-        val recipeImageRef = storage.reference.child("${auth.uid}/profile_image/profile-image.jpg")
-
-        if (recipeImageUri == null) return Response.Failiure(data = null, message = null)
-
-        val recipeImage = compressor.comporessBitmap(ImageCompressor.LOW_QUALITY, recipeImageUri)
-        val outputStream = ByteArrayOutputStream()
-        recipeImage.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
-        val imageByteArray = outputStream.toByteArray()
-
-        val uploadTask = recipeImageRef.putBytes(imageByteArray)
-
-        return suspendCoroutine { continuation ->
-
-            uploadTask.continueWithTask { task ->
-                if (task.isSuccessful) {
-                    recipeImageRef.downloadUrl
-                } else {
-                    task.exception?.let {
-                        throw it
-                    }
-                }
-            }.addOnSuccessListener { urlTask ->
-                if (urlTask.path != null) {
-                    continuation.resume(Response.Success(data = urlTask))
-                } else {
-                    continuation.resume(Response.Failiure(data = null, message = null))
-                }
-            }.addOnFailureListener {
-                continuation.resume(Response.Failiure(data = null, message = null))
-            }
-
-        }
+        return registerUserDataSource.registerUser(username, email, password, profileImage)
     }
 
     suspend fun getUserProfile(uid: String) : Response<User?> {
+        return getProfile.getUserProfile(uid = uid)
+    }
+
+    /*suspend fun getUserProfile(uid: String) : Response<User?> {
+
        return suspendCoroutine {  continuation ->
            firestore.collection(FirebaseContracts.USER_COLLECTION).document(uid).get(Source.SERVER).addOnCompleteListener { task ->
                if (task.isSuccessful) {
@@ -130,7 +58,9 @@ class UserDataSource @Inject constructor(private val compressor: ImageCompressor
                            username = task.result.getString(FirebaseContracts.USER_NAME) ?: FirebaseContracts.UNKNOWN,
                            email = task.result.getString(FirebaseContracts.USER_EMAIL) ?: FirebaseContracts.UNKNOWN,
                            profileImage = task.result.getString(FirebaseContracts.USER_PROFILE_IMAGE),
-                       )
+                           posts = task.result.getLong(FirebaseContracts.USER_POSTS)?.toInt() ?: FirebaseContracts.NUMBER_UNKNOWN,
+                           followers = task.result.getLong(FirebaseContracts.USER_FOLLOWERS)?.toInt() ?: FirebaseContracts.NUMBER_UNKNOWN,
+                           following = task.result.getLong(FirebaseContracts.USER_FOLLOWING)?.toInt() ?: FirebaseContracts.NUMBER_UNKNOWN)
                        ))
                    } else {
                        continuation.resume(Response.Failiure(data = null, message = null))
@@ -141,6 +71,6 @@ class UserDataSource @Inject constructor(private val compressor: ImageCompressor
                }
            }
        }
-    }
+    }*/
 
 }
