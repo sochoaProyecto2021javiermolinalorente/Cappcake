@@ -11,7 +11,8 @@ import kotlin.coroutines.suspendCoroutine
 
 class UserDataSource @Inject constructor(
     private val registerUser: RegisterUser,
-    private val getProfile: GetProfile
+    private val getProfile: GetProfile,
+    private val followUser: FollowUser
 ) {
 
     private val auth = Firebase.auth
@@ -37,6 +38,10 @@ class UserDataSource @Inject constructor(
 
     suspend fun getUserProfile(uid: String) : Response<User?> {
         return getProfile.getUserProfile(uid = uid)
+    }
+
+    suspend fun followUser(followedUserId: String) : Response<Boolean> {
+        return followUser.invoke(followedUserId = followedUserId)
     }
 
     /*suspend fun getUserProfile(uid: String) : Response<User?> {
