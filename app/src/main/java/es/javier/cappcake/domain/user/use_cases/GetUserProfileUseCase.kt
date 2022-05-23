@@ -7,6 +7,6 @@ import javax.inject.Inject
 
 class GetUserProfileUseCase @Inject constructor(private val repository: UserRepository) {
 
-    suspend operator fun invoke(uid: String) : Response<User?> = repository.getUserProfile(uid = uid)
+    suspend operator fun invoke(uid: String) : Response<Pair<User, Boolean>?> = repository.getUserProfile(uid = uid)
 
 }

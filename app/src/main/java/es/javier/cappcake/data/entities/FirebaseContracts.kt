@@ -8,6 +8,7 @@ object FirebaseContracts {
     // Followers collection
     const val FOLLOWERS_COLLECTION = "followers"
     const val FOLLOWERS_USERS = "users"
+    const val FOLLOWERS_USER_USERS_ID = "userId"
 
     // User collection
     const val USER_COLLECTION = "users"

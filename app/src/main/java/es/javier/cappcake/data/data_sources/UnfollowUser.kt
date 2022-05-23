@@ -11,38 +11,34 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 import kotlin.math.floor
 
-class FollowUser @Inject constructor() {
+class UnfollowUser @Inject constructor() {
 
     private val firestore = Firebase.firestore
     private val auth = Firebase.auth
 
-    suspend operator fun invoke(followedUserId: String) : Response<Boolean> {
+    suspend fun unfollowUser(unfollowedUser: String) : Response<Boolean> {
 
-        val followedUserRef = firestore.collection(FirebaseContracts.USER_COLLECTION).document(followedUserId)
-        val countersRef = followedUserRef.collection(FirebaseContracts.USER_FOLLOWERS_COUNTER_COLLECTION)
+        val unfollowedUserRef = firestore.collection(FirebaseContracts.USER_COLLECTION).document(unfollowedUser)
+        val countersRef = unfollowedUserRef.collection(FirebaseContracts.USER_FOLLOWERS_COUNTER_COLLECTION)
 
         return suspendCoroutine { continuation ->
             firestore.runTransaction { transaction ->
 
-                val userDocument = transaction.get(followedUserRef)
-
-                transaction.update(
-                    firestore.collection(FirebaseContracts.FOLLOWERS_COLLECTION).document(userDocument.getString(FirebaseContracts.USER_NAME)!!),
-                    FirebaseContracts.FOLLOWERS_USERS,
-                    FieldValue.arrayUnion(auth.uid)
-                )
+                val unfollowedUserDocument = transaction.get(unfollowedUserRef)
 
                 transaction.update(
                     firestore.collection(FirebaseContracts.USER_COLLECTION).document(auth.uid!!),
                     FirebaseContracts.USER_FOLLOWING,
-                    FieldValue.increment(1)
+                    FieldValue.increment(-1)
                 )
 
                 val shardId = floor(Math.random() * FirebaseContracts.USER_FOLLOWER_COUNTERS).toInt()
+                transaction.update(countersRef.document(shardId.toString()), FirebaseContracts.USER_FOLLOWERS_COUNTER, FieldValue.increment(-1))
+
                 transaction.update(
-                    countersRef.document(shardId.toString()),
-                    FirebaseContracts.USER_FOLLOWERS_COUNTER,
-                    FieldValue.increment(1)
+                    firestore.collection(FirebaseContracts.FOLLOWERS_COLLECTION).document(unfollowedUserDocument.getString(FirebaseContracts.USER_NAME)!!),
+                    FirebaseContracts.FOLLOWERS_USERS,
+                    FieldValue.arrayRemove(auth.uid)
                 )
 
             }.addOnCompleteListener { task ->
@@ -52,7 +48,9 @@ class FollowUser @Inject constructor() {
                     continuation.resume(Response.Failiure(data = false, message = task.exception?.message))
                 }
             }
+
         }
+
     }
 
 }

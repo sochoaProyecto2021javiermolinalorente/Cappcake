@@ -8,6 +8,8 @@ interface UserRepository {
     fun getCurrentUserId() : String?
     suspend fun authenticateUser(email: String, password: String) : Response<Boolean>
     suspend fun registerUser(username: String, email: String, password: String, image: Uri? = null) : Response<Boolean>
-    suspend fun getUserProfile(uid: String) : Response<User?>
+    suspend fun getUserProfile(uid: String) : Response<Pair<User, Boolean>?>
+    suspend fun getFollowersCount(uid: String) : Response<Int?>
     suspend fun followUser(followedUserId: String) : Response<Boolean>
+    suspend fun unfollowUser(unfolloedUserId: String) : Response<Boolean>
 }
