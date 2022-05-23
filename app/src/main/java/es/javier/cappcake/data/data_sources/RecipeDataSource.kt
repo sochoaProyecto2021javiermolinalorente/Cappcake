@@ -23,7 +23,8 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 class RecipeDataSource @Inject constructor(
-    private val uploadRecipe: UploadRecipe
+    private val uploadRecipe: UploadRecipe,
+    private val getRecipesOf: GetRecipesOf
 ) {
     
     private val firestore = Firebase.firestore
@@ -32,7 +33,11 @@ class RecipeDataSource @Inject constructor(
         return uploadRecipe.uploadRecipe(recipeName, recipeImageUri, recipeProcess, ingredients)
     }
 
-    suspend fun getRecipesOf(uid: String) : Response<List<Recipe>?> {
+    suspend fun getRecipesOf(uid: Array<String>) : Response<List<Recipe>> {
+        return getRecipesOf.getRecipesOf(uid)
+    }
+
+    /*suspend fun getRecipesOf(uid: String) : Response<List<Recipe>?> {
         val recipesRef = firestore.collection(FirebaseContracts.RECIPE_COLLECTION)
 
         val query = recipesRef.whereEqualTo(FirebaseContracts.RECIPE_USER_ID, uid)
@@ -62,7 +67,7 @@ class RecipeDataSource @Inject constructor(
                 }
             }
         }
-    }
+    }*/
 
     suspend fun getAllRecipes() : Response<List<Recipe>?> {
         val ref = firestore.collection(FirebaseContracts.RECIPE_COLLECTION)

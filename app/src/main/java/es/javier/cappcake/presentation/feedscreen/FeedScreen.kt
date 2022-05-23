@@ -25,7 +25,6 @@ import coil.request.ImageRequest
 import es.javier.cappcake.R
 import es.javier.cappcake.domain.recipe.Recipe
 import es.javier.cappcake.domain.user.User
-import es.javier.cappcake.presentation.components.ProfileImage
 import es.javier.cappcake.presentation.components.RecipeComponent
 import es.javier.cappcake.presentation.ui.theme.CappcakeTheme
 
@@ -34,6 +33,9 @@ fun FeedScreen(navController: NavController, viewModel: FeedScreenViewModel) {
 
     LaunchedEffect(key1 = Unit) {
         viewModel.loadFollowedUsers()
+        if (viewModel.users.isNotEmpty()) {
+            viewModel.loadRecipesOfFollowers()
+        }
     }
 
     Column(modifier = Modifier.fillMaxSize()) {
@@ -58,13 +60,19 @@ fun FeedScreen(navController: NavController, viewModel: FeedScreenViewModel) {
             Divider(color = Color.Black, thickness = 1.dp)
         }
 
-        LazyColumn(modifier = Modifier.fillMaxSize()) {
-            items(100) {
-                RecipeComponent(
-                    modifier = Modifier.padding(20.dp),
-                    recipe = Recipe(recipeId = "", recipeProcess = "", ingredients = emptyList(), userId = "", title = "Unknown"),
-                    loadUser = { User(profileImage = null, email = "unknown", username = "Unknown", userId = "", posts = 0, following = 0) }
-                )
+        if (viewModel.recipes.isEmpty()) {
+            Box(modifier = Modifier.fillMaxSize()) {
+                Text(text = "No recipes")
+            }
+        } else {
+            LazyColumn(modifier = Modifier.fillMaxSize()) {
+                items(viewModel.recipes, key = { it.recipeId }) {
+                    RecipeComponent(
+                        modifier = Modifier.padding(20.dp),
+                        recipe = it,
+                        loadUser = { viewModel.loadUser(it.userId) }
+                    )
+                }
             }
         }
     }

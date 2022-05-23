@@ -56,7 +56,7 @@ class ProfileScreenVIewModel @Inject constructor(
     }
 
     suspend fun loadRecipes(uid: String) {
-        val response = getRecipesOfUseCase(uid = uid)
+        val response = getRecipesOfUseCase(uid)
 
         when (response) {
             is Response.Failiure -> {}
