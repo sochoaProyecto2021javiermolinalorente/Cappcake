@@ -40,7 +40,7 @@ class SearchScreenViewModel @Inject constructor(
 
         return when (response) {
             is Response.Failiure -> null
-            is Response.Success -> response.data
+            is Response.Success -> response.data!!.first
         }
     }
 

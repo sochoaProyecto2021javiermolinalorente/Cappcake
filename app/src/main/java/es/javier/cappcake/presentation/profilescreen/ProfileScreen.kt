@@ -6,23 +6,18 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Button
-import androidx.compose.material.Text
-import androidx.compose.material.Divider
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Surface
-import androidx.compose.material.MaterialTheme
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.material.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -32,80 +27,112 @@ import com.google.firebase.auth.FirebaseAuth
 import es.javier.cappcake.R
 import es.javier.cappcake.presentation.Navigation
 import es.javier.cappcake.presentation.components.RecipeComponent
+import kotlinx.coroutines.launch
 
 @Composable
 fun ProfileScreen(navController: NavController, viewModel: ProfileScreenVIewModel, uid: String) {
 
+    val coroutineScope = rememberCoroutineScope()
+
     LaunchedEffect(key1 = Unit) {
         viewModel.loadUser(uid = uid)
+        viewModel.getFollowersCount(uid = uid)
         viewModel.loadRecipes(uid = uid)
     }
 
-    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
-        Scaffold(
-            drawerContent = {
+    if (viewModel.showUnFollowUserAlert.value) {
+        UnfollowUserAlert(username = viewModel.user!!.username, showAlert = viewModel.showUnFollowUserAlert) {
+            coroutineScope.launch {
+                viewModel.showUnFollowUserAlert.value = false
+                viewModel.unfollowUser(uid)
+                viewModel.getFollowersCount(uid)
+            }
+        }
+    }
+    
+    Scaffold(
+        drawerContent = if (viewModel.getCurrentUserId() == uid) {
+            {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     Button(onClick = { signOut(navController = navController) }) {
-                        Text(text = "Cerrar sesión".uppercase())
+                        Text(text = stringResource(id = R.string.profile_screen_sign_out_button_text).uppercase())
                     }
                 }
             }
-        ) {
-            Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
-                Box {
-                    Column(modifier = Modifier.padding(top = 10.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-                        ProfileScreenProfileImage(
-                            modifier = Modifier.size(90.dp),
-                            profileImage = viewModel.user?.profileImage)
+        } else null
+    ) {
+        Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
+            Box {
+                Column(modifier = Modifier.padding(top = 10.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                    ProfileScreenProfileImage(
+                        modifier = Modifier.size(90.dp),
+                        profileImage = viewModel.user?.profileImage)
 
+                    Row(verticalAlignment = Alignment.CenterVertically) {
                         if (viewModel.user == null) {
-                            Text(text = "Username", modifier = Modifier.padding(vertical = 10.dp))
+                            Text(text = stringResource(id = R.string.profile_screen_username_text), modifier = Modifier.padding(vertical = 10.dp))
                         } else {
                             Text(text = viewModel.user!!.username, modifier = Modifier.padding(vertical = 10.dp))
                         }
 
-                        Row(modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 10.dp), verticalAlignment = Alignment.CenterVertically){
-                            Column(modifier = Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
-                                Text(text = "Post")
-                                Text(text = "1")
-                            }
-
-                            Column(modifier = Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
-                                Text(text = "Following")
-                                Text(text = "1")
-                            }
-
-                            Column(modifier = Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
-                                Text(text = "Followers")
-                                Text(text = "1")
+                        if (viewModel.getCurrentUserId() != uid) {
+                            Spacer(modifier = Modifier.width(10.dp))
+                            TextButton(onClick = {
+                                coroutineScope.launch {
+                                    if (viewModel.userFollowed) {
+                                        viewModel.showUnFollowUserAlert.value = true
+                                    } else {
+                                        viewModel.followUser(uid)
+                                    }
+                                    viewModel.getFollowersCount(uid)
+                                } }) {
+                                Text(text = if (viewModel.userFollowed) stringResource(id = R.string.profile_screen_unfollow_button_text)
+                                else stringResource(id = R.string.profile_screen_follow_button_text))
                             }
                         }
+                    }
 
-                        Divider()
+                    Row(modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 10.dp), verticalAlignment = Alignment.CenterVertically){
+                        Column(modifier = Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(text = stringResource(id = R.string.profile_screen_posts_text))
+                            Text(text = viewModel.user?.posts.toString() ?: "0")
+                        }
+
+                        Column(modifier = Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(text = stringResource(id = R.string.profile_screen_following_text))
+                            Text(text = viewModel.user?.following.toString() ?: "0")
+                        }
+
+                        Column(modifier = Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(text = stringResource(id = R.string.profile_screen_followers_text))
+                            Text(text = viewModel.followers?.toString() ?: "0")
+                        }
+                    }
+
+                    Divider()
+                }
+            }
+
+            if (viewModel.recipes != null) {
+                LazyColumn(modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)) {
+
+                    items(viewModel.recipes!!, key = { it.recipeId }) {
+
+                        RecipeComponent(
+                            modifier = Modifier.padding(20.dp),
+                            recipe = it,
+                            loadUser = { viewModel.user },
+                            onRecipeClick = { navController.navigate(Navigation.RecipeDetailScreen.navigationRoute + "?recipeId=${it.recipeId}") }
+                        )
                     }
                 }
-
-                if (viewModel.recipes != null) {
-                    LazyColumn(modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)) {
-
-                        items(viewModel.recipes!!, key = { it.recipeId }) {
-
-                            RecipeComponent(
-                                modifier = Modifier.padding(20.dp),
-                                recipe = it,
-                                loadUser = { viewModel.user },
-                                onRecipeClick = { navController.navigate(Navigation.RecipeDetailScreen.navigationRoute + "?recipeId=${it.recipeId}") }
-                            )
-                        }
-                    }
-                } else {
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        CircularProgressIndicator()
-                    }
+            } else {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator()
                 }
             }
         }
@@ -134,6 +161,37 @@ fun ProfileScreenProfileImage(modifier: Modifier, profileImage: String?) {
         }
 
     }
+}
+
+@Composable
+fun UnfollowUserAlert(username: String, showAlert: MutableState<Boolean>, onConfirmClick: () -> Unit) {
+
+    AlertDialog(
+        onDismissRequest = { showAlert.value = false },
+        title = {
+                Text(text = stringResource(id = R.string.profile_screen_unfollow_user_alert_title))
+        },
+        text = {
+               Text(text = buildAnnotatedString {
+                   append(stringResource(id = R.string.profile_screen_unfollow_user_alert_message_text))
+                   withStyle(style = SpanStyle(color = MaterialTheme.colors.primary)) {
+                       append(" $username\n")
+                   }
+                   append(stringResource(id = R.string.profile_screen_unfollow_user_alert_question_text))
+               })
+        },
+        confirmButton = {
+            TextButton(onClick = onConfirmClick) {
+                Text(text = stringResource(id = R.string.profile_screen_unfollow_user_alert_confirm_button_text), color = Color.Red)
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = { showAlert.value = false }) {
+                Text(text = stringResource(id = R.string.profile_screen_unfollow_user_alert_cancel_button_text))
+            }
+        }
+    )
+
 }
 
 
