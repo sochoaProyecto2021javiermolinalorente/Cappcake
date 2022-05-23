@@ -47,7 +47,7 @@ fun FeedScreen(navController: NavController, viewModel: FeedScreenViewModel) {
                 RecipeComponent(
                     modifier = Modifier.padding(20.dp),
                     recipe = Recipe(recipeId = "", recipeProcess = "", ingredients = emptyList(), userId = "", title = "Unknown"),
-                    loadUser = { User(profileImage = null, email = "unknown", username = "Unknown", userId = "", posts = 0, following = 0, followers = 0) }
+                    loadUser = { User(profileImage = null, email = "unknown", username = "Unknown", userId = "", posts = 0, following = 0) }
                 )
             }
         }
