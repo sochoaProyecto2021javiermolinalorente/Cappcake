@@ -53,30 +53,4 @@ class UserDataSource @Inject constructor(
         return getProfileInfo.getFollowersCount(uid = uid)
     }
 
-    /*suspend fun getUserProfile(uid: String) : Response<User?> {
-
-       return suspendCoroutine {  continuation ->
-           firestore.collection(FirebaseContracts.USER_COLLECTION).document(uid).get(Source.SERVER).addOnCompleteListener { task ->
-               if (task.isSuccessful) {
-                   if (task.result.exists()) {
-                       continuation.resume(Response.Success(data = User(
-                           userId = task.result.id,
-                           username = task.result.getString(FirebaseContracts.USER_NAME) ?: FirebaseContracts.UNKNOWN,
-                           email = task.result.getString(FirebaseContracts.USER_EMAIL) ?: FirebaseContracts.UNKNOWN,
-                           profileImage = task.result.getString(FirebaseContracts.USER_PROFILE_IMAGE),
-                           posts = task.result.getLong(FirebaseContracts.USER_POSTS)?.toInt() ?: FirebaseContracts.NUMBER_UNKNOWN,
-                           followers = task.result.getLong(FirebaseContracts.USER_FOLLOWERS)?.toInt() ?: FirebaseContracts.NUMBER_UNKNOWN,
-                           following = task.result.getLong(FirebaseContracts.USER_FOLLOWING)?.toInt() ?: FirebaseContracts.NUMBER_UNKNOWN)
-                       ))
-                   } else {
-                       continuation.resume(Response.Failiure(data = null, message = null))
-                   }
-
-               } else {
-                   continuation.resume(Response.Failiure(data = null, message = null))
-               }
-           }
-       }
-    }*/
-
 }

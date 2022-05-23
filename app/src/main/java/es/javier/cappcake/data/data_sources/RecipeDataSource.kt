@@ -25,80 +25,12 @@ import kotlin.coroutines.suspendCoroutine
 class RecipeDataSource @Inject constructor(
     private val uploadRecipe: UploadRecipe
 ) {
-
-    private val auth = Firebase.auth
+    
     private val firestore = Firebase.firestore
-    private val storage = Firebase.storage
 
     suspend fun uploadRecipe(recipeName: String, recipeImageUri: Uri?, recipeProcess: String, ingredients: List<Ingredient>) : Response<Boolean> {
         return uploadRecipe.uploadRecipe(recipeName, recipeImageUri, recipeProcess, ingredients)
     }
-
-    /*suspend fun uploadRecipe(recipeName: String, recipeImageUri: Uri?, recipeProcess: String, ingredients: List<Ingredient>) : Response<Boolean> {
-
-        val recipeDocumentRef = firestore.collection(FirebaseContracts.RECIPE_COLLECTION).document()
-
-        val imageUrl = uploadRecipeImage(recipeImageUri)
-
-        val data = hashMapOf(
-            FirebaseContracts.RECIPE_USER_ID to auth.uid,
-            FirebaseContracts.RECIPE_NAME to recipeName,
-            FirebaseContracts.RECIPE_IMAGE to imageUrl.data,
-            FirebaseContracts.RECIPE_INGREDIENTS to ingredients,
-            FirebaseContracts.RECIPE_PROCESS to recipeProcess
-        )
-
-        return suspendCoroutine { continuation ->
-            recipeDocumentRef.set(data).addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    continuation.resume(Response.Success(data = true))
-                } else {
-                    val exception = task.exception
-                    if (exception != null)
-                        continuation.resume(Response.Failiure(data = false, message = exception.message))
-                    else
-                        continuation.resume(Response.Failiure(data = false, message = null))
-                }
-            }
-        }
-
-    }
-
-    private suspend fun uploadRecipeImage(recipeImageUri: Uri?) : Response<Uri?> {
-
-        val recipeImageRef = storage.reference.child("${auth.uid}/recipes/${UUID.randomUUID()}.jpg")
-
-        if (recipeImageUri == null) return Response.Failiure(data = null, message = null)
-
-        val recipeImage = imageCompressor.comporessBitmap(ImageCompressor.MID_QUALITY, recipeImageUri)
-        val outputStream = ByteArrayOutputStream()
-        recipeImage.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
-        val imageByteArray = outputStream.toByteArray()
-
-        val uploadTask = recipeImageRef.putBytes(imageByteArray)
-
-        return suspendCoroutine { continuation ->
-
-            uploadTask.continueWithTask { task ->
-                if (task.isSuccessful) {
-                    recipeImageRef.downloadUrl
-                } else {
-                    task.exception?.let {
-                        throw it
-                    }
-                }
-            }.addOnSuccessListener { urlTask ->
-                if (urlTask.path != null) {
-                    continuation.resume(Response.Success(data = urlTask))
-                } else {
-                    continuation.resume(Response.Failiure(data = null, message = null))
-                }
-            }.addOnFailureListener {
-                continuation.resume(Response.Failiure(data = null, message = null))
-            }
-
-        }
-    }*/
 
     suspend fun getRecipesOf(uid: String) : Response<List<Recipe>?> {
         val recipesRef = firestore.collection(FirebaseContracts.RECIPE_COLLECTION)
