@@ -13,7 +13,8 @@ class UserDataSource @Inject constructor(
     private val registerUser: RegisterUser,
     private val getProfileInfo: GetProfileInfo,
     private val followUser: FollowUser,
-    private val unfollowUser: UnfollowUser
+    private val unfollowUser: UnfollowUser,
+    private val getFollowedUsers: GetFollowedUsers
 ) {
 
     private val auth = Firebase.auth
@@ -39,6 +40,10 @@ class UserDataSource @Inject constructor(
 
     suspend fun getUserProfile(uid: String) : Response<Pair<User, Boolean>?> {
         return getProfileInfo.getUserProfile(uid = uid)
+    }
+
+    suspend fun getFollowedUsers() : Response<List<User>> {
+        return getFollowedUsers.getFollowedUsers()
     }
 
     suspend fun followUser(followedUserId: String) : Response<Boolean> {

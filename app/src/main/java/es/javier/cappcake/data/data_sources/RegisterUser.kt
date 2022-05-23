@@ -47,6 +47,8 @@ class RegisterUser @Inject constructor(private val imageUploader: ImageUploader)
             )
 
             val followersData = hashMapOf(
+                FirebaseContracts.FOLLOWERS_USER_ID to auth.uid!!,
+                FirebaseContracts.FOLLOWERS_PROFILE_IMAGE to imagePath.data,
                 FirebaseContracts.FOLLOWERS_USERS to emptyList<String>()
             )
 

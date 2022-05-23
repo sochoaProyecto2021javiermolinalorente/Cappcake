@@ -21,6 +21,7 @@ class ImplUserRepository @Inject constructor(
 
     override suspend fun getUserProfile(uid: String): Response<Pair<User, Boolean>?> = userDataSource.getUserProfile(uid = uid)
     override suspend fun getFollowersCount(uid: String): Response<Int?> = userDataSource.getFollowersCount(uid = uid)
+    override suspend fun getFollowedUsers(): Response<List<User>> = userDataSource.getFollowedUsers()
 
     override suspend fun followUser(followedUserId: String): Response<Boolean> = userDataSource.followUser(followedUserId)
 

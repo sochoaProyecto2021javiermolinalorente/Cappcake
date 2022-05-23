@@ -10,6 +10,7 @@ interface UserRepository {
     suspend fun registerUser(username: String, email: String, password: String, image: Uri? = null) : Response<Boolean>
     suspend fun getUserProfile(uid: String) : Response<Pair<User, Boolean>?>
     suspend fun getFollowersCount(uid: String) : Response<Int?>
+    suspend fun getFollowedUsers() : Response<List<User>>
     suspend fun followUser(followedUserId: String) : Response<Boolean>
     suspend fun unfollowUser(unfolloedUserId: String) : Response<Boolean>
 }

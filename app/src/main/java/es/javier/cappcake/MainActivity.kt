@@ -148,7 +148,7 @@ fun NavGraphBuilder.LoginGraph(navController: NavController) {
 fun NavGraphBuilder.ApplicationGraph(navController: NavController) {
     navigation(startDestination = Navigation.FeedScreen.navigationRoute, route = Navigation.APPLICATION_GRAPH) {
         composable(Navigation.FeedScreen.navigationRoute) {
-            FeedScreen(navController = navController, viewModel = viewModel())
+            FeedScreen(navController = navController, viewModel = hiltViewModel())
         }
         composable(Navigation.SearchScreen.navigationRoute) {
             SearchScreen(navController = navController, viewModel = hiltViewModel())
