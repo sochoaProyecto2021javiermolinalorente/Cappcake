@@ -67,23 +67,4 @@ class GetProfileInfo @Inject constructor() {
         }
     }
 
-    private suspend fun isCurrentFollowing(username: String) : Boolean {
-        return suspendCoroutine { continuation ->
-
-            firestore.runTransaction { transaction ->
-                val followerUser = transaction.get(firestore.collection(FirebaseContracts.FOLLOWERS_COLLECTION).document(username))
-
-                val users = followerUser[FirebaseContracts.FOLLOWERS_USERS] as ArrayList<*>
-
-                return@runTransaction users.contains(auth.uid!!)
-            }.addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    continuation.resume(task.result)
-                } else {
-                    continuation.resume(false)
-                }
-            }
-        }
-    }
-
 }
