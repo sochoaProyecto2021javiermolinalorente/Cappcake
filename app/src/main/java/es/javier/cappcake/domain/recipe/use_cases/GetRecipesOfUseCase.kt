@@ -7,6 +7,6 @@ import javax.inject.Inject
 
 class GetRecipesOfUseCase @Inject constructor(private val repository: RecipeRepository) {
 
-    suspend operator fun invoke(uid: String) : Response<List<Recipe>?> = repository.getRecipesOf(uid = uid)
+    suspend operator fun invoke(uid: Array<String>) : Response<List<Recipe>> = repository.getRecipesOf(uid = uid)
 
 }

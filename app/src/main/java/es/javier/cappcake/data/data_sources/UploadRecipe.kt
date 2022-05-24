@@ -29,7 +29,7 @@ class UploadRecipe @Inject constructor(
         val recipeDocumentRef = firestore.collection(FirebaseContracts.RECIPE_COLLECTION).document()
         val userRef = firestore.collection(FirebaseContracts.USER_COLLECTION).document(auth.uid!!)
 
-        val recipeImageRef = "${auth.uid}/recipes/${UUID.randomUUID()}.jpg"
+        val recipeImageRef = "/recipes/${UUID.randomUUID()}.jpg"
 
         val imageUrl = imageUploader.uploadImage(
             imageUri = recipeImageUri,

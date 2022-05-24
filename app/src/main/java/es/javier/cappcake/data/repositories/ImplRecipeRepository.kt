@@ -17,7 +17,7 @@ class ImplRecipeRepository @Inject constructor(private val dataSource: RecipeDat
         ingredients: List<Ingredient>
     ): Response<Boolean> = dataSource.uploadRecipe(recipeName, recipeImageUri, recipeProcess, ingredients)
 
-    override suspend fun getRecipesOf(uid: String): Response<List<Recipe>?> = dataSource.getRecipesOf(uid)
+    override suspend fun getRecipesOf(uid: Array<String>): Response<List<Recipe>> = dataSource.getRecipesOf(uid)
 
     override suspend fun getAllRecipes(): Response<List<Recipe>?> = dataSource.getAllRecipes()
 
