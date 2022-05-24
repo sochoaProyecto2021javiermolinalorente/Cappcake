@@ -44,16 +44,16 @@ class FeedScreenViewModel @Inject constructor(
                 return
             }
 
-            val ids: Array<out String> = if (userFilter.isBlank()) {
+            val ids: Array<String> = if (userFilter.isBlank()) {
                 Array(it.size) { position ->
                     it[position].userId
                 }
             } else {
-                Array(1) { userFilter }
+                arrayOf(userFilter)
             }
 
 
-            val response = getRecipesOfUseCase(*ids)
+            val response = getRecipesOfUseCase(ids)
 
             when (response) {
                 is Response.Failiure -> { }
