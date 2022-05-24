@@ -116,23 +116,35 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileScreenVIewMode
             }
 
             if (viewModel.recipes != null) {
-                LazyColumn(modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)) {
+                if (viewModel.recipes!!.isNotEmpty()) {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                    ) {
 
-                    items(viewModel.recipes!!, key = { it.recipeId }) {
+                        items(viewModel.recipes!!, key = { it.recipeId }) {
 
-                        RecipeComponent(
-                            modifier = Modifier.padding(20.dp),
-                            recipe = it,
-                            loadUser = { viewModel.user },
-                            onRecipeClick = { navController.navigate(Navigation.RecipeDetailScreen.navigationRoute + "?recipeId=${it.recipeId}") }
-                        )
+                            RecipeComponent(
+                                modifier = Modifier.padding(20.dp),
+                                recipe = it,
+                                loadUser = { viewModel.user },
+                                onRecipeClick = { navController.navigate(Navigation.RecipeDetailScreen.navigationRoute + "?recipeId=${it.recipeId}") }
+                            )
+                        }
+                    }
+                } else {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Text(text = stringResource(id = R.string.profile_screen_no_recipes_text))
                     }
                 }
             } else {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator()
+                    Row {
+                        Text(text = stringResource(id = R.string.profile_screen_loading_recipes_text))
+                        Spacer(modifier = Modifier.width(10.dp))
+                        CircularProgressIndicator()
+                    }
                 }
             }
         }

@@ -20,7 +20,7 @@ class SearchScreenViewModel @Inject constructor(
     private val getUserProfileUseCase: GetUserProfileUseCase
 ) : ViewModel() {
 
-    var recipes: List<Recipe> by mutableStateOf(emptyList())
+    var recipes: List<Recipe>? by mutableStateOf(null)
 
     fun loadAllRecipes() {
         viewModelScope.launch {
@@ -29,7 +29,7 @@ class SearchScreenViewModel @Inject constructor(
             when (response) {
                 is Response.Failiure -> Unit
                 is Response.Success -> {
-                    recipes = response.data!!
+                    recipes = response.data
                 }
             }
         }

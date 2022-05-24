@@ -25,6 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -52,59 +53,77 @@ fun FeedScreen(navController: NavController, viewModel: FeedScreenViewModel) {
     Column(modifier = Modifier.fillMaxSize()) {
         Column {
 
-            if (viewModel.users.isEmpty()) {
-                Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.height(70.dp)) {
-                    Text(text = "No users followed", modifier = Modifier
-                        .fillMaxWidth(), textAlign = TextAlign.Center)
-                }
-            } else {
-                LazyRow(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(70.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    items(viewModel.users, key = { it.userId }) {
+            if (viewModel.users != null) {
+                if (viewModel.users!!.isEmpty()) {
+                    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.height(70.dp)) {
+                        Text(text = stringResource(id = R.string.feed_screen_no_users_text), modifier = Modifier
+                            .fillMaxWidth(), textAlign = TextAlign.Center)
+                    }
+                } else {
+                    LazyRow(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(70.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        items(viewModel.users!!, key = { it.userId }) {
 
-                        if (viewModel.userFilter == it.userId) {
-                            SelectedUserFollowed(modifier = Modifier
-                                .size(65.dp)
-                                .padding(5.dp), user = it) {
-                                coroutineScope.launch {
-                                    viewModel.userFilter = ""
-                                    viewModel.loadRecipesOfFollowers()
+                            if (viewModel.userFilter == it.userId) {
+                                SelectedUserFollowed(modifier = Modifier
+                                    .size(65.dp)
+                                    .padding(5.dp), user = it) {
+                                    coroutineScope.launch {
+                                        viewModel.userFilter = ""
+                                        viewModel.loadRecipesOfFollowers()
+                                    }
                                 }
-                            }
-                        } else {
-                            UserFollowed(modifier = Modifier
-                                .size(65.dp)
-                                .padding(5.dp), user = it) {
-                                coroutineScope.launch {
-                                    viewModel.userFilter = it.userId
-                                    viewModel.loadRecipesOfFollowers()
+                            } else {
+                                UserFollowed(modifier = Modifier
+                                    .size(65.dp)
+                                    .padding(5.dp), user = it) {
+                                    coroutineScope.launch {
+                                        viewModel.userFilter = it.userId
+                                        viewModel.loadRecipesOfFollowers()
+                                    }
                                 }
                             }
                         }
                     }
                 }
+            } else {
+                Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.height(70.dp).fillMaxWidth()) {
+                    Text(text = stringResource(id = R.string.feed_screen_loading_users_text))
+                    Spacer(modifier = Modifier.width(10.dp))
+                    CircularProgressIndicator()
+                }
             }
             Divider(color = Color.Black, thickness = 1.dp)
         }
 
-        if (viewModel.recipes.isEmpty()) {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text(text = "No recipes")
+        if (viewModel.recipes != null) {
+            if (viewModel.recipes!!.isEmpty()) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text(text = stringResource(id = R.string.feed_screen_no_recipes_text))
+                }
+            } else {
+                LazyColumn(modifier = Modifier.fillMaxSize()) {
+                    items(viewModel.recipes!!, key = { it.recipeId }) {
+                        RecipeComponent(
+                            modifier = Modifier.padding(20.dp),
+                            recipe = it,
+                            loadUser = { viewModel.loadUser(it.userId) },
+                            onUserClick = { navController.navigate(Navigation.ProfileScreen.navigationRoute + "?userId=${it.userId}") },
+                            onRecipeClick = { navController.navigate(Navigation.RecipeDetailScreen.navigationRoute + "?recipeId=${it.recipeId}") }
+                        )
+                    }
+                }
             }
         } else {
-            LazyColumn(modifier = Modifier.fillMaxSize()) {
-                items(viewModel.recipes, key = { it.recipeId }) {
-                    RecipeComponent(
-                        modifier = Modifier.padding(20.dp),
-                        recipe = it,
-                        loadUser = { viewModel.loadUser(it.userId) },
-                        onUserClick = { navController.navigate(Navigation.ProfileScreen.navigationRoute + "?userId=${it.userId}") },
-                        onRecipeClick =  { navController.navigate(Navigation.RecipeDetailScreen.navigationRoute + "?recipeId=${it.recipeId}") }
-                    )
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Row {
+                    Text(text = stringResource(id = R.string.feed_screen_loading_recipes_text))
+                    Spacer(modifier = Modifier.width(10.dp))
+                    CircularProgressIndicator()
                 }
             }
         }

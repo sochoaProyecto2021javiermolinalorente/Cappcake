@@ -26,8 +26,16 @@
     <string name="user_not_created_title_dialog">Error</string>
     <string name="user_not_created_message_dialog">No se ha podido crear el usuario</string>
 
+    <!-- Feed screen -->
+    <string name="feed_screen_loading_users_text">Cargando usuarios…</string>
+    <string name="feed_screen_no_users_text">No sigues a ningún usuario</string>
+    <string name="feed_screen_loading_recipes_text">Cargando recetas…</string>
+    <string name="feed_screen_no_recipes_text">No hay recetas disponibles</string>
+
     <!-- Search screen -->
     <string name="search_search_hint">Buscar…</string>
+    <string name="search_screen_loading_recipes_text">Cargando recetas…</string>
+    <string name="search_screen_no_recipes_text">No ha recetas disponibles</string>
 
     <!-- Add recipe screen -->
     <string name="add_recipe_screen_title">Añadir receta</string>
@@ -64,6 +72,8 @@
     <string name="profile_screen_follow_button_text">Seguir</string>
     <string name="profile_screen_unfollow_button_text">Dejar de seguir</string>
     <string name="profile_screen_username_text">Nombre de usuario</string>
+    <string name="profile_screen_loading_recipes_text">Cargando recetas…</string>
+    <string name="profile_screen_no_recipes_text">No se han subido recetas</string>
     <!-- Unfollow user alert -->
     <string name="profile_screen_unfollow_user_alert_title">Dejar de seguir</string>
     <string name="profile_screen_unfollow_user_alert_message_text">Vas a dejar de seguir a </string>

@@ -21,9 +21,9 @@ class FeedScreenViewModel @Inject constructor(
 ) : ViewModel() {
 
 
-    var users: List<User> by mutableStateOf(emptyList())
+    var users: List<User>? by mutableStateOf(null)
     var userFilter: String by mutableStateOf("")
-    var recipes: List<Recipe> by mutableStateOf(emptyList())
+    var recipes: List<Recipe>? by mutableStateOf(null)
 
     suspend fun loadFollowedUsers() {
         val response = getFollowedUserUseCase()
@@ -38,26 +38,28 @@ class FeedScreenViewModel @Inject constructor(
 
 
     suspend fun loadRecipesOfFollowers() {
-        if (users.isEmpty()) {
-            recipes = emptyList()
-            return
-        }
-
-        val ids: Array<out String> = if (userFilter.isBlank()) {
-            Array(users.size) {
-                users[it].userId
+        users?.let {
+            if (it.isEmpty()) {
+                recipes = emptyList()
+                return
             }
-        } else {
-            Array(1) { userFilter }
-        }
+
+            val ids: Array<out String> = if (userFilter.isBlank()) {
+                Array(it.size) { position ->
+                    it[position].userId
+                }
+            } else {
+                Array(1) { userFilter }
+            }
 
 
-        val response = getRecipesOfUseCase(*ids)
+            val response = getRecipesOfUseCase(*ids)
 
-        when (response) {
-            is Response.Failiure -> { }
-            is Response.Success -> {
-                recipes = response.data!!
+            when (response) {
+                is Response.Failiure -> { }
+                is Response.Success -> {
+                    recipes = response.data
+                }
             }
         }
     }
@@ -67,7 +69,7 @@ class FeedScreenViewModel @Inject constructor(
 
         return when (response) {
             is Response.Failiure -> null
-            is Response.Success -> response.data!!.first
+            is Response.Success -> response.data?.first
         }
     }
 
