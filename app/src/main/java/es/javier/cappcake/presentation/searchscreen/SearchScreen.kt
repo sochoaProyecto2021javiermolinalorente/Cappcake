@@ -55,9 +55,7 @@ fun SearchScreen(navController: NavController, viewModel: SearchScreenViewModel)
                         recipe = it,
                         loadUser = { viewModel.loadUser(it.userId) },
                         onUserClick = {
-                            navController.navigate(Navigation.ProfileScreen.navigationRoute + "?userId=${it.userId}") {
-                                popUpTo(Navigation.SearchScreen.navigationRoute)
-                            }
+                            navController.navigate(Navigation.ProfileScreen.navigationRoute + "?userId=${it.userId}")
                         },
                         onRecipeClick = {
                             navController.navigate(Navigation.RecipeDetailScreen.navigationRoute + "?recipeId=${it.recipeId}")

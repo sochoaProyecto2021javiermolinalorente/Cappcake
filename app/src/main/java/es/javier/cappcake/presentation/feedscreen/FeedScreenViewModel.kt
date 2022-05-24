@@ -22,6 +22,7 @@ class FeedScreenViewModel @Inject constructor(
 
 
     var users: List<User> by mutableStateOf(emptyList())
+    var userFilter: String by mutableStateOf("")
     var recipes: List<Recipe> by mutableStateOf(emptyList())
 
     suspend fun loadFollowedUsers() {
@@ -37,7 +38,20 @@ class FeedScreenViewModel @Inject constructor(
 
 
     suspend fun loadRecipesOfFollowers() {
-        val ids = users.map { it.userId }.toTypedArray()
+        if (users.isEmpty()) {
+            recipes = emptyList()
+            return
+        }
+
+        val ids: Array<out String> = if (userFilter.isBlank()) {
+            Array(users.size) {
+                users[it].userId
+            }
+        } else {
+            Array(1) { userFilter }
+        }
+
+
         val response = getRecipesOfUseCase(*ids)
 
         when (response) {
