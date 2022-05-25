@@ -2,7 +2,9 @@ package es.javier.cappcake.presentation.feedscreen
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import es.javier.cappcake.domain.Response
@@ -11,6 +13,7 @@ import es.javier.cappcake.domain.recipe.use_cases.GetRecipesOfUseCase
 import es.javier.cappcake.domain.user.User
 import es.javier.cappcake.domain.user.use_cases.GetFollowedUserUseCase
 import es.javier.cappcake.domain.user.use_cases.GetUserProfileUseCase
+import es.javier.cappcake.utils.ScreenState
 import javax.inject.Inject
 
 @HiltViewModel
@@ -23,7 +26,10 @@ class FeedScreenViewModel @Inject constructor(
 
     var users: List<User>? by mutableStateOf(null)
     var userFilter: String by mutableStateOf("")
-    var recipes: List<Recipe>? by mutableStateOf(null)
+    var recipes: SnapshotStateList<Recipe>? = mutableStateListOf()
+    var lastRecipeId: String? by mutableStateOf(null)
+    var screenStatus: ScreenState by mutableStateOf(ScreenState.LoadingData)
+    var loadingMoreRecipes by mutableStateOf(false)
 
     suspend fun loadFollowedUsers() {
         val response = getFollowedUserUseCase()
@@ -40,7 +46,7 @@ class FeedScreenViewModel @Inject constructor(
     suspend fun loadRecipesOfFollowers() {
         users?.let {
             if (it.isEmpty()) {
-                recipes = emptyList()
+                recipes?.removeAll { true }
                 return
             }
 
@@ -53,12 +59,45 @@ class FeedScreenViewModel @Inject constructor(
             }
 
 
-            val response = getRecipesOfUseCase(ids)
+            val response = getRecipesOfUseCase(ids, null)
 
             when (response) {
                 is Response.Failiure -> { }
                 is Response.Success -> {
-                    recipes = response.data
+                    recipes?.clear()
+                    recipes?.addAll(response.data!!.first.toTypedArray())
+                    lastRecipeId = response.data?.second
+                    screenStatus = ScreenState.DataLoaded
+                }
+            }
+        }
+    }
+
+    suspend fun loadMoreRecipes() {
+        users?.let {
+            if (it.isEmpty()) {
+                recipes?.removeAll { true }
+                return
+            }
+
+            loadingMoreRecipes = true
+            val ids: Array<String> = if (userFilter.isBlank()) {
+                Array(it.size) { position ->
+                    it[position].userId
+                }
+            } else {
+                arrayOf(userFilter)
+            }
+
+
+            val response = getRecipesOfUseCase(ids, lastRecipeId)
+
+            when (response) {
+                is Response.Failiure -> { loadingMoreRecipes = false }
+                is Response.Success -> {
+                    recipes?.addAll(response.data!!.first.toTypedArray())
+                    lastRecipeId = response.data?.second
+                    loadingMoreRecipes = false
                 }
             }
         }

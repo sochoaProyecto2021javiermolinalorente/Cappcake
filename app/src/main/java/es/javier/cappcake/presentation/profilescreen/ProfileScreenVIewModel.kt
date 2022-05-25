@@ -2,7 +2,9 @@ package es.javier.cappcake.presentation.profilescreen
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -12,6 +14,7 @@ import es.javier.cappcake.domain.recipe.use_cases.GetRecipeUseCase
 import es.javier.cappcake.domain.user.User
 import es.javier.cappcake.domain.recipe.use_cases.GetRecipesOfUseCase
 import es.javier.cappcake.domain.user.use_cases.*
+import es.javier.cappcake.utils.ScreenState
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -27,8 +30,10 @@ class ProfileScreenVIewModel @Inject constructor(
 
     var user: User? by mutableStateOf(null)
     var followers: Int? by mutableStateOf(null)
-    var recipes: List<Recipe>? by mutableStateOf(null)
+    var recipes: SnapshotStateList<Recipe> = mutableStateListOf()
+    var lastRecipeId: String? by mutableStateOf(null)
     var userFollowed: Boolean by mutableStateOf(false)
+    var screenStatus: ScreenState by mutableStateOf(ScreenState.LoadingData)
     var showUnFollowUserAlert = mutableStateOf(false)
 
     suspend fun loadUser(uid: String) {
@@ -56,12 +61,28 @@ class ProfileScreenVIewModel @Inject constructor(
     }
 
     suspend fun loadRecipes(uid: String) {
-        val response = getRecipesOfUseCase(arrayOf(uid))
+        val response = getRecipesOfUseCase(arrayOf(uid), null)
 
         when (response) {
             is Response.Failiure -> {}
             is Response.Success -> {
-                recipes = response.data
+                recipes.clear()
+                recipes.addAll(response.data!!.first.toTypedArray())
+                lastRecipeId = response.data?.second
+                screenStatus = ScreenState.DataLoaded
+            }
+        }
+    }
+
+    suspend fun loadMoreRecipes(uid: String) {
+
+        val response = getRecipesOfUseCase(arrayOf(uid), lastRecipeId)
+
+        when (response) {
+            is Response.Failiure -> { }
+            is Response.Success -> {
+                recipes.addAll(response.data!!.first.toTypedArray())
+                lastRecipeId = response.data.second
             }
         }
     }

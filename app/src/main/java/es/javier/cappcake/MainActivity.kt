@@ -57,7 +57,7 @@ import kotlin.coroutines.suspendCoroutine
 class MainActivity : ComponentActivity() {
 
     companion object {
-        const val IP_ADDRESS = "10.0.2.2"
+        const val IP_ADDRESS = "127.0.0.1"
     }
 
     private lateinit var navController: NavHostController

@@ -1,10 +1,12 @@
 package es.javier.cappcake.presentation.profilescreen
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -27,17 +29,29 @@ import com.google.firebase.auth.FirebaseAuth
 import es.javier.cappcake.R
 import es.javier.cappcake.presentation.Navigation
 import es.javier.cappcake.presentation.components.RecipeComponent
+import es.javier.cappcake.utils.OnBottomReached
+import es.javier.cappcake.utils.ScreenState
 import kotlinx.coroutines.launch
 
 @Composable
 fun ProfileScreen(navController: NavController, viewModel: ProfileScreenVIewModel, uid: String) {
 
+    LaunchedEffect(key1 = Unit) {
+        if (viewModel.screenStatus == ScreenState.LoadingData) {
+            viewModel.loadUser(uid = uid)
+            viewModel.getFollowersCount(uid = uid)
+            viewModel.loadRecipes(uid = uid)
+        }
+    }
+
+    val lazyListState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
 
-    LaunchedEffect(key1 = Unit) {
-        viewModel.loadUser(uid = uid)
-        viewModel.getFollowersCount(uid = uid)
-        viewModel.loadRecipes(uid = uid)
+    lazyListState.OnBottomReached {
+        coroutineScope.launch {
+            Log.i("profile_Screen", "loading more recipes")
+            viewModel.lastRecipeId?.let { viewModel.loadMoreRecipes(uid) }
+        }
     }
 
     if (viewModel.showUnFollowUserAlert.value) {
@@ -115,15 +129,16 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileScreenVIewMode
                 }
             }
 
-            if (viewModel.recipes != null) {
-                if (viewModel.recipes!!.isNotEmpty()) {
+            if (viewModel.user != null) {
+                if (viewModel.recipes.isNotEmpty()) {
                     LazyColumn(
+                        state = lazyListState,
                         modifier = Modifier
                             .fillMaxWidth()
                             .weight(1f)
                     ) {
 
-                        items(viewModel.recipes!!, key = { it.recipeId }) {
+                        items(viewModel.recipes, key = { it.recipeId }) {
 
                             RecipeComponent(
                                 modifier = Modifier.padding(20.dp),

@@ -2,6 +2,7 @@ package es.javier.cappcake.data.data_sources
 
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.Source
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import es.javier.cappcake.data.entities.FirebaseContracts
@@ -13,41 +14,38 @@ import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-class GetRecipesOf @Inject constructor() {
+class GetAllRecipes @Inject constructor() {
 
     private val firestore = Firebase.firestore
 
-    suspend fun getRecipesOf(uid: Array<String>, lastRecipeId: String?) : Response<Pair<List<Recipe>, String>> {
-        val recipesRef = firestore.collection(FirebaseContracts.RECIPE_COLLECTION)
+    suspend fun getAllRecipes(lastRecipeId: String?) : Response<Pair<List<Recipe>, String>> {
+        val ref = firestore.collection(FirebaseContracts.RECIPE_COLLECTION)
 
         var lastDocumentSnapshot: DocumentSnapshot? = if (lastRecipeId != null) {
             suspendCoroutine { continuation ->
-                firestore.collection(FirebaseContracts.RECIPE_COLLECTION).document(lastRecipeId)
+                ref.document(lastRecipeId)
                     .get().addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        continuation.resume(task.result)
-                    } else {
-                        continuation.resume(null)
+                        if (task.isSuccessful) {
+                            continuation.resume(task.result)
+                        } else {
+                            continuation.resume(null)
+                        }
                     }
-                }
             }
         } else {
             null
         }
 
         val query = if (lastDocumentSnapshot != null) {
-            recipesRef.whereIn(FirebaseContracts.RECIPE_USER_ID, uid.asList())
-                .orderBy(FirebaseContracts.RECIPE_TIMESTAMP, Query.Direction.DESCENDING).startAfter(lastDocumentSnapshot).limit(10)
+            ref.orderBy(FirebaseContracts.RECIPE_TIMESTAMP, Query.Direction.DESCENDING).startAfter(lastDocumentSnapshot).limit(10)
         } else {
-            recipesRef.whereIn(FirebaseContracts.RECIPE_USER_ID, uid.asList())
-                .orderBy(FirebaseContracts.RECIPE_TIMESTAMP, Query.Direction.DESCENDING).limit(10)
+            ref.orderBy(FirebaseContracts.RECIPE_TIMESTAMP, Query.Direction.DESCENDING).limit(10)
         }
-
 
         return suspendCoroutine { continuation ->
             query.get().addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    val recipeList = task.result.documents.map { document ->
+                    val recipeList = task.result.documents.filter { it.exists() }.map { document ->
                         val recipeId = document.id
                         val userId = document.getString(FirebaseContracts.RECIPE_USER_ID)
                         val recipeName = document.getString(FirebaseContracts.RECIPE_NAME)
@@ -68,6 +66,7 @@ class GetRecipesOf @Inject constructor() {
                         continuation.resume(Response.Success(data = Pair(recipeList, recipeList.last().recipeId)))
                     }
                 } else {
+                    val exception = task.exception
                     continuation.resume(Response.Failiure(data = Pair(emptyList(), ""), message = null))
                 }
             }

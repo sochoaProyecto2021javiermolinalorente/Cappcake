@@ -12,8 +12,8 @@ interface RecipeRepository {
         recipeImageUri: Uri?,
         recipeProcess: String,
         ingredients: List<Ingredient>) : Response<Boolean>
-    suspend fun getRecipesOf(uid: Array<String>) : Response<List<Recipe>>
-    suspend fun getAllRecipes() : Response<List<Recipe>?>
+    suspend fun getRecipesOf(uid: Array<String>, lastRecipeId: String?) : Response<Pair<List<Recipe>, String>>
+    suspend fun getAllRecipes(lastRecipeId: String?) : Response<Pair<List<Recipe>, String>>
     suspend fun getRecipe(recipeId: String) : Response<Recipe?>
 
 }
