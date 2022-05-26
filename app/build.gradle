@@ -86,6 +86,7 @@ dependencies {
     // Accompanist
     implementation "com.google.accompanist:accompanist-pager:$accompanist"
     implementation "com.google.accompanist:accompanist-pager-indicators:$accompanist"
+    implementation "com.google.accompanist:accompanist-swiperefresh:$accompanist"
 
     // Coil
     implementation "io.coil-kt:coil-compose:$coil"

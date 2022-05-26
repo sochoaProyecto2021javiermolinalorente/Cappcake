@@ -27,6 +27,8 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import es.javier.cappcake.R
 import es.javier.cappcake.presentation.Navigation
 import es.javier.cappcake.presentation.components.RecipeComponent
@@ -65,36 +67,17 @@ fun SearchScreen(navController: NavController, viewModel: SearchScreenViewModel)
 
         Divider(thickness = 1.dp, color = Color.Black)
 
-        if (viewModel.recipes!!.isNotEmpty()) {
-            LazyColumn(
-                state = lazyListState,
-                modifier = Modifier.fillMaxSize()) {
-                items(viewModel.recipes!!, key = { it.recipeId }) {
-                    RecipeComponent(
-                        modifier = Modifier.padding(20.dp),
-                        recipe = it,
-                        loadUser = { viewModel.loadUser(it.userId) },
-                        onUserClick = {
-                            navController.navigate(Navigation.ProfileScreen.navigationRoute + "?userId=${it.userId}")
-                        },
-                        onRecipeClick = {
-                            navController.navigate(Navigation.RecipeDetailScreen.navigationRoute + "?recipeId=${it.recipeId}")
-                        }
-                    )
-                }
-            }
-        } else {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text(text = stringResource(id = R.string.search_screen_no_recipes_text))
-            }
-        }
+        if (viewModel.recipes.isNotEmpty()) {
+            SwipeRefresh(
+                state = rememberSwipeRefreshState(isRefreshing = viewModel.isRefreshing),
+                onRefresh = {
+                    coroutineScope.launch { viewModel.loadRecipesAgain() }
+                }) {
 
-        /*if (viewModel.recipes != null) {
-            if (viewModel.recipes!!.isNotEmpty()) {
                 LazyColumn(
                     state = lazyListState,
                     modifier = Modifier.fillMaxSize()) {
-                    items(viewModel.recipes!!, key = { it.recipeId }) {
+                    items(viewModel.recipes, key = { it.recipeId }) {
                         RecipeComponent(
                             modifier = Modifier.padding(20.dp),
                             recipe = it,
@@ -108,20 +91,13 @@ fun SearchScreen(navController: NavController, viewModel: SearchScreenViewModel)
                         )
                     }
                 }
-            } else {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text(text = stringResource(id = R.string.search_screen_no_recipes_text))
-                }
+
             }
         } else {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Row() {
-                    Text(text = stringResource(id = R.string.search_screen_loading_recipes_text))
-                    Spacer(modifier = Modifier.width(10.dp))
-                    CircularProgressIndicator()
-                }
+                Text(text = stringResource(id = R.string.search_screen_no_recipes_text))
             }
-        }*/
+        }
     }
 }
 

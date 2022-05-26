@@ -25,6 +25,8 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.google.firebase.auth.FirebaseAuth
 import es.javier.cappcake.R
 import es.javier.cappcake.presentation.Navigation
@@ -34,7 +36,7 @@ import es.javier.cappcake.utils.ScreenState
 import kotlinx.coroutines.launch
 
 @Composable
-fun ProfileScreen(navController: NavController, viewModel: ProfileScreenVIewModel, uid: String) {
+fun ProfileScreen(navController: NavController, viewModel: ProfileScreenViewModel, uid: String) {
 
     LaunchedEffect(key1 = Unit) {
         if (viewModel.screenStatus == ScreenState.LoadingData) {
@@ -49,7 +51,6 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileScreenVIewMode
 
     lazyListState.OnBottomReached {
         coroutineScope.launch {
-            Log.i("profile_Screen", "loading more recipes")
             viewModel.lastRecipeId?.let { viewModel.loadMoreRecipes(uid) }
         }
     }
@@ -131,22 +132,28 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileScreenVIewMode
 
             if (viewModel.user != null) {
                 if (viewModel.recipes.isNotEmpty()) {
-                    LazyColumn(
-                        state = lazyListState,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(1f)
-                    ) {
+                    SwipeRefresh(
+                        state = rememberSwipeRefreshState(isRefreshing = viewModel.isRefreshing),
+                        onRefresh = { coroutineScope.launch { viewModel.loadRecipesAgain(uid) } }) {
 
-                        items(viewModel.recipes, key = { it.recipeId }) {
+                        LazyColumn(
+                            state = lazyListState,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(1f)
+                        ) {
 
-                            RecipeComponent(
-                                modifier = Modifier.padding(20.dp),
-                                recipe = it,
-                                loadUser = { viewModel.user },
-                                onRecipeClick = { navController.navigate(Navigation.RecipeDetailScreen.navigationRoute + "?recipeId=${it.recipeId}") }
-                            )
+                            items(viewModel.recipes, key = { it.recipeId }) {
+
+                                RecipeComponent(
+                                    modifier = Modifier.padding(20.dp),
+                                    recipe = it,
+                                    loadUser = { viewModel.user },
+                                    onRecipeClick = { navController.navigate(Navigation.RecipeDetailScreen.navigationRoute + "?recipeId=${it.recipeId}") }
+                                )
+                            }
                         }
+
                     }
                 } else {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {

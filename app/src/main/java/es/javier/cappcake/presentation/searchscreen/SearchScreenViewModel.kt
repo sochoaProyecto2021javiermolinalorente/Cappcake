@@ -14,6 +14,7 @@ import es.javier.cappcake.domain.user.User
 import es.javier.cappcake.domain.recipe.use_cases.GetAllRecipesUseCase
 import es.javier.cappcake.domain.user.use_cases.GetUserProfileUseCase
 import es.javier.cappcake.utils.ScreenState
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -26,6 +27,7 @@ class SearchScreenViewModel @Inject constructor(
     var recipes: SnapshotStateList<Recipe> = mutableStateListOf()
     var lastRecipeId: String? by mutableStateOf(null)
     var screenStatus: ScreenState by mutableStateOf(ScreenState.LoadingData)
+    var isRefreshing by mutableStateOf(false)
 
     suspend fun loadAllRecipes() {
         val response = getAllRecipesUseCase(null)
@@ -37,6 +39,21 @@ class SearchScreenViewModel @Inject constructor(
                 recipes.addAll(response.data!!.first.toTypedArray())
                 lastRecipeId = response.data.second
                 screenStatus = ScreenState.DataLoaded
+            }
+        }
+    }
+
+    suspend fun loadRecipesAgain() {
+        isRefreshing = true
+        val response = getAllRecipesUseCase(null)
+
+        when (response) {
+            is Response.Failiure -> { isRefreshing = false }
+            is Response.Success -> {
+                recipes.clear()
+                recipes.addAll(response.data!!.first.toTypedArray())
+                lastRecipeId = response.data.second
+                isRefreshing = false
             }
         }
     }

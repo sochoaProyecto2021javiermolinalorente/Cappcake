@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ProfileScreenVIewModel @Inject constructor(
+class ProfileScreenViewModel @Inject constructor(
     private val getUserProfileUseCase: GetUserProfileUseCase,
     private val getRecipesOfUseCase: GetRecipesOfUseCase,
     private val getCurrentUserIdUseCase: GetCurrentUserIdUseCase,
@@ -35,6 +35,7 @@ class ProfileScreenVIewModel @Inject constructor(
     var userFollowed: Boolean by mutableStateOf(false)
     var screenStatus: ScreenState by mutableStateOf(ScreenState.LoadingData)
     var showUnFollowUserAlert = mutableStateOf(false)
+    var isRefreshing by mutableStateOf(false)
 
     suspend fun loadUser(uid: String) {
 
@@ -68,8 +69,23 @@ class ProfileScreenVIewModel @Inject constructor(
             is Response.Success -> {
                 recipes.clear()
                 recipes.addAll(response.data!!.first.toTypedArray())
-                lastRecipeId = response.data?.second
+                lastRecipeId = response.data.second
                 screenStatus = ScreenState.DataLoaded
+            }
+        }
+    }
+
+    suspend fun loadRecipesAgain(uid: String) {
+        isRefreshing = true
+        val response = getRecipesOfUseCase(arrayOf(uid), null)
+
+        when (response) {
+            is Response.Failiure -> { isRefreshing = false }
+            is Response.Success -> {
+                recipes.clear()
+                recipes.addAll(response.data!!.first.toTypedArray())
+                lastRecipeId = response.data.second
+                isRefreshing = false
             }
         }
     }

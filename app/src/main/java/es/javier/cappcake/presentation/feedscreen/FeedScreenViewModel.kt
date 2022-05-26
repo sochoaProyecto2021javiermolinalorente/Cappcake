@@ -26,10 +26,11 @@ class FeedScreenViewModel @Inject constructor(
 
     var users: List<User>? by mutableStateOf(null)
     var userFilter: String by mutableStateOf("")
-    var recipes: SnapshotStateList<Recipe>? = mutableStateListOf()
+    var recipes: SnapshotStateList<Recipe> = mutableStateListOf()
     var lastRecipeId: String? by mutableStateOf(null)
     var screenStatus: ScreenState by mutableStateOf(ScreenState.LoadingData)
     var loadingMoreRecipes by mutableStateOf(false)
+    var isRefreshing by mutableStateOf(false)
 
     suspend fun loadFollowedUsers() {
         val response = getFollowedUserUseCase()
@@ -37,7 +38,7 @@ class FeedScreenViewModel @Inject constructor(
         when (response) {
             is Response.Failiure -> {}
             is Response.Success -> {
-                users = response.data!!
+                users = response.data
             }
         }
     }
@@ -46,7 +47,7 @@ class FeedScreenViewModel @Inject constructor(
     suspend fun loadRecipesOfFollowers() {
         users?.let {
             if (it.isEmpty()) {
-                recipes?.removeAll { true }
+                recipes.clear()
                 return
             }
 
@@ -64,10 +65,44 @@ class FeedScreenViewModel @Inject constructor(
             when (response) {
                 is Response.Failiure -> { }
                 is Response.Success -> {
-                    recipes?.clear()
-                    recipes?.addAll(response.data!!.first.toTypedArray())
-                    lastRecipeId = response.data?.second
+                    recipes.clear()
+                    recipes.addAll(response.data!!.first.toTypedArray())
+                    lastRecipeId = response.data.second
                     screenStatus = ScreenState.DataLoaded
+                }
+            }
+        }
+    }
+
+
+    suspend fun loadRecipesOfFollowersAgain() {
+        isRefreshing = true
+        loadFollowedUsers()
+        if (users != null) {
+            if (users!!.isEmpty()) {
+                recipes.clear()
+                isRefreshing = false
+                return
+            }
+
+            val ids: Array<String> = if (userFilter.isBlank()) {
+                Array(users!!.size) { position ->
+                    users!![position].userId
+                }
+            } else {
+                arrayOf(userFilter)
+            }
+
+
+            val response = getRecipesOfUseCase(ids, null)
+
+            when (response) {
+                is Response.Failiure -> { isRefreshing = false }
+                is Response.Success -> {
+                    recipes.clear()
+                    recipes.addAll(response.data!!.first.toTypedArray())
+                    lastRecipeId = response.data.second
+                    isRefreshing = false
                 }
             }
         }
@@ -76,7 +111,7 @@ class FeedScreenViewModel @Inject constructor(
     suspend fun loadMoreRecipes() {
         users?.let {
             if (it.isEmpty()) {
-                recipes?.removeAll { true }
+                recipes.clear()
                 return
             }
 
@@ -95,8 +130,8 @@ class FeedScreenViewModel @Inject constructor(
             when (response) {
                 is Response.Failiure -> { loadingMoreRecipes = false }
                 is Response.Success -> {
-                    recipes?.addAll(response.data!!.first.toTypedArray())
-                    lastRecipeId = response.data?.second
+                    recipes.addAll(response.data!!.first.toTypedArray())
+                    lastRecipeId = response.data.second
                     loadingMoreRecipes = false
                 }
             }

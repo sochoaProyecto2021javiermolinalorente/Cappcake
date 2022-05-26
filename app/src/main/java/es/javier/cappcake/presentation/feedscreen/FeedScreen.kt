@@ -24,6 +24,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import es.javier.cappcake.R
 import es.javier.cappcake.domain.user.User
 import es.javier.cappcake.presentation.Navigation
@@ -108,16 +110,21 @@ fun FeedScreen(navController: NavController, viewModel: FeedScreenViewModel) {
             Divider(color = Color.Black, thickness = 1.dp)
         }
 
-        if (viewModel.recipes != null) {
-            if (viewModel.recipes!!.isEmpty()) {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text(text = stringResource(id = R.string.feed_screen_no_recipes_text))
-                }
-            } else {
+        if (viewModel.recipes.isEmpty()) {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text(text = stringResource(id = R.string.feed_screen_no_recipes_text))
+            }
+        } else {
+            SwipeRefresh(
+                state = rememberSwipeRefreshState(isRefreshing = viewModel.isRefreshing),
+                onRefresh = { coroutineScope.launch {
+                    viewModel.loadRecipesOfFollowersAgain()
+                } }) {
+
                 LazyColumn(
                     state = lazyListState,
                     modifier = Modifier.fillMaxSize()) {
-                    items(viewModel.recipes!!, key = { it.recipeId }) {
+                    items(viewModel.recipes, key = { it.recipeId }) {
                         RecipeComponent(
                             modifier = Modifier.padding(20.dp),
                             recipe = it,
@@ -133,14 +140,7 @@ fun FeedScreen(navController: NavController, viewModel: FeedScreenViewModel) {
                         }
                     }
                 }
-            }
-        } else {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Row {
-                    Text(text = stringResource(id = R.string.feed_screen_loading_recipes_text))
-                    Spacer(modifier = Modifier.width(10.dp))
-                    CircularProgressIndicator()
-                }
+
             }
         }
     }
