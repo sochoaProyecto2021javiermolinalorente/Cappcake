@@ -221,10 +221,10 @@ fun BottomNavigationitems(navController: NavController, currentBackStackEntry: N
             onClick = { navController.navigate(Navigation.AddRecipeScreen.navigationRoute) {
                 popUpTo(Navigation.FeedScreen.navigationRoute) {
                     inclusive = false
-                    this.saveState = true
+                    this.saveState = false
                 }
                 launchSingleTop = true
-                restoreState = true
+                restoreState = false
             } },
             icon = { Icon(imageVector = Icons.Filled.Add, contentDescription = null)})
 

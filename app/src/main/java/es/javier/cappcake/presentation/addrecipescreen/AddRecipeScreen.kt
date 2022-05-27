@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.google.accompanist.pager.*
 import es.javier.cappcake.R
+import es.javier.cappcake.presentation.Navigation
 import es.javier.cappcake.presentation.components.ErrorDialog
 import es.javier.cappcake.presentation.components.LoadingAlert
 import es.javier.cappcake.presentation.components.StoragePermissionNotGrantedAlert
@@ -47,6 +48,17 @@ fun AddRecipeScreen(navController: NavController, viewModel: AddRecipeScreenView
 
     val pagerState = rememberPagerState()
     val scope = rememberCoroutineScope()
+
+    LaunchedEffect(key1 = viewModel.recipeFinished) {
+        if (viewModel.recipeFinished) {
+            val id = viewModel.getLastRecipe()
+            id?.let {
+                navController.navigate(Navigation.RecipeDetailScreen.navigationRoute + "?recipeId=${it}") {
+                    popUpTo(Navigation.FeedScreen.navigationRoute)
+                }
+            }
+        }
+    }
 
     val imageSelector = rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { imageUri ->
         imageUri?.let {
