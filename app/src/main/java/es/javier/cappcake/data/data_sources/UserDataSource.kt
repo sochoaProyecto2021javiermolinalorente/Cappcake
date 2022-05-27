@@ -28,7 +28,6 @@ class UserDataSource @Inject constructor(
                     if (task.isSuccessful) {
                         continuation.resume(Response.Success(true))
                     } else {
-                        val exception = task.exception
                         continuation.resume(Response.Failiure(task.exception!!.message!!, false))
                     }
                 }
