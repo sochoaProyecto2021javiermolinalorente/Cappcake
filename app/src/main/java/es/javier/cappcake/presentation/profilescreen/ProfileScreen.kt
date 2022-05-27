@@ -1,10 +1,12 @@
 package es.javier.cappcake.presentation.profilescreen
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -23,21 +25,34 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.google.firebase.auth.FirebaseAuth
 import es.javier.cappcake.R
 import es.javier.cappcake.presentation.Navigation
 import es.javier.cappcake.presentation.components.RecipeComponent
+import es.javier.cappcake.utils.OnBottomReached
+import es.javier.cappcake.utils.ScreenState
 import kotlinx.coroutines.launch
 
 @Composable
-fun ProfileScreen(navController: NavController, viewModel: ProfileScreenVIewModel, uid: String) {
-
-    val coroutineScope = rememberCoroutineScope()
+fun ProfileScreen(navController: NavController, viewModel: ProfileScreenViewModel, uid: String) {
 
     LaunchedEffect(key1 = Unit) {
-        viewModel.loadUser(uid = uid)
-        viewModel.getFollowersCount(uid = uid)
-        viewModel.loadRecipes(uid = uid)
+        if (viewModel.screenStatus == ScreenState.LoadingData) {
+            viewModel.loadUser(uid = uid)
+            viewModel.getFollowersCount(uid = uid)
+            viewModel.loadRecipes(uid = uid)
+        }
+    }
+
+    val lazyListState = rememberLazyListState()
+    val coroutineScope = rememberCoroutineScope()
+
+    lazyListState.OnBottomReached {
+        coroutineScope.launch {
+            viewModel.lastRecipeId?.let { viewModel.loadMoreRecipes(uid) }
+        }
     }
 
     if (viewModel.showUnFollowUserAlert.value) {
@@ -115,23 +130,30 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileScreenVIewMode
                 }
             }
 
-            if (viewModel.recipes != null) {
-                if (viewModel.recipes!!.isNotEmpty()) {
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(1f)
-                    ) {
+            if (viewModel.user != null) {
+                if (viewModel.recipes.isNotEmpty()) {
+                    SwipeRefresh(
+                        state = rememberSwipeRefreshState(isRefreshing = viewModel.isRefreshing),
+                        onRefresh = { coroutineScope.launch { viewModel.loadRecipesAgain(uid) } }) {
 
-                        items(viewModel.recipes!!, key = { it.recipeId }) {
+                        LazyColumn(
+                            state = lazyListState,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(1f)
+                        ) {
 
-                            RecipeComponent(
-                                modifier = Modifier.padding(20.dp),
-                                recipe = it,
-                                loadUser = { viewModel.user },
-                                onRecipeClick = { navController.navigate(Navigation.RecipeDetailScreen.navigationRoute + "?recipeId=${it.recipeId}") }
-                            )
+                            items(viewModel.recipes, key = { it.recipeId }) {
+
+                                RecipeComponent(
+                                    modifier = Modifier.padding(20.dp),
+                                    recipe = it,
+                                    loadUser = { viewModel.user },
+                                    onRecipeClick = { navController.navigate(Navigation.RecipeDetailScreen.navigationRoute + "?recipeId=${it.recipeId}") }
+                                )
+                            }
                         }
+
                     }
                 } else {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {

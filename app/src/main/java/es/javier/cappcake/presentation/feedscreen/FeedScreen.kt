@@ -1,26 +1,19 @@
 package es.javier.cappcake.presentation.feedscreen
 
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+import android.util.Log
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -31,24 +24,39 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import es.javier.cappcake.R
-import es.javier.cappcake.domain.recipe.Recipe
 import es.javier.cappcake.domain.user.User
 import es.javier.cappcake.presentation.Navigation
 import es.javier.cappcake.presentation.components.RecipeComponent
 import es.javier.cappcake.presentation.ui.theme.CappcakeTheme
 import es.javier.cappcake.presentation.ui.theme.orangish
+import es.javier.cappcake.utils.OnBottomReached
+import es.javier.cappcake.utils.ScreenState
 import kotlinx.coroutines.launch
 
 @Composable
 fun FeedScreen(navController: NavController, viewModel: FeedScreenViewModel) {
 
     LaunchedEffect(key1 = Unit) {
-        viewModel.loadFollowedUsers()
-        viewModel.loadRecipesOfFollowers()
+        if (viewModel.screenStatus == ScreenState.LoadingData) {
+            viewModel.loadFollowedUsers()
+            viewModel.loadRecipesOfFollowers()
+        }
     }
 
+
+    val lazyListState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
+
+    lazyListState.OnBottomReached {
+        coroutineScope.launch {
+            Log.i("feed_screen", "loading more recipes")
+            viewModel.lastRecipeId?.let { viewModel.loadMoreRecipes() }
+        }
+    }
+
 
     Column(modifier = Modifier.fillMaxSize()) {
         Column {
@@ -91,7 +99,9 @@ fun FeedScreen(navController: NavController, viewModel: FeedScreenViewModel) {
                     }
                 }
             } else {
-                Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.height(70.dp).fillMaxWidth()) {
+                Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier
+                    .height(70.dp)
+                    .fillMaxWidth()) {
                     Text(text = stringResource(id = R.string.feed_screen_loading_users_text))
                     Spacer(modifier = Modifier.width(10.dp))
                     CircularProgressIndicator()
@@ -100,14 +110,21 @@ fun FeedScreen(navController: NavController, viewModel: FeedScreenViewModel) {
             Divider(color = Color.Black, thickness = 1.dp)
         }
 
-        if (viewModel.recipes != null) {
-            if (viewModel.recipes!!.isEmpty()) {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text(text = stringResource(id = R.string.feed_screen_no_recipes_text))
-                }
-            } else {
-                LazyColumn(modifier = Modifier.fillMaxSize()) {
-                    items(viewModel.recipes!!, key = { it.recipeId }) {
+        if (viewModel.recipes.isEmpty()) {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text(text = stringResource(id = R.string.feed_screen_no_recipes_text))
+            }
+        } else {
+            SwipeRefresh(
+                state = rememberSwipeRefreshState(isRefreshing = viewModel.isRefreshing),
+                onRefresh = { coroutineScope.launch {
+                    viewModel.loadRecipesOfFollowersAgain()
+                } }) {
+
+                LazyColumn(
+                    state = lazyListState,
+                    modifier = Modifier.fillMaxSize()) {
+                    items(viewModel.recipes, key = { it.recipeId }) {
                         RecipeComponent(
                             modifier = Modifier.padding(20.dp),
                             recipe = it,
@@ -116,15 +133,14 @@ fun FeedScreen(navController: NavController, viewModel: FeedScreenViewModel) {
                             onRecipeClick = { navController.navigate(Navigation.RecipeDetailScreen.navigationRoute + "?recipeId=${it.recipeId}") }
                         )
                     }
+
+                    if (viewModel.loadingMoreRecipes) {
+                        item {
+                            CircularProgressIndicator(modifier = Modifier.padding(vertical = 5.dp))
+                        }
+                    }
                 }
-            }
-        } else {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Row {
-                    Text(text = stringResource(id = R.string.feed_screen_loading_recipes_text))
-                    Spacer(modifier = Modifier.width(10.dp))
-                    CircularProgressIndicator()
-                }
+
             }
         }
     }

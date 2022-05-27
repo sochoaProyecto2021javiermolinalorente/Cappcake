@@ -4,24 +4,18 @@ package es.javier.cappcake
 
 import android.os.Bundle
 import android.util.Log
-import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.*
 import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -41,17 +35,17 @@ import es.javier.cappcake.presentation.addrecipescreen.AddRecipeScreen
 import es.javier.cappcake.presentation.addrecipescreen.AddRecipeScreenViewModel
 import es.javier.cappcake.presentation.addrecipescreen.RecipeProcessScreen
 import es.javier.cappcake.presentation.feedscreen.FeedScreen
+import es.javier.cappcake.presentation.feedscreen.FeedScreenViewModel
 import es.javier.cappcake.presentation.loadingscreen.LoadingScreen
 import es.javier.cappcake.presentation.loginscreen.LoginScreen
 import es.javier.cappcake.presentation.profilescreen.ProfileScreen
+import es.javier.cappcake.presentation.profilescreen.ProfileScreenViewModel
 import es.javier.cappcake.presentation.recipedetailscreen.RecipeDetailScreen
 import es.javier.cappcake.presentation.registerscreen.RegisterScreen
 import es.javier.cappcake.presentation.searchscreen.SearchScreen
+import es.javier.cappcake.presentation.searchscreen.SearchScreenViewModel
 import es.javier.cappcake.presentation.ui.theme.CappcakeTheme
 import java.lang.Exception
-import javax.inject.Inject
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {

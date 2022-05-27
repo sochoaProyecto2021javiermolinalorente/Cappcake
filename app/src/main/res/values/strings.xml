@@ -29,12 +29,10 @@
     <!-- Feed screen -->
     <string name="feed_screen_loading_users_text">Cargando usuarios…</string>
     <string name="feed_screen_no_users_text">No sigues a ningún usuario</string>
-    <string name="feed_screen_loading_recipes_text">Cargando recetas…</string>
     <string name="feed_screen_no_recipes_text">No hay recetas disponibles</string>
 
     <!-- Search screen -->
     <string name="search_search_hint">Buscar…</string>
-    <string name="search_screen_loading_recipes_text">Cargando recetas…</string>
     <string name="search_screen_no_recipes_text">No ha recetas disponibles</string>
 
     <!-- Add recipe screen -->
