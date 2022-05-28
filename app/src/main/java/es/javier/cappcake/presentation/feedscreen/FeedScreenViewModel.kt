@@ -29,7 +29,6 @@ class FeedScreenViewModel @Inject constructor(
     var recipes: SnapshotStateList<Recipe> = mutableStateListOf()
     var lastRecipeId: String? by mutableStateOf(null)
     var screenStatus: ScreenState by mutableStateOf(ScreenState.LoadingData)
-    var loadingMoreRecipes by mutableStateOf(false)
     var isRefreshing by mutableStateOf(false)
 
     suspend fun loadFollowedUsers() {
@@ -115,7 +114,6 @@ class FeedScreenViewModel @Inject constructor(
                 return
             }
 
-            loadingMoreRecipes = true
             val ids: Array<String> = if (userFilter.isBlank()) {
                 Array(it.size) { position ->
                     it[position].userId
@@ -128,11 +126,10 @@ class FeedScreenViewModel @Inject constructor(
             val response = getRecipesOfUseCase(ids, lastRecipeId)
 
             when (response) {
-                is Response.Failiure -> { loadingMoreRecipes = false }
+                is Response.Failiure -> {  }
                 is Response.Success -> {
                     recipes.addAll(response.data!!.first.toTypedArray())
                     lastRecipeId = response.data.second
-                    loadingMoreRecipes = false
                 }
             }
         }

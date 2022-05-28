@@ -7,11 +7,13 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Search
@@ -55,10 +57,6 @@ fun SearchScreen(navController: NavController, viewModel: SearchScreenViewModel)
         }
     }
 
-    BackHandler(enabled = true) {
-        navController.popBackStack(Navigation.FeedScreen.navigationRoute, inclusive = false, true)
-    }
-
     Column(modifier = Modifier.fillMaxSize()) {
         SearchBar(modifier = Modifier
             .fillMaxWidth()
@@ -96,6 +94,16 @@ fun SearchScreen(navController: NavController, viewModel: SearchScreenViewModel)
         } else {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Text(text = stringResource(id = R.string.search_screen_no_recipes_text))
+
+                SwipeRefresh(
+                    state = rememberSwipeRefreshState(isRefreshing = viewModel.isRefreshing),
+                    onRefresh = {
+                        coroutineScope.launch { viewModel.loadRecipesAgain() }
+                    }) {
+
+                    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) { }
+
+                }
             }
         }
     }

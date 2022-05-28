@@ -66,12 +66,14 @@
     <string name="profile_screen_posts_text">Publicaciones</string>
     <string name="profile_screen_followers_text">Seguidores</string>
     <string name="profile_screen_following_text">Siguiendo</string>
-    <string name="profile_screen_sign_out_button_text">Cerrar sesión</string>
     <string name="profile_screen_follow_button_text">Seguir</string>
     <string name="profile_screen_unfollow_button_text">Dejar de seguir</string>
     <string name="profile_screen_username_text">Nombre de usuario</string>
     <string name="profile_screen_loading_recipes_text">Cargando recetas…</string>
     <string name="profile_screen_no_recipes_text">No se han subido recetas</string>
+    <string name="profile_screen_liked_recipes_text">Recetas que te gustan</string>
+    <string name="profile_screen_edit_profile_text">Editar perfil</string>
+    <string name="profile_screen_sign_out_text">Cerrar sesión</string>
     <!-- Unfollow user alert -->
     <string name="profile_screen_unfollow_user_alert_title">Dejar de seguir</string>
     <string name="profile_screen_unfollow_user_alert_message_text">Vas a dejar de seguir a </string>

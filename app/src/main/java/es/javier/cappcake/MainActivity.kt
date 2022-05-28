@@ -241,7 +241,7 @@ fun BottomNavigationitems(navController: NavController, currentBackStackEntry: N
             icon = { Icon(imageVector = Icons.Filled.Favorite, contentDescription = null)})
 
         BottomNavigationItem(
-            selected = currentDestination?.hierarchy?.any { it.route == Navigation.ProfileScreen.navigationRoute } == true,
+            selected = currentDestination?.hierarchy?.any { it.route == "${Navigation.ProfileScreen.navigationRoute}?userId={userId}" } == true,
             onClick = { navController.navigate(Navigation.ProfileScreen.navigationRoute) {
                 popUpTo(Navigation.FeedScreen.navigationRoute) {
                     inclusive = false

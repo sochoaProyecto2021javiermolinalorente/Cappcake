@@ -113,6 +113,16 @@ fun FeedScreen(navController: NavController, viewModel: FeedScreenViewModel) {
         if (viewModel.recipes.isEmpty()) {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Text(text = stringResource(id = R.string.feed_screen_no_recipes_text))
+
+                SwipeRefresh(
+                    state = rememberSwipeRefreshState(isRefreshing = viewModel.isRefreshing),
+                    onRefresh = { coroutineScope.launch {
+                        viewModel.loadRecipesOfFollowersAgain()
+                    } }) {
+
+                    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) { }
+
+                }
             }
         } else {
             SwipeRefresh(
@@ -133,14 +143,7 @@ fun FeedScreen(navController: NavController, viewModel: FeedScreenViewModel) {
                             onRecipeClick = { navController.navigate(Navigation.RecipeDetailScreen.navigationRoute + "?recipeId=${it.recipeId}") }
                         )
                     }
-
-                    if (viewModel.loadingMoreRecipes) {
-                        item {
-                            CircularProgressIndicator(modifier = Modifier.padding(vertical = 5.dp))
-                        }
-                    }
                 }
-
             }
         }
     }
