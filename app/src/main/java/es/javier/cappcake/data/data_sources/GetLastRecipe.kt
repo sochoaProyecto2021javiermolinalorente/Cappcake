@@ -22,7 +22,9 @@ class GetLastRecipe @Inject constructor() {
     suspend fun getLastRecipe() : Response<String?> {
         val ref = firestore.collection(FirebaseContracts.RECIPE_COLLECTION)
 
-        val query = ref.orderBy(FirebaseContracts.RECIPE_TIMESTAMP, Query.Direction.DESCENDING).limit(1)
+        val query = ref.whereEqualTo(FirebaseContracts.RECIPE_USER_ID, auth.uid!!)
+            .orderBy(FirebaseContracts.RECIPE_TIMESTAMP, Query.Direction.DESCENDING)
+            .limit(1)
 
         return suspendCoroutine { continuation ->
             query.get().addOnCompleteListener { task ->
