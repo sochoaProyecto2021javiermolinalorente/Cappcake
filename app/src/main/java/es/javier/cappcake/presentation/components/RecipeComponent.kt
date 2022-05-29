@@ -16,6 +16,7 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -53,7 +54,12 @@ fun RecipeComponent(modifier: Modifier,
                             .size(50.dp)
                             .padding(5.dp),
                         imagePath = user?.profileImage)
-                    Text(text = user?.username ?: "Username", style = MaterialTheme.typography.body1)
+                    Text(
+                        text = user?.username ?: "Username",
+                        style = MaterialTheme.typography.body1,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
+                    )
                 }
                 Divider(color = Color.Black)
             }
@@ -88,7 +94,10 @@ fun RecipeComponent(modifier: Modifier,
                 Text(
                     text = recipe.title,
                     style = MaterialTheme.typography.body1,
-                    modifier = Modifier.padding(10.dp))
+                    modifier = Modifier.padding(10.dp),
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
             }
         }
     }

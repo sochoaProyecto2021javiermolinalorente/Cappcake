@@ -3,6 +3,7 @@ package es.javier.cappcake.presentation.recipedetailscreen
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Comment
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.runtime.Composable
@@ -14,6 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
@@ -44,16 +46,26 @@ fun RecipeDetailScreen(navController: NavController, viewModel: RecipeDetailScre
     } else {
         Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
 
-            AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .crossfade(true)
-                    .data(viewModel.recipe!!.image)
-                    .build(),
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxSize(0.25f))
+            Box {
+                AsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .crossfade(true)
+                        .data(viewModel.recipe!!.image)
+                        .build(),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxSize(0.25f))
+
+                IconButton(onClick = { navController.popBackStack() }) {
+                    Icon(
+                        imageVector = Icons.Filled.ArrowBack,
+                        contentDescription = null,
+                        tint = Color.White
+                    )
+                }
+            }
 
             Divider()
             Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
@@ -62,7 +74,10 @@ fun RecipeDetailScreen(navController: NavController, viewModel: RecipeDetailScre
                     modifier = Modifier
                         .weight(1f)
                         .padding(horizontal = 20.dp),
-                    style = MaterialTheme.typography.h5)
+                    style = MaterialTheme.typography.h5,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 2
+                )
                 Icon(
                     imageVector = Icons.Filled.FavoriteBorder,
                     contentDescription = null,

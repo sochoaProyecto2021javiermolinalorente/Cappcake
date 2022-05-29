@@ -1,5 +1,6 @@
 package es.javier.cappcake.data.data_sources
 
+import android.graphics.Bitmap
 import android.net.Uri
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -14,7 +15,9 @@ class UserDataSource @Inject constructor(
     private val getProfileInfo: GetProfileInfo,
     private val followUser: FollowUser,
     private val unfollowUser: UnfollowUser,
-    private val getFollowedUsers: GetFollowedUsers
+    private val getFollowedUsers: GetFollowedUsers,
+    private val loadImage: LoadImage,
+    private val updateProfile: UpdateProfile
 ) {
 
     private val auth = Firebase.auth
@@ -42,6 +45,10 @@ class UserDataSource @Inject constructor(
         return getProfileInfo.getUserProfile(uid = uid)
     }
 
+    suspend fun loadProfileImage(url: String) : Response<Bitmap?> {
+        return loadImage.loadImage(url)
+    }
+
     suspend fun getFollowedUsers() : Response<List<User>> {
         return getFollowedUsers.getFollowedUsers()
     }
@@ -56,6 +63,10 @@ class UserDataSource @Inject constructor(
 
     suspend fun getFollowersCount(uid: String) : Response<Int?> {
         return getProfileInfo.getFollowersCount(uid = uid)
+    }
+
+    suspend fun updateUserProfile(username: String, profileImage: Uri?) : Response<Boolean> {
+        return updateProfile.updateProfile(username, profileImage)
     }
 
 }

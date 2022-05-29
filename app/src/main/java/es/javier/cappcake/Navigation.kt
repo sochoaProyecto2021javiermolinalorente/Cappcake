@@ -1,4 +1,4 @@
-package es.javier.cappcake.presentation
+package es.javier.cappcake
 
 sealed class Navigation(val navigationRoute: String) {
 
@@ -21,7 +21,10 @@ sealed class Navigation(val navigationRoute: String) {
     object RecipeProcessScreen: Navigation("recipe_process_screen")
 
     object ActivityScreen: Navigation("activity_screen")
+
+    // Profile screen navigtion
     object ProfileScreen: Navigation("profile_screen")
+    object EditProfileScreen: Navigation("edit_prfile_screen")
 
     object RecipeDetailScreen: Navigation("recipeDetailScreen")
 }

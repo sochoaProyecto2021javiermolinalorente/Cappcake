@@ -44,11 +44,10 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import es.javier.cappcake.presentation.Navigation
+import es.javier.cappcake.Navigation
 import es.javier.cappcake.presentation.components.EmailOutlinedTextField
 import es.javier.cappcake.presentation.components.ErrorDialog
 import es.javier.cappcake.presentation.components.StoragePermissionNotGrantedAlert
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 @Composable
@@ -241,6 +240,7 @@ fun UsernameTextField(modifier: Modifier = Modifier, value: String, onValueChang
         keyboardActions = KeyboardActions(onNext = {focusManager.moveFocus(FocusDirection.Down)}),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Next),
         singleLine = true,
+        maxLines = 1,
         colors = if (isFocused) TextFieldDefaults.outlinedTextFieldColors(
             focusedLabelColor = MaterialTheme.colors.primary,
             leadingIconColor = MaterialTheme.colors.primary
@@ -280,6 +280,7 @@ fun RegisterPasswordOutlinedTextField(
         visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
         enabled = enabled,
         readOnly = false,
+        maxLines = 1,
         singleLine = true,
         modifier = modifier.onFocusChanged { focusState ->
             isFocused = focusState.isFocused
@@ -328,6 +329,7 @@ fun RepeatPasswordOutlinedTextField(
         visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
         enabled = enabled,
         readOnly = false,
+        maxLines = 1,
         singleLine = true,
         isError = error,
         modifier = modifier.onFocusChanged { focusState ->

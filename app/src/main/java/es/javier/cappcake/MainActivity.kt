@@ -29,21 +29,18 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.firestoreSettings
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
-import es.javier.cappcake.presentation.Navigation
 import es.javier.cappcake.presentation.activityscreen.ActivityScreen
 import es.javier.cappcake.presentation.addrecipescreen.AddRecipeScreen
 import es.javier.cappcake.presentation.addrecipescreen.AddRecipeScreenViewModel
 import es.javier.cappcake.presentation.addrecipescreen.RecipeProcessScreen
+import es.javier.cappcake.presentation.editprofilescreen.EditProfileScreen
 import es.javier.cappcake.presentation.feedscreen.FeedScreen
-import es.javier.cappcake.presentation.feedscreen.FeedScreenViewModel
 import es.javier.cappcake.presentation.loadingscreen.LoadingScreen
 import es.javier.cappcake.presentation.loginscreen.LoginScreen
 import es.javier.cappcake.presentation.profilescreen.ProfileScreen
-import es.javier.cappcake.presentation.profilescreen.ProfileScreenViewModel
 import es.javier.cappcake.presentation.recipedetailscreen.RecipeDetailScreen
 import es.javier.cappcake.presentation.registerscreen.RegisterScreen
 import es.javier.cappcake.presentation.searchscreen.SearchScreen
-import es.javier.cappcake.presentation.searchscreen.SearchScreenViewModel
 import es.javier.cappcake.presentation.ui.theme.CappcakeTheme
 import java.lang.Exception
 
@@ -174,6 +171,10 @@ fun NavGraphBuilder.ApplicationGraph(navController: NavController) {
             }
         }
 
+        composable(Navigation.EditProfileScreen.navigationRoute) {
+            EditProfileScreen(navController = navController, viewModel = hiltViewModel())
+        }
+
         composable("${Navigation.RecipeDetailScreen.navigationRoute}?recipeId={recipeId}", arguments = listOf(
             navArgument(name = "recipeId") {
                 type = NavType.StringType
@@ -221,10 +222,10 @@ fun BottomNavigationitems(navController: NavController, currentBackStackEntry: N
             onClick = { navController.navigate(Navigation.AddRecipeScreen.navigationRoute) {
                 popUpTo(Navigation.FeedScreen.navigationRoute) {
                     inclusive = false
-                    this.saveState = true
+                    this.saveState = false
                 }
                 launchSingleTop = true
-                restoreState = true
+                restoreState = false
             } },
             icon = { Icon(imageVector = Icons.Filled.Add, contentDescription = null)})
 
@@ -241,7 +242,7 @@ fun BottomNavigationitems(navController: NavController, currentBackStackEntry: N
             icon = { Icon(imageVector = Icons.Filled.Favorite, contentDescription = null)})
 
         BottomNavigationItem(
-            selected = currentDestination?.hierarchy?.any { it.route == Navigation.ProfileScreen.navigationRoute } == true,
+            selected = currentDestination?.hierarchy?.any { it.route == "${Navigation.ProfileScreen.navigationRoute}?userId={userId}" } == true,
             onClick = { navController.navigate(Navigation.ProfileScreen.navigationRoute) {
                 popUpTo(Navigation.FeedScreen.navigationRoute) {
                     inclusive = false

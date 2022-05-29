@@ -12,6 +12,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import es.javier.cappcake.domain.AmountType
 import es.javier.cappcake.domain.Ingredient
 import es.javier.cappcake.domain.Response
+import es.javier.cappcake.domain.recipe.use_cases.GetLastRecipeUseCase
 import es.javier.cappcake.domain.recipe.use_cases.UploadRecipeUseCase
 import es.javier.cappcake.utils.ImageCompressor
 import kotlinx.coroutines.launch
@@ -20,7 +21,8 @@ import javax.inject.Inject
 @HiltViewModel
 class AddRecipeScreenViewModel @Inject constructor(
     private val compressor: ImageCompressor,
-    private val uploadRecipeUseCase: UploadRecipeUseCase
+    private val uploadRecipeUseCase: UploadRecipeUseCase,
+    private val getLastRecipeUseCase: GetLastRecipeUseCase
 ) : ViewModel() {
 
     var recipeName by mutableStateOf("")
@@ -75,6 +77,8 @@ class AddRecipeScreenViewModel @Inject constructor(
             }
         }
     }
+
+    suspend fun getLastRecipe() : String? = getLastRecipeUseCase().data
 
     private fun checkValidRecipe() : Boolean {
         return checkName() && checkImage() && checkIngredients() && checkRecipeProcess()

@@ -12,7 +12,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import es.javier.cappcake.R
-import es.javier.cappcake.presentation.Navigation
+import es.javier.cappcake.Navigation
 import es.javier.cappcake.presentation.ui.theme.notePageColor
 
 @Composable

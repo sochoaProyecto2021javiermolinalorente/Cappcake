@@ -1,14 +1,22 @@
 package es.javier.cappcake.presentation.profilescreen
 
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Logout
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,8 +37,11 @@ import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.google.firebase.auth.FirebaseAuth
 import es.javier.cappcake.R
-import es.javier.cappcake.presentation.Navigation
+import es.javier.cappcake.Navigation
 import es.javier.cappcake.presentation.components.RecipeComponent
+import es.javier.cappcake.presentation.ui.theme.primaryVariant
+import es.javier.cappcake.presentation.ui.theme.primarydrawervariant
+import es.javier.cappcake.presentation.ui.theme.redvariant
 import es.javier.cappcake.utils.OnBottomReached
 import es.javier.cappcake.utils.ScreenState
 import kotlinx.coroutines.launch
@@ -68,11 +79,7 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileScreenViewMode
     Scaffold(
         drawerContent = if (viewModel.getCurrentUserId() == uid) {
             {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Button(onClick = { signOut(navController = navController) }) {
-                        Text(text = stringResource(id = R.string.profile_screen_sign_out_button_text).uppercase())
-                    }
-                }
+                DrawerProfileSettings(navController = navController, viewModel = viewModel)
             }
         } else null
     ) {
@@ -131,11 +138,18 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileScreenViewMode
             }
 
             if (viewModel.user != null) {
-                if (viewModel.recipes.isNotEmpty()) {
-                    SwipeRefresh(
-                        state = rememberSwipeRefreshState(isRefreshing = viewModel.isRefreshing),
-                        onRefresh = { coroutineScope.launch { viewModel.loadRecipesAgain(uid) } }) {
+                SwipeRefresh(
+                    state = rememberSwipeRefreshState(isRefreshing = viewModel.isRefreshing),
+                    onRefresh = {
+                        coroutineScope.launch {
+                            viewModel.loadUser(uid)
+                            //viewModel.recipes.clear()
+                            viewModel.loadRecipesAgain(uid)
+                        }
+                    }
+                ) {
 
+                    if (viewModel.recipes.isNotEmpty()) {
                         LazyColumn(
                             state = lazyListState,
                             modifier = Modifier
@@ -153,12 +167,14 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileScreenViewMode
                                 )
                             }
                         }
+                    } else {
+                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            Text(text = stringResource(id = R.string.profile_screen_no_recipes_text))
 
+                            Column(modifier = Modifier.fillMaxSize().scrollable(rememberScrollState(), Orientation.Vertical)) {}
+                        }
                     }
-                } else {
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Text(text = stringResource(id = R.string.profile_screen_no_recipes_text))
-                    }
+
                 }
             } else {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -228,6 +244,84 @@ fun UnfollowUserAlert(username: String, showAlert: MutableState<Boolean>, onConf
 
 }
 
+@Composable
+fun DrawerProfileSettings(navController: NavController, viewModel: ProfileScreenViewModel) {
+    
+    Column(modifier = Modifier.fillMaxWidth()) {
+
+        Surface(
+            modifier = Modifier
+                .padding(5.dp)
+                .clickable { },
+            color = primarydrawervariant,
+            shape = RoundedCornerShape(8.dp)
+        ) {
+            Row(modifier = Modifier
+                .fillMaxWidth()
+                .padding(5.dp),
+                verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = Icons.Filled.Favorite,
+                    contentDescription = null,
+                    tint = MaterialTheme.colors.primary
+                )
+                Spacer(modifier = Modifier.width(20.dp))
+                Text(
+                    text = stringResource(id = R.string.profile_screen_liked_recipes_text).uppercase()
+                )
+            }
+        }
+
+        Surface(
+            modifier = Modifier
+                .padding(5.dp)
+                .clickable { navController.navigate(Navigation.EditProfileScreen.navigationRoute) },
+            color = primarydrawervariant,
+            shape = RoundedCornerShape(8.dp)
+        ) {
+            Row(modifier = Modifier
+                .fillMaxWidth()
+                .padding(5.dp),
+                verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = Icons.Filled.Edit,
+                    contentDescription = null,
+                    tint = MaterialTheme.colors.primary
+                )
+                Spacer(modifier = Modifier.width(20.dp))
+                Text(
+                    text = stringResource(id = R.string.profile_screen_edit_profile_text).uppercase()
+                )
+            }
+        }
+
+        Surface(
+            modifier = Modifier
+                .padding(horizontal = 5.dp, vertical = 5.dp)
+                .clickable { signOut(navController) },
+            color = redvariant,
+            shape = RoundedCornerShape(8.dp)
+        ) {
+            Row(modifier = Modifier
+                .fillMaxWidth()
+                .padding(5.dp),
+                verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = Icons.Filled.Logout,
+                    contentDescription = null,
+                    tint = Color.Red
+                )
+                Spacer(modifier = Modifier.width(20.dp))
+                Text(
+                    text = stringResource(id = R.string.profile_screen_sign_out_text).uppercase(),
+                    color = Color.Red
+                )
+            }
+        }
+        
+    }
+    
+}
 
 
 private fun signOut(navController: NavController) {

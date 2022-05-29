@@ -1,5 +1,6 @@
 package es.javier.cappcake.data.repositories
 
+import android.graphics.Bitmap
 import android.net.Uri
 import es.javier.cappcake.data.data_sources.UserDataSource
 import es.javier.cappcake.domain.Response
@@ -20,10 +21,16 @@ class ImplUserRepository @Inject constructor(
         userDataSource.registerUser(username, email, password, image)
 
     override suspend fun getUserProfile(uid: String): Response<Pair<User, Boolean>?> = userDataSource.getUserProfile(uid = uid)
+
+    override suspend fun loadProfileImage(url: String): Response<Bitmap?> = userDataSource.loadProfileImage(url)
+
     override suspend fun getFollowersCount(uid: String): Response<Int?> = userDataSource.getFollowersCount(uid = uid)
+
     override suspend fun getFollowedUsers(): Response<List<User>> = userDataSource.getFollowedUsers()
 
     override suspend fun followUser(followedUserId: String): Response<Boolean> = userDataSource.followUser(followedUserId)
 
     override suspend fun unfollowUser(unfollowedUserId: String): Response<Boolean> = userDataSource.unfollowUser(unfollowedUserId)
+
+    override suspend fun updateProfile(username: String, profileImageUri: Uri?): Response<Boolean> = userDataSource.updateUserProfile(username, profileImageUri)
 }

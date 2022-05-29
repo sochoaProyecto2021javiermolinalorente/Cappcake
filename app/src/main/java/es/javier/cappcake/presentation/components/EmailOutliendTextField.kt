@@ -34,6 +34,7 @@ fun EmailOutlinedTextField(
         onValueChange = onValueChange,
         enabled = enabled,
         readOnly = false,
+        maxLines = 1,
         label = { Text(text = stringResource(id = R.string.login_email_hint)) },
         leadingIcon = { Icon(Icons.Filled.Email, contentDescription = "") },
         keyboardOptions = KeyboardOptions(

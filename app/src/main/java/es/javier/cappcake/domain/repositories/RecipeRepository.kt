@@ -16,4 +16,6 @@ interface RecipeRepository {
     suspend fun getAllRecipes(lastRecipeId: String?) : Response<Pair<List<Recipe>, String>>
     suspend fun getRecipe(recipeId: String) : Response<Recipe?>
 
+    suspend fun getLastRecipe() : Response<String?>
+
 }

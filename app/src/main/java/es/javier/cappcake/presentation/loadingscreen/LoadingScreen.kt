@@ -8,7 +8,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
-import es.javier.cappcake.presentation.Navigation
+import es.javier.cappcake.Navigation
 
 @Composable
 fun LoadingScreen(navController: NavController, viewModel: LoadingScreenViewModel) {

@@ -19,7 +19,8 @@ import kotlin.coroutines.suspendCoroutine
 class RecipeDataSource @Inject constructor(
     private val uploadRecipe: UploadRecipe,
     private val getAllRecipes: GetAllRecipes,
-    private val getRecipesOf: GetRecipesOf
+    private val getRecipesOf: GetRecipesOf,
+    private val getLastRecipe: GetLastRecipe
 ) {
     
     private val firestore = Firebase.firestore
@@ -62,6 +63,10 @@ class RecipeDataSource @Inject constructor(
                 }
             }
         }
+    }
+
+    suspend fun getLastRecipe() : Response<String?> {
+        return getLastRecipe.getLastRecipe()
     }
 
 }
