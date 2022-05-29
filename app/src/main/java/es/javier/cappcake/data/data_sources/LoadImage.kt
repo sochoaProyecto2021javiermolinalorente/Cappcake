@@ -22,7 +22,6 @@ class LoadImage @Inject constructor(@ApplicationContext private val context: Con
 
         return try {
             val bitmap = imageLoader.execute(imageRequest).drawable?.toBitmap()
-            print("")
             if (bitmap != null) {
                 Response.Success(data = bitmap)
             } else {

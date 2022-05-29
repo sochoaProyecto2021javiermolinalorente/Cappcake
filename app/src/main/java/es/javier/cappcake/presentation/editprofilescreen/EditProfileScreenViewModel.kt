@@ -104,11 +104,3 @@ class EditProfileScreenViewModel @Inject constructor(
     }
 
 }
-
-sealed class EditProfileScreenState {
-    object LoadBaseDate : EditProfileScreenState()
-    object BaseData : EditProfileScreenState()
-    object DataChanged : EditProfileScreenState()
-    object Updating : EditProfileScreenState()
-    object Updated : EditProfileScreenState()
-}
