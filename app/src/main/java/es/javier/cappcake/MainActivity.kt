@@ -33,6 +33,7 @@ import es.javier.cappcake.presentation.activityscreen.ActivityScreen
 import es.javier.cappcake.presentation.addrecipescreen.AddRecipeScreen
 import es.javier.cappcake.presentation.addrecipescreen.AddRecipeScreenViewModel
 import es.javier.cappcake.presentation.addrecipescreen.RecipeProcessScreen
+import es.javier.cappcake.presentation.commentsscreen.CommentsScreen
 import es.javier.cappcake.presentation.editprofilescreen.EditProfileScreen
 import es.javier.cappcake.presentation.feedscreen.FeedScreen
 import es.javier.cappcake.presentation.loadingscreen.LoadingScreen
@@ -184,6 +185,10 @@ fun NavGraphBuilder.ApplicationGraph(navController: NavController) {
             recipeId?.let {
                 RecipeDetailScreen(navController = navController, viewModel = hiltViewModel(), recipeId = it)
             }
+        }
+
+        composable("${Navigation.CommentsScreen.navigationRoute}?recipeId={recipeId}") {
+            CommentsScreen(navController = navController, viewModel = hiltViewModel())
         }
     }
 }

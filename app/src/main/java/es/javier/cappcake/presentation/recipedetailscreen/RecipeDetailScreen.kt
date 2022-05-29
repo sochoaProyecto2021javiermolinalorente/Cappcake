@@ -21,6 +21,7 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.google.accompanist.pager.*
+import es.javier.cappcake.Navigation
 import es.javier.cappcake.R
 import kotlinx.coroutines.launch
 
@@ -73,7 +74,7 @@ fun RecipeDetailScreen(navController: NavController, viewModel: RecipeDetailScre
                     text = viewModel.recipe!!.title,
                     modifier = Modifier
                         .weight(1f)
-                        .padding(horizontal = 20.dp),
+                        .padding(10.dp),
                     style = MaterialTheme.typography.h5,
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 2
@@ -81,12 +82,19 @@ fun RecipeDetailScreen(navController: NavController, viewModel: RecipeDetailScre
                 Icon(
                     imageVector = Icons.Filled.FavoriteBorder,
                     contentDescription = null,
-                    modifier = Modifier.padding(20.dp)
+                    modifier = Modifier.padding(start = 10.dp, end = 5.dp)
                 )
-                Icon(
-                    imageVector = Icons.Filled.Comment,
-                    contentDescription = null,
-                    modifier = Modifier.padding(top = 20.dp, bottom = 20.dp, end = 20.dp))
+
+                IconButton(
+                    modifier = Modifier.padding(start = 5.dp, end = 10.dp),
+                    onClick = {
+                        navController.navigate(Navigation.CommentsScreen.navigationRoute + "?recipeId=${recipeId}")
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Comment,
+                        contentDescription = null)
+                }
             }
             Divider()
 
