@@ -15,6 +15,7 @@ import es.javier.cappcake.domain.user.User
 import es.javier.cappcake.domain.recipe.use_cases.GetRecipesOfUseCase
 import es.javier.cappcake.domain.user.use_cases.*
 import es.javier.cappcake.utils.ScreenState
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -83,6 +84,7 @@ class ProfileScreenViewModel @Inject constructor(
             is Response.Failiure -> { isRefreshing = false }
             is Response.Success -> {
                 recipes.clear()
+                delay(50L)
                 recipes.addAll(response.data!!.first.toTypedArray())
                 lastRecipeId = response.data.second
                 isRefreshing = false

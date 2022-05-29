@@ -28,7 +28,7 @@ import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import es.javier.cappcake.R
 import es.javier.cappcake.domain.user.User
-import es.javier.cappcake.presentation.Navigation
+import es.javier.cappcake.Navigation
 import es.javier.cappcake.presentation.components.RecipeComponent
 import es.javier.cappcake.presentation.ui.theme.CappcakeTheme
 import es.javier.cappcake.presentation.ui.theme.orangish
@@ -110,27 +110,19 @@ fun FeedScreen(navController: NavController, viewModel: FeedScreenViewModel) {
             Divider(color = Color.Black, thickness = 1.dp)
         }
 
-        if (viewModel.recipes.isEmpty()) {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text(text = stringResource(id = R.string.feed_screen_no_recipes_text))
+        SwipeRefresh(
+            state = rememberSwipeRefreshState(isRefreshing = viewModel.isRefreshing),
+            onRefresh = { coroutineScope.launch {
+                viewModel.loadRecipesOfFollowersAgain()
+            } }) {
 
-                SwipeRefresh(
-                    state = rememberSwipeRefreshState(isRefreshing = viewModel.isRefreshing),
-                    onRefresh = { coroutineScope.launch {
-                        viewModel.loadRecipesOfFollowersAgain()
-                    } }) {
+            if (viewModel.recipes.isEmpty()) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text(text = stringResource(id = R.string.feed_screen_no_recipes_text))
 
                     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) { }
-
                 }
-            }
-        } else {
-            SwipeRefresh(
-                state = rememberSwipeRefreshState(isRefreshing = viewModel.isRefreshing),
-                onRefresh = { coroutineScope.launch {
-                    viewModel.loadRecipesOfFollowersAgain()
-                } }) {
-
+            } else {
                 LazyColumn(
                     state = lazyListState,
                     modifier = Modifier.fillMaxSize()) {

@@ -26,13 +26,13 @@ class ImageCompressor @Inject constructor(@ApplicationContext private val contex
             val source = ImageDecoder.createSource(context.contentResolver, imageUri)
             val imageBitmap = ImageDecoder.decodeBitmap(source)
             val outputStream = ByteArrayOutputStream()
-            imageBitmap.compress(Bitmap.CompressFormat.JPEG, 10, outputStream)
+            imageBitmap.compress(Bitmap.CompressFormat.JPEG, quality, outputStream)
             val byteArray = outputStream.toByteArray()
             BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
         } else {
             val imageBitmap = MediaStore.Images.Media.getBitmap(context.contentResolver, imageUri)
             val outputStream = ByteArrayOutputStream()
-            imageBitmap.compress(Bitmap.CompressFormat.JPEG, 10, outputStream)
+            imageBitmap.compress(Bitmap.CompressFormat.JPEG, quality, outputStream)
             val byteArray = outputStream.toByteArray()
             BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
         }

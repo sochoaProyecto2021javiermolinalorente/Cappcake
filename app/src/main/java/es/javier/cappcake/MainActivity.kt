@@ -29,21 +29,18 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.firestoreSettings
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
-import es.javier.cappcake.presentation.Navigation
 import es.javier.cappcake.presentation.activityscreen.ActivityScreen
 import es.javier.cappcake.presentation.addrecipescreen.AddRecipeScreen
 import es.javier.cappcake.presentation.addrecipescreen.AddRecipeScreenViewModel
 import es.javier.cappcake.presentation.addrecipescreen.RecipeProcessScreen
+import es.javier.cappcake.presentation.editprofilescreen.EditProfileScreen
 import es.javier.cappcake.presentation.feedscreen.FeedScreen
-import es.javier.cappcake.presentation.feedscreen.FeedScreenViewModel
 import es.javier.cappcake.presentation.loadingscreen.LoadingScreen
 import es.javier.cappcake.presentation.loginscreen.LoginScreen
 import es.javier.cappcake.presentation.profilescreen.ProfileScreen
-import es.javier.cappcake.presentation.profilescreen.ProfileScreenViewModel
 import es.javier.cappcake.presentation.recipedetailscreen.RecipeDetailScreen
 import es.javier.cappcake.presentation.registerscreen.RegisterScreen
 import es.javier.cappcake.presentation.searchscreen.SearchScreen
-import es.javier.cappcake.presentation.searchscreen.SearchScreenViewModel
 import es.javier.cappcake.presentation.ui.theme.CappcakeTheme
 import java.lang.Exception
 
@@ -172,6 +169,10 @@ fun NavGraphBuilder.ApplicationGraph(navController: NavController) {
             userId?.let {
                 ProfileScreen(navController = navController, viewModel = hiltViewModel(), uid = it)
             }
+        }
+
+        composable(Navigation.EditProfileScreen.navigationRoute) {
+            EditProfileScreen(navController = navController, viewModel = hiltViewModel())
         }
 
         composable("${Navigation.RecipeDetailScreen.navigationRoute}?recipeId={recipeId}", arguments = listOf(

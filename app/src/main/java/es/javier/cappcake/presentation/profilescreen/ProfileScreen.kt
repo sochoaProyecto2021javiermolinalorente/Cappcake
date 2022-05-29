@@ -2,12 +2,14 @@ package es.javier.cappcake.presentation.profilescreen
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -35,8 +37,11 @@ import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.google.firebase.auth.FirebaseAuth
 import es.javier.cappcake.R
-import es.javier.cappcake.presentation.Navigation
+import es.javier.cappcake.Navigation
 import es.javier.cappcake.presentation.components.RecipeComponent
+import es.javier.cappcake.presentation.ui.theme.primaryVariant
+import es.javier.cappcake.presentation.ui.theme.primarydrawervariant
+import es.javier.cappcake.presentation.ui.theme.redvariant
 import es.javier.cappcake.utils.OnBottomReached
 import es.javier.cappcake.utils.ScreenState
 import kotlinx.coroutines.launch
@@ -133,11 +138,18 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileScreenViewMode
             }
 
             if (viewModel.user != null) {
-                if (viewModel.recipes.isNotEmpty()) {
-                    SwipeRefresh(
-                        state = rememberSwipeRefreshState(isRefreshing = viewModel.isRefreshing),
-                        onRefresh = { coroutineScope.launch { viewModel.loadRecipesAgain(uid) } }) {
+                SwipeRefresh(
+                    state = rememberSwipeRefreshState(isRefreshing = viewModel.isRefreshing),
+                    onRefresh = {
+                        coroutineScope.launch {
+                            viewModel.loadUser(uid)
+                            //viewModel.recipes.clear()
+                            viewModel.loadRecipesAgain(uid)
+                        }
+                    }
+                ) {
 
+                    if (viewModel.recipes.isNotEmpty()) {
                         LazyColumn(
                             state = lazyListState,
                             modifier = Modifier
@@ -155,12 +167,14 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileScreenViewMode
                                 )
                             }
                         }
+                    } else {
+                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            Text(text = stringResource(id = R.string.profile_screen_no_recipes_text))
 
+                            Column(modifier = Modifier.fillMaxSize().scrollable(rememberScrollState(), Orientation.Vertical)) {}
+                        }
                     }
-                } else {
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Text(text = stringResource(id = R.string.profile_screen_no_recipes_text))
-                    }
+
                 }
             } else {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -236,8 +250,10 @@ fun DrawerProfileSettings(navController: NavController, viewModel: ProfileScreen
     Column(modifier = Modifier.fillMaxWidth()) {
 
         Surface(
-            modifier = Modifier.padding(5.dp).clickable {  },
-            color = Color(0xFFB7FFA6),
+            modifier = Modifier
+                .padding(5.dp)
+                .clickable { },
+            color = primarydrawervariant,
             shape = RoundedCornerShape(8.dp)
         ) {
             Row(modifier = Modifier
@@ -257,8 +273,10 @@ fun DrawerProfileSettings(navController: NavController, viewModel: ProfileScreen
         }
 
         Surface(
-            modifier = Modifier.padding(5.dp).clickable {  },
-            color = Color(0xFFB7FFA6),
+            modifier = Modifier
+                .padding(5.dp)
+                .clickable { navController.navigate(Navigation.EditProfileScreen.navigationRoute) },
+            color = primarydrawervariant,
             shape = RoundedCornerShape(8.dp)
         ) {
             Row(modifier = Modifier
@@ -281,7 +299,7 @@ fun DrawerProfileSettings(navController: NavController, viewModel: ProfileScreen
             modifier = Modifier
                 .padding(horizontal = 5.dp, vertical = 5.dp)
                 .clickable { signOut(navController) },
-            color = Color(0xFFFFDBE3),
+            color = redvariant,
             shape = RoundedCornerShape(8.dp)
         ) {
             Row(modifier = Modifier

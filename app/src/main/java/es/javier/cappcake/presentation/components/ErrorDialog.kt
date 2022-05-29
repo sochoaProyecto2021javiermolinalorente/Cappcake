@@ -24,7 +24,7 @@ fun ErrorDialog(showDialog: MutableState<Boolean>,
     }, buttons = {
         Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
             TextButton(onClick = { showDialog.value = false }) {
-                Text(text = stringResource(id = R.string.eror_dialog_accept_button).uppercase())
+                Text(text = stringResource(id = R.string.error_dialog_accept_button).uppercase())
             }
         }
     }, onDismissRequest = { showDialog.value = false })

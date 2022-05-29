@@ -39,7 +39,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import es.javier.cappcake.R
-import es.javier.cappcake.presentation.Navigation
+import es.javier.cappcake.Navigation
 import es.javier.cappcake.presentation.ui.theme.*
 import kotlinx.coroutines.launch
 import es.javier.cappcake.presentation.components.EmailOutlinedTextField
@@ -200,6 +200,7 @@ fun LoginPasswordOutlinedTextField(
         visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
         enabled = enabled,
         readOnly = false,
+        maxLines = 1,
         singleLine = true,
         modifier = modifier.onFocusChanged { focusState ->
             isFocused = focusState.isFocused

@@ -2,7 +2,7 @@
     <string name="app_name">Cappcake</string>
 
     <!-- Error dialog -->
-    <string name="eror_dialog_accept_button">Aceptar</string>
+    <string name="error_dialog_accept_button">Aceptar</string>
 
     <!-- Login screen -->
     <string name="login_title_text">Iniciar sesión</string>
@@ -56,7 +56,6 @@
     <!-- Recipe not valid alert -->
     <string name="add_recipe_recipe_not_valid_alert_title">Receta no válida</string>
     <string name="add_recipe_recipe_not_valid_alert_text">Hay algunos campos sin completar. Asegúrate de que no has dejado ningún ingrediente incompleto o dejado la imagen sin seleccionar.</string>
-    <string name="add_recipe_recipe_not_valid_alert_confirm_button">Aceptar</string>
 
     <!-- Recipe detail screen -->
     <string name="recipe_detail_screen_ingredients_tab_label">Ingredientes</string>
@@ -80,5 +79,21 @@
     <string name="profile_screen_unfollow_user_alert_question_text">¿Estás seguro?</string>
     <string name="profile_screen_unfollow_user_alert_confirm_button_text">Dejar de seguir</string>
     <string name="profile_screen_unfollow_user_alert_cancel_button_text">Cancelar</string>
+
+    <!-- Edit profile screen -->
+    <string name="edit_profile_screen_top_bar_title">Editar perfil</string>
+    <string name="edit_profile_screen_change_profile_photo_text">cambiar foto de perfil</string>
+    <string name="edit_profile_screen_change_username_text">cambiar nombre de ususario</string>
+    <string name="edit_profile_screen_send_button_text">enviar</string>
+    <string name="edit_profile_screen_username_hint">Nombre de usuario</string>
+    <string name="edit_profile_screen_updating_text">Modificando usuario</string>
+    <!-- Can not update user alert -->
+    <string name="can_not_update_user_alert_title">Error al actualizar</string>
+    <string name="can_not_update_user_alert_message">No se ha podido actualizar el usuario. Es posible que el nombre de usuario ya exista</string>
+    <!-- Change photo alert -->
+    <string name="change_photo_alert_title">Cambiar foto de pergil</string>
+    <string name="change_photo_alert_change_photo_text">Cambiar foto</string>
+    <string name="change_photo_alert_delete_photo_text">Eliminar foto</string>
+    <string name="change_photo_alert_cancel_text">Canclear</string>
 
 </resources>

@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
@@ -73,7 +74,10 @@ fun RecipeDetailScreen(navController: NavController, viewModel: RecipeDetailScre
                     modifier = Modifier
                         .weight(1f)
                         .padding(horizontal = 20.dp),
-                    style = MaterialTheme.typography.h5)
+                    style = MaterialTheme.typography.h5,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 2
+                )
                 Icon(
                     imageVector = Icons.Filled.FavoriteBorder,
                     contentDescription = null,
