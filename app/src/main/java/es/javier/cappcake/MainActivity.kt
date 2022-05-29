@@ -187,8 +187,17 @@ fun NavGraphBuilder.ApplicationGraph(navController: NavController) {
             }
         }
 
-        composable("${Navigation.CommentsScreen.navigationRoute}?recipeId={recipeId}") {
-            CommentsScreen(navController = navController, viewModel = hiltViewModel())
+        composable(
+            "${Navigation.CommentsScreen.navigationRoute}?recipeId={recipeId}",
+            arguments = listOf(navArgument(name = "recipeId") {
+                type = NavType.StringType
+                nullable = true
+            })
+        ) { backStackEntry ->
+            val recipeId = backStackEntry.arguments?.getString("recipeId")
+            recipeId?.let {
+                CommentsScreen(navController = navController, viewModel = hiltViewModel(), recipeId = it)
+            }
         }
     }
 }

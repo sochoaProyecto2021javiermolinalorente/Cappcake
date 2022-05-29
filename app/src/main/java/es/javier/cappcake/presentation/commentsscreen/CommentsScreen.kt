@@ -33,7 +33,11 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
-fun CommentsScreen(navController: NavController, viewModel: CommentsScreenViewModel) {
+fun CommentsScreen(navController: NavController, viewModel: CommentsScreenViewModel, recipeId: String) {
+
+    LaunchedEffect(key1 = Unit) {
+        viewModel.getAllCommentsOf(recipeId)
+    }
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -41,7 +45,7 @@ fun CommentsScreen(navController: NavController, viewModel: CommentsScreenViewMo
         AddCommentAlert(
             showAlert = viewModel.showAddCommentAlert
         ) {
-            coroutineScope.launch { viewModel.addComment() }
+            coroutineScope.launch { viewModel.addComment(recipeId) }
             viewModel.showAddCommentAlert.value = false
         }
     }
@@ -88,7 +92,7 @@ fun CommentsScreen(navController: NavController, viewModel: CommentsScreenViewMo
                     CommentItem(
                         modifier = Modifier.fillMaxWidth(),
                         comment = it.comment,
-                        loadUser = { null })
+                        loadUser = { viewModel.loadUser(it.userId) })
                 }
 
             }
@@ -231,16 +235,6 @@ fun CommentItemPreview() {
             modifier = Modifier.fillMaxWidth(),
             comment = "Great recipe",
             loadUser = { null })
-    }
-}
-
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun CommentScreenPreview() {
-    CappcakeTheme {
-        CommentsScreen(
-            navController = NavController(LocalContext.current),
-            viewModel = viewModel())
     }
 }
 
