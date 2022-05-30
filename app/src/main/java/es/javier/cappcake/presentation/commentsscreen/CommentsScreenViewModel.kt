@@ -38,8 +38,12 @@ class CommentsScreenViewModel @Inject constructor(
     var currentEditingCommentId by mutableStateOf("")
 
     var screenState: ScreenState by mutableStateOf(ScreenState.LoadingData)
-    var showAddCommentAlert = mutableStateOf(false)
-    var showRemoveCommentAlert = mutableStateOf(false)
+    val showProcessingAlert = mutableStateOf(false)
+    val showAddCommentAlert = mutableStateOf(false)
+    val showRemoveCommentAlert = mutableStateOf(false)
+    val showAddCommentErrorAlert = mutableStateOf(false)
+    val showDeleteCommentErrorAlert = mutableStateOf(false)
+    val showEditCommentErrorAlert = mutableStateOf(false)
 
     suspend fun getAllCommentsOf(recipeId: String) {
         val response = getAllCommentsOfUseCase(recipeId, null)
@@ -84,10 +88,14 @@ class CommentsScreenViewModel @Inject constructor(
     }
 
     suspend fun addComment(recipeId: String) {
+        showProcessingAlert.value = true
         val response = addCommentUseCase(comment = currentComment, recipeId = recipeId)
 
         when (response) {
-            is Response.Failiure -> { }
+            is Response.Failiure -> {
+                showProcessingAlert.value = false
+                showAddCommentErrorAlert.value = true
+            }
             is Response.Success -> {
                 comments.add(0, Comment(
                     UUID.randomUUID().toString(),
@@ -96,6 +104,7 @@ class CommentsScreenViewModel @Inject constructor(
                     currentComment
                 ))
                 currentComment = ""
+                showProcessingAlert.value = false
             }
         }
     }
@@ -110,30 +119,39 @@ class CommentsScreenViewModel @Inject constructor(
     }
 
     suspend fun deleteComment(recipeId: String) {
+        showProcessingAlert.value = true
         val response = deleteCommentUseCase(recipeId, lastFocusCommentId)
 
         when (response) {
-            is Response.Failiure -> { }
+            is Response.Failiure -> {
+                showProcessingAlert.value = false
+                showDeleteCommentErrorAlert.value = true
+            }
             is Response.Success -> {
                 val comment = comments.filter { it.commentId == lastFocusCommentId }.first()
                 comments.remove(comment)
                 lastFocusCommentId = ""
+                showProcessingAlert.value = false
             }
         }
     }
 
     suspend fun updateComment(comment: String, recipeId: String) {
+        showProcessingAlert.value = true
         val response = updateCommentUseCase(comment, recipeId, currentEditingCommentId)
 
         when (response) {
-            is Response.Failiure -> { }
+            is Response.Failiure -> {
+                showProcessingAlert.value = false
+                showEditCommentErrorAlert.value = true
+            }
             is Response.Success -> {
                 val oldComment = comments.filter { it.commentId == currentEditingCommentId }.first()
                 val index = comments.indexOf(oldComment)
                 val newComment = Comment(oldComment.commentId, oldComment.userId, oldComment.recipeId, comment )
-                comments.removeAt(index)
                 comments[index] = newComment
                 currentEditingCommentId = ""
+                showProcessingAlert.value = false
             }
         }
     }

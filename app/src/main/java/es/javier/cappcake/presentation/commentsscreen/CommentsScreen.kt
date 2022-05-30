@@ -15,6 +15,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -22,8 +23,11 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+import es.javier.cappcake.R
 import es.javier.cappcake.domain.comment.Comment
 import es.javier.cappcake.domain.user.User
+import es.javier.cappcake.presentation.components.ErrorDialog
+import es.javier.cappcake.presentation.components.LoadingAlert
 import es.javier.cappcake.presentation.components.ProfileImage
 import es.javier.cappcake.utils.OnBottomReached
 import es.javier.cappcake.utils.ScreenState
@@ -48,31 +52,16 @@ fun CommentsScreen(navController: NavController, viewModel: CommentsScreenViewMo
         }
     }
 
-    if (viewModel.showAddCommentAlert.value) {
-        AddCommentAlert(
-            showAlert = viewModel.showAddCommentAlert
-        ) {
-            coroutineScope.launch { viewModel.addComment(recipeId) }
-            viewModel.showAddCommentAlert.value = false
-        }
-    }
-
-    if (viewModel.showRemoveCommentAlert.value) {
-        DeleteCommentAlert(showAlert = viewModel.showRemoveCommentAlert) {
-            coroutineScope.launch {
-                viewModel.deleteComment(recipeId)
-                viewModel.showRemoveCommentAlert.value = false
-            }
-        }
-    }
+    Dialogs(viewModel = viewModel, recipeId)
 
     Scaffold(
         topBar = {
-            TopAppBar {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
+            TopAppBar(
+                title = {
+                    Text(text = stringResource(id = R.string.comments_screen_topbar_title),
+                        color = Color.White)
+                },
+                navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
                             imageVector = Icons.Filled.ArrowBack,
@@ -80,15 +69,8 @@ fun CommentsScreen(navController: NavController, viewModel: CommentsScreenViewMo
                             tint = Color.White
                         )
                     }
-
-                    Text(text = "Comments",
-                        style = MaterialTheme.typography.h6,
-                        modifier = Modifier
-                            .padding(horizontal = 10.dp)
-                            .weight(1f),
-                        color = Color.White)
                 }
-            }
+            )
         }
     ) {
 
@@ -168,7 +150,7 @@ fun AddCommentItem(modifier: Modifier, value: String, onValuechange: (String) ->
             if (value.isBlank()) {
                 Text(
                     modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
-                    text = "¿Qué opinas de esta receta?",
+                    text = stringResource(id = R.string.comments_screen_add_recipe_hint),
                     fontSize = 16.sp,
                     color = Color.Gray
                 )
@@ -183,7 +165,7 @@ fun AddCommentItem(modifier: Modifier, value: String, onValuechange: (String) ->
                 if (value.isNotBlank())
                     onSendClick()
             }) {
-                Text(text = "Enviar", color = MaterialTheme.colors.primary)
+                Text(text = stringResource(id = R.string.comments_screen_send_button_text), color = MaterialTheme.colors.primary)
             }
         }
 
@@ -247,7 +229,10 @@ fun CommentItem(modifier: Modifier,
 
         TextButton(onClick = { expanded = !expanded }) {
             Text(
-                text = if (expanded) "Read less" else "Read more",
+                text = if (expanded)
+                    stringResource(id = R.string.comments_screen_read_more_button_text)
+                else
+                    stringResource(id = R.string.comments_screen_read_less_button_text),
                 color = MaterialTheme.colors.primary,
                 overflow = TextOverflow.Ellipsis
             )
@@ -286,7 +271,7 @@ fun EditComment(modifier: Modifier,
             if (value.isBlank()) {
                 Text(
                     modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
-                    text = "¿Qué opinas de esta receta?",
+                    text = stringResource(id = R.string.comments_screen_edit_comment_hint),
                     fontSize = 16.sp,
                     color = Color.Gray
                 )
@@ -298,14 +283,14 @@ fun EditComment(modifier: Modifier,
             Spacer(modifier = Modifier.weight(1f))
 
             TextButton(onClick = onCancelClick) {
-                Text(text = "Cancelar", color = Color.Red)
+                Text(text = stringResource(id = R.string.comments_screen_cancel_button_text), color = Color.Red)
             }
 
             TextButton(onClick = {
                 if (value.isNotBlank())
                     onUpdateClick(comment)
             }) {
-                Text(text = "Editar", color = MaterialTheme.colors.primary)
+                Text(text = stringResource(id = R.string.comments_screen_edit_button_text), color = MaterialTheme.colors.primary)
             }
         }
 
@@ -333,12 +318,12 @@ fun CommentOptionsDropDownMenu(ownComment: Boolean, onEditClick: () -> Unit, onR
         ) {
             if (ownComment) {
                 DropdownMenuItem(onClick = onEditClick) {
-                    Text(text = "Edit comment", color = MaterialTheme.colors.primary)
+                    Text(text = stringResource(id = R.string.comments_screen_edit_menu_text), color = MaterialTheme.colors.primary)
                 }
             }
 
             DropdownMenuItem(onClick = onRemoveClick) {
-                Text(text = "Remove comment", color = Color.Red)
+                Text(text = stringResource(id = R.string.comments_screen_delete_menu_text), color = Color.Red)
             }
         }
     }
@@ -350,15 +335,15 @@ fun AddCommentAlert(showAlert: MutableState<Boolean>, onConfirmClick: () -> Unit
     AlertDialog(
         onDismissRequest = { showAlert.value = false },
         title = {
-            Text(text = "Add comment")
+            Text(text = stringResource(id = R.string.add_comment_title))
         },
         text = {
-            Text(text = "¿Estás seguro de añadir este comentario?")
+            Text(text = stringResource(id = R.string.add_comment_text))
         },
         confirmButton = {
             TextButton(onClick = onConfirmClick) {
                 Text(
-                    text = "Aceptar".uppercase(),
+                    text = stringResource(id = R.string.add_comment_accept_button_text).uppercase(),
                     color = MaterialTheme.colors.primary
                 )
             }
@@ -366,7 +351,7 @@ fun AddCommentAlert(showAlert: MutableState<Boolean>, onConfirmClick: () -> Unit
         dismissButton = {
             TextButton(onClick = { showAlert.value = false }) {
                 Text(
-                    text = "Cancelar".uppercase(),
+                    text = stringResource(id = R.string.add_comment_cancel_button_text).uppercase(),
                     color = MaterialTheme.colors.primary,
                 )
             }
@@ -379,15 +364,15 @@ fun DeleteCommentAlert(showAlert: MutableState<Boolean>, onConfirmClick: () -> U
     AlertDialog(
         onDismissRequest = { showAlert.value = false },
         title = {
-            Text(text = "Delete comment")
+            Text(text = stringResource(id = R.string.delete_comment_title))
         },
         text = {
-            Text(text = "¿Estás seguro de eliminar este comentario?")
+            Text(text = stringResource(id = R.string.delete_comment_text))
         },
         confirmButton = {
             TextButton(onClick = onConfirmClick) {
                 Text(
-                    text = "Aceptar".uppercase(),
+                    text = stringResource(id = R.string.delete_comment_accept_button_text).uppercase(),
                     color = MaterialTheme.colors.primary
                 )
             }
@@ -395,10 +380,64 @@ fun DeleteCommentAlert(showAlert: MutableState<Boolean>, onConfirmClick: () -> U
         dismissButton = {
             TextButton(onClick = { showAlert.value = false }) {
                 Text(
-                    text = "Cancelar".uppercase(),
+                    text = stringResource(id = R.string.delete_comment_cancel_button_text).uppercase(),
                     color = MaterialTheme.colors.primary,
                 )
             }
         }
     )
+}
+
+@Composable
+fun Dialogs(viewModel: CommentsScreenViewModel, recipeId: String) {
+
+    val coroutineScope = rememberCoroutineScope()
+
+    if (viewModel.showAddCommentAlert.value) {
+        AddCommentAlert(
+            showAlert = viewModel.showAddCommentAlert
+        ) {
+            coroutineScope.launch { viewModel.addComment(recipeId) }
+            viewModel.showAddCommentAlert.value = false
+        }
+    }
+
+    if (viewModel.showRemoveCommentAlert.value) {
+        DeleteCommentAlert(showAlert = viewModel.showRemoveCommentAlert) {
+            coroutineScope.launch {
+                viewModel.deleteComment(recipeId)
+                viewModel.showRemoveCommentAlert.value = false
+            }
+        }
+    }
+
+    if (viewModel.showProcessingAlert.value) {
+        LoadingAlert(
+            text = { Text(text = stringResource(id = R.string.comment_loading_alert_text)) }
+        )
+    }
+
+    if (viewModel.showAddCommentErrorAlert.value) {
+        ErrorDialog(
+            showDialog = viewModel.showAddCommentErrorAlert,
+            title = R.string.add_comment_error_alert_title,
+            text = R.string.add_comment_error_alert_text
+        )
+    }
+
+    if (viewModel.showDeleteCommentErrorAlert.value) {
+        ErrorDialog(
+            showDialog = viewModel.showDeleteCommentErrorAlert,
+            title = R.string.delete_comment_error_alert_title,
+            text = R.string.delete_comment_error_alert_text
+        )
+    }
+
+    if (viewModel.showEditCommentErrorAlert.value) {
+        ErrorDialog(
+            showDialog = viewModel.showEditCommentErrorAlert,
+            title = R.string.edit_comment_error_alert_title,
+            text = R.string.edit_comment_error_alert_text
+        )
+    }
 }

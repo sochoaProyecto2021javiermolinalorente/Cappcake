@@ -61,6 +61,37 @@
     <string name="recipe_detail_screen_ingredients_tab_label">Ingredientes</string>
     <string name="recipe_detail_screen_process_tab_label">Elaboración</string>
     
+    <!-- Comments screen -->
+    <string name="comments_screen_topbar_title">Comentarios</string>
+    <string name="comments_screen_add_recipe_hint">¿Qué opinas de esta receta?</string>
+    <string name="comments_screen_send_button_text">Enviar</string>
+    <string name="comments_screen_read_more_button_text">Leer más</string>
+    <string name="comments_screen_read_less_button_text">Leer menos</string>
+    <string name="comments_screen_edit_comment_hint">Comentario</string>
+    <string name="comments_screen_cancel_button_text">Cancelar</string>
+    <string name="comments_screen_edit_button_text">Editar</string>
+    <string name="comments_screen_edit_menu_text">Editar comentario</string>
+    <string name="comments_screen_delete_menu_text">Eliminar comentario</string>
+    <!-- Processing -->
+    <string name="comment_loading_alert_text">Procesando…</string>
+    <!-- Add comment alert -->
+    <string name="add_comment_title">Añadir comentario</string>
+    <string name="add_comment_text">¿Quieres publicar este cometnario?</string>
+    <string name="add_comment_accept_button_text">Aceptar</string>
+    <string name="add_comment_cancel_button_text">Cancelar</string>
+    <!-- Delete comment alert -->
+    <string name="delete_comment_title">Eliminar comentario</string>
+    <string name="delete_comment_text">Quieres eliminar este cometnario?</string>
+    <string name="delete_comment_accept_button_text">Aceptar</string>
+    <string name="delete_comment_cancel_button_text">Cancelar</string>
+    <!-- Comment process error alert -->
+    <string name="add_comment_error_alert_title">Error al añadir comentario</string>
+    <string name="add_comment_error_alert_text">No se ha pdodio añadir el comentario de la receta.</string>
+    <string name="delete_comment_error_alert_title">Erro al eliminar cometnario</string>
+    <string name="delete_comment_error_alert_text">No se ha podido eliminar el comentario</string>
+    <string name="edit_comment_error_alert_title">Error al editar</string>
+    <string name="edit_comment_error_alert_text">No se ha podido editar el cometnario</string>
+    
     <!-- Profile screen -->
     <string name="profile_screen_posts_text">Publicaciones</string>
     <string name="profile_screen_followers_text">Seguidores</string>
