@@ -29,6 +29,7 @@ class CommentsScreenViewModel @Inject constructor(
 
     var currentComment by mutableStateOf("")
     var comments = mutableStateListOf<Comment>()
+    var lastCommentId: String? by mutableStateOf(null)
     var isRefreshing by mutableStateOf(false)
 
     var deletedCommentId by mutableStateOf("")
@@ -38,13 +39,14 @@ class CommentsScreenViewModel @Inject constructor(
     var showRemoveCommentAlert = mutableStateOf(false)
 
     suspend fun getAllCommentsOf(recipeId: String) {
-        val response = getAllCommentsOfUseCase(recipeId)
+        val response = getAllCommentsOfUseCase(recipeId, null)
 
         when (response) {
             is Response.Failiure -> {  }
             is Response.Success -> {
                 comments.clear()
-                comments.addAll(response.data!!)
+                comments.addAll(response.data!!.first)
+                lastCommentId = response.data.second
                 screenState = ScreenState.DataLoaded
             }
         }
@@ -53,14 +55,27 @@ class CommentsScreenViewModel @Inject constructor(
 
     suspend fun getAllCommentsAgain(recipeId: String) {
         isRefreshing = true
-        val response = getAllCommentsOfUseCase(recipeId)
+        val response = getAllCommentsOfUseCase(recipeId, null)
 
         when (response) {
             is Response.Failiure -> { isRefreshing = false }
             is Response.Success -> {
                 comments.clear()
-                comments.addAll(response.data!!)
+                comments.addAll(response.data!!.first)
+                lastCommentId = response.data.second
                 isRefreshing = false
+            }
+        }
+    }
+
+    suspend fun loadMoreComments(recipeId: String) {
+        val response = getAllCommentsOfUseCase(recipeId, lastCommentId)
+
+        when (response) {
+            is Response.Failiure -> {  }
+            is Response.Success -> {
+                comments.addAll(response.data!!.first.toTypedArray())
+                lastCommentId = response.data.second
             }
         }
     }

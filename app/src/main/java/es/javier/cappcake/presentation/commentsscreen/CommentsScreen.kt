@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -31,6 +32,7 @@ import es.javier.cappcake.domain.comment.Comment
 import es.javier.cappcake.domain.user.User
 import es.javier.cappcake.presentation.components.ProfileImage
 import es.javier.cappcake.presentation.ui.theme.CappcakeTheme
+import es.javier.cappcake.utils.OnBottomReached
 import es.javier.cappcake.utils.ScreenState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.coroutineScope
@@ -46,6 +48,13 @@ fun CommentsScreen(navController: NavController, viewModel: CommentsScreenViewMo
     }
 
     val coroutineScope = rememberCoroutineScope()
+    val lazyListState = rememberLazyListState()
+
+    lazyListState.OnBottomReached {
+        coroutineScope.launch {
+            viewModel.lastCommentId?.let { viewModel.loadMoreComments(recipeId) }
+        }
+    }
 
     if (viewModel.showAddCommentAlert.value) {
         AddCommentAlert(
@@ -106,7 +115,9 @@ fun CommentsScreen(navController: NavController, viewModel: CommentsScreenViewMo
                 onRefresh = { coroutineScope.launch { viewModel.getAllCommentsAgain(recipeId) } }
             ) {
 
-                LazyColumn {
+                LazyColumn(
+                    state = lazyListState
+                ) {
 
                     items(viewModel.comments, key = { it.commentId }) {
                         CommentItem(

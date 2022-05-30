@@ -10,8 +10,8 @@ class CommentsDataSource @Inject constructor(
     private val deleteComment: DeleteComment
 ) {
 
-    suspend fun getAllCommentsOf(recipeId: String) : Response<List<Comment>> {
-        return getAllCommentsOf.getAllCommentsOf(recipeId)
+    suspend fun getAllCommentsOf(recipeId: String, lastCommentId: String?) : Response<Pair<List<Comment>, String>> {
+        return getAllCommentsOf.getAllCommentsOf(recipeId, lastCommentId)
     }
 
     suspend fun addComment(comment: String, recipeId: String) : Response<Boolean> {

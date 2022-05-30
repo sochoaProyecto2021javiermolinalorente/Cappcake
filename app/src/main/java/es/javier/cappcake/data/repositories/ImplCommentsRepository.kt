@@ -8,8 +8,8 @@ import javax.inject.Inject
 
 class ImplCommentsRepository @Inject constructor(private val dataSource: CommentsDataSource) : CommentsRepository {
 
-    override suspend fun getAllCommentsOf(recipeId: String): Response<List<Comment>> {
-        return dataSource.getAllCommentsOf(recipeId)
+    override suspend fun getAllCommentsOf(recipeId: String, lastCommentId: String?): Response<Pair<List<Comment>, String>> {
+        return dataSource.getAllCommentsOf(recipeId, lastCommentId)
     }
 
     override suspend fun addComment(recipeId: String, comment: String) : Response<Boolean> {
