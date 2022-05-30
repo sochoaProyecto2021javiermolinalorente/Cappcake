@@ -88,7 +88,9 @@ fun RecipeDetailScreen(navController: NavController, viewModel: RecipeDetailScre
                 IconButton(
                     modifier = Modifier.padding(start = 5.dp, end = 10.dp),
                     onClick = {
-                        navController.navigate(Navigation.CommentsScreen.navigationRoute + "?recipeId=${recipeId}")
+                        navController.navigate(Navigation.CommentsScreen.navigationRoute +
+                                "?recipeId=${recipeId}" +
+                                "?userId=${viewModel.recipe?.userId}")
                     }
                 ) {
                     Icon(

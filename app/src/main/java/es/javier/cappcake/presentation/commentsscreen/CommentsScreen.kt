@@ -8,7 +8,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.*
@@ -24,19 +24,25 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import es.javier.cappcake.R
+import es.javier.cappcake.domain.comment.Comment
 import es.javier.cappcake.domain.user.User
 import es.javier.cappcake.presentation.components.ProfileImage
 import es.javier.cappcake.presentation.ui.theme.CappcakeTheme
+import es.javier.cappcake.utils.ScreenState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
-fun CommentsScreen(navController: NavController, viewModel: CommentsScreenViewModel, recipeId: String) {
+fun CommentsScreen(navController: NavController, viewModel: CommentsScreenViewModel, recipeId: String, owner: String) {
 
     LaunchedEffect(key1 = Unit) {
-        viewModel.getAllCommentsOf(recipeId)
+        if (viewModel.screenState is ScreenState.LoadingData) {
+            viewModel.getAllCommentsOf(recipeId)
+        }
     }
 
     val coroutineScope = rememberCoroutineScope()
@@ -47,6 +53,15 @@ fun CommentsScreen(navController: NavController, viewModel: CommentsScreenViewMo
         ) {
             coroutineScope.launch { viewModel.addComment(recipeId) }
             viewModel.showAddCommentAlert.value = false
+        }
+    }
+
+    if (viewModel.showRemoveCommentAlert.value) {
+        DeleteCommentAlert(showAlert = viewModel.showRemoveCommentAlert) {
+            coroutineScope.launch {
+                viewModel.deleteComment(recipeId, viewModel.deletedCommentId)
+                viewModel.showRemoveCommentAlert.value = false
+            }
         }
     }
 
@@ -86,13 +101,28 @@ fun CommentsScreen(navController: NavController, viewModel: CommentsScreenViewMo
                 viewModel.showAddCommentAlert.value = true
             }
 
-            LazyColumn {
+            SwipeRefresh(
+                state = rememberSwipeRefreshState(isRefreshing = viewModel.isRefreshing),
+                onRefresh = { coroutineScope.launch { viewModel.getAllCommentsAgain(recipeId) } }
+            ) {
 
-                items(viewModel.comments, key = { it.commentId }) {
-                    CommentItem(
-                        modifier = Modifier.fillMaxWidth(),
-                        comment = it.comment,
-                        loadUser = { viewModel.loadUser(it.userId) })
+                LazyColumn {
+
+                    items(viewModel.comments, key = { it.commentId }) {
+                        CommentItem(
+                            modifier = Modifier.fillMaxWidth(),
+                            comment = it,
+                            currentUserId = viewModel.getCurrentId(),
+                            owner = owner,
+                            loadUser = { viewModel.loadUser(it.userId) },
+                            onEditClick = { },
+                            onRemoveClick = {
+                                viewModel.deletedCommentId = it.commentId
+                                viewModel.showRemoveCommentAlert.value = true
+                            }
+                        )
+                    }
+
                 }
 
             }
@@ -137,7 +167,10 @@ fun AddCommentItem(modifier: Modifier, value: String, onValuechange: (String) ->
 
             Spacer(modifier = Modifier.weight(1f))
 
-            TextButton(onClick = onSendClick) {
+            TextButton(onClick = {
+                if (value.isNotBlank())
+                    onSendClick()
+            }) {
                 Text(text = "Enviar", color = MaterialTheme.colors.primary)
             }
         }
@@ -149,11 +182,17 @@ fun AddCommentItem(modifier: Modifier, value: String, onValuechange: (String) ->
 
 @Composable
 fun CommentItem(modifier: Modifier,
-                comment: String,
-                loadUser: suspend CoroutineScope.() -> User?) {
+                comment: Comment,
+                owner: String,
+                currentUserId: String?,
+                loadUser: suspend CoroutineScope.() -> User?,
+                onEditClick: () -> Unit,
+                onRemoveClick: () -> Unit) {
 
     var user: User? by remember { mutableStateOf(null) }
     var expanded by remember { mutableStateOf(false) }
+    val ownRecipe = owner == currentUserId
+    val ownComment = currentUserId == comment.userId
 
     LaunchedEffect(key1 = Unit) {
         user = loadUser()
@@ -176,11 +215,21 @@ fun CommentItem(modifier: Modifier,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis
             )
+
+            if (ownRecipe || ownComment) {
+                Spacer(modifier = Modifier.weight(1f))
+
+                CommentOptionsDropDownMenu(
+                    ownComment = ownComment,
+                    onEditClick = onEditClick,
+                    onRemoveClick = onRemoveClick
+                )
+            }
         }
 
         Text(
             modifier = Modifier.padding(10.dp),
-            text = comment,
+            text = comment.comment,
             maxLines = if (expanded) Int.MAX_VALUE else 3
         )
 
@@ -194,7 +243,37 @@ fun CommentItem(modifier: Modifier,
 
         Divider()
     }
+}
 
+@Composable
+fun CommentOptionsDropDownMenu(ownComment: Boolean, onEditClick: () -> Unit, onRemoveClick: () -> Unit) {
+
+    var expanded by remember { mutableStateOf(false) }
+
+    Box {
+
+        IconButton(onClick = { expanded = true }) {
+            Icon(
+                imageVector = Icons.Default.MoreVert,
+                contentDescription = null
+            )
+        }
+
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            if (ownComment) {
+                DropdownMenuItem(onClick = onEditClick) {
+                    Text(text = "Edit comment", color = MaterialTheme.colors.primary)
+                }
+            }
+
+            DropdownMenuItem(onClick = onRemoveClick) {
+                Text(text = "Remove comment", color = Color.Red)
+            }
+        }
+    }
 
 }
 
@@ -220,22 +299,38 @@ fun AddCommentAlert(showAlert: MutableState<Boolean>, onConfirmClick: () -> Unit
             TextButton(onClick = { showAlert.value = false }) {
                 Text(
                     text = "Cancelar".uppercase(),
-                    color = MaterialTheme.colors.primary
+                    color = MaterialTheme.colors.primary,
                 )
             }
         }
     )
 }
 
-@Preview(showBackground = true)
 @Composable
-fun CommentItemPreview() {
-    CappcakeTheme {
-        CommentItem(
-            modifier = Modifier.fillMaxWidth(),
-            comment = "Great recipe",
-            loadUser = { null })
-    }
+fun DeleteCommentAlert(showAlert: MutableState<Boolean>, onConfirmClick: () -> Unit) {
+    AlertDialog(
+        onDismissRequest = { showAlert.value = false },
+        title = {
+            Text(text = "Delete comment")
+        },
+        text = {
+            Text(text = "¿Estás seguro de eliminar este comentario?")
+        },
+        confirmButton = {
+            TextButton(onClick = onConfirmClick) {
+                Text(
+                    text = "Aceptar".uppercase(),
+                    color = MaterialTheme.colors.primary
+                )
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = { showAlert.value = false }) {
+                Text(
+                    text = "Cancelar".uppercase(),
+                    color = MaterialTheme.colors.primary,
+                )
+            }
+        }
+    )
 }
-
-private val comment = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."

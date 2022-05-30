@@ -14,7 +14,6 @@ import kotlin.coroutines.suspendCoroutine
 class GetAllCommentsOf @Inject constructor() {
 
     private val firestore = Firebase.firestore
-    private val auth = Firebase.auth
 
     suspend fun getAllCommentsOf(recipeId: String) : Response<List<Comment>> {
 

@@ -16,8 +16,7 @@ class ImplCommentsRepository @Inject constructor(private val dataSource: Comment
         return dataSource.addComment(comment, recipeId)
     }
 
-
-    override suspend fun removeComment(commentId: String): Response<Boolean> {
-        TODO("Not yet implemented")
+    override suspend fun removeComment(recipeId: String, commentId: String): Response<Boolean> {
+        return dataSource.deleteComment(recipeId, commentId)
     }
 }

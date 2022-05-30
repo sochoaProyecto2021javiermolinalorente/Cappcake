@@ -188,15 +188,21 @@ fun NavGraphBuilder.ApplicationGraph(navController: NavController) {
         }
 
         composable(
-            "${Navigation.CommentsScreen.navigationRoute}?recipeId={recipeId}",
+            "${Navigation.CommentsScreen.navigationRoute}?recipeId={recipeId}?userId={userId}",
             arguments = listOf(navArgument(name = "recipeId") {
                 type = NavType.StringType
                 nullable = true
+            }, navArgument(name = "userId") {
+                type = NavType.StringType
+                nullable = false
             })
         ) { backStackEntry ->
             val recipeId = backStackEntry.arguments?.getString("recipeId")
-            recipeId?.let {
-                CommentsScreen(navController = navController, viewModel = hiltViewModel(), recipeId = it)
+            val owner = backStackEntry.arguments?.getString("userId")
+
+            if (recipeId != null && owner != null) {
+                CommentsScreen(navController = navController, viewModel = hiltViewModel(), recipeId = recipeId, owner = owner)
+
             }
         }
     }
