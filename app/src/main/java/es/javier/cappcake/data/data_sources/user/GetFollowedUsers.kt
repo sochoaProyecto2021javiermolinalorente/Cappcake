@@ -1,4 +1,4 @@
-package es.javier.cappcake.data.data_sources
+package es.javier.cappcake.data.data_sources.user
 
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore

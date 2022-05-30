@@ -1,9 +1,10 @@
-package es.javier.cappcake.data.data_sources
+package es.javier.cappcake.data.data_sources.user
 
 import android.graphics.Bitmap
 import android.net.Uri
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import es.javier.cappcake.data.data_sources.*
 import es.javier.cappcake.domain.Response
 import es.javier.cappcake.domain.user.User
 import javax.inject.Inject

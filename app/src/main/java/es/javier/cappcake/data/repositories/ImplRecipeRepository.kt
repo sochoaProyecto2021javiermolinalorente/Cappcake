@@ -1,7 +1,7 @@
 package es.javier.cappcake.data.repositories
 
 import android.net.Uri
-import es.javier.cappcake.data.data_sources.RecipeDataSource
+import es.javier.cappcake.data.data_sources.recipe.RecipeDataSource
 import es.javier.cappcake.domain.Ingredient
 import es.javier.cappcake.domain.recipe.Recipe
 import es.javier.cappcake.domain.Response
