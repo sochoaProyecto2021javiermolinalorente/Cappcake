@@ -11,6 +11,7 @@ import es.javier.cappcake.domain.comment.Comment
 import es.javier.cappcake.domain.comment.use_cases.AddCommentUseCase
 import es.javier.cappcake.domain.comment.use_cases.DeleteCommentUseCase
 import es.javier.cappcake.domain.comment.use_cases.GetAllCommentsOfUseCase
+import es.javier.cappcake.domain.comment.use_cases.UpdateCommentUseCase
 import es.javier.cappcake.domain.user.User
 import es.javier.cappcake.domain.user.use_cases.GetCurrentUserIdUseCase
 import es.javier.cappcake.domain.user.use_cases.GetUserProfileUseCase
@@ -23,6 +24,7 @@ class CommentsScreenViewModel @Inject constructor(
     private val getAllCommentsOfUseCase: GetAllCommentsOfUseCase,
     private val addCommentUseCase: AddCommentUseCase,
     private val deleteCommentUseCase: DeleteCommentUseCase,
+    private val updateCommentUseCase: UpdateCommentUseCase,
     private val getUserProfileUseCase: GetUserProfileUseCase,
     private val getCurrentUserIdUseCase: GetCurrentUserIdUseCase
 ) : ViewModel() {
@@ -32,7 +34,8 @@ class CommentsScreenViewModel @Inject constructor(
     var lastCommentId: String? by mutableStateOf(null)
     var isRefreshing by mutableStateOf(false)
 
-    var deletedCommentId by mutableStateOf("")
+    var lastFocusCommentId by mutableStateOf("")
+    var currentEditingCommentId by mutableStateOf("")
 
     var screenState: ScreenState by mutableStateOf(ScreenState.LoadingData)
     var showAddCommentAlert = mutableStateOf(false)
@@ -106,15 +109,31 @@ class CommentsScreenViewModel @Inject constructor(
         }
     }
 
-    suspend fun deleteComment(recipeId: String, commentId: String) {
-        val response = deleteCommentUseCase(recipeId, commentId)
+    suspend fun deleteComment(recipeId: String) {
+        val response = deleteCommentUseCase(recipeId, lastFocusCommentId)
 
         when (response) {
             is Response.Failiure -> { }
             is Response.Success -> {
-                val comment = comments.filter { it.commentId == commentId }.first()
+                val comment = comments.filter { it.commentId == lastFocusCommentId }.first()
                 comments.remove(comment)
-                deletedCommentId = ""
+                lastFocusCommentId = ""
+            }
+        }
+    }
+
+    suspend fun updateComment(comment: String, recipeId: String) {
+        val response = updateCommentUseCase(comment, recipeId, currentEditingCommentId)
+
+        when (response) {
+            is Response.Failiure -> { }
+            is Response.Success -> {
+                val oldComment = comments.filter { it.commentId == currentEditingCommentId }.first()
+                val index = comments.indexOf(oldComment)
+                val newComment = Comment(oldComment.commentId, oldComment.userId, oldComment.recipeId, comment )
+                comments.removeAt(index)
+                comments[index] = newComment
+                currentEditingCommentId = ""
             }
         }
     }

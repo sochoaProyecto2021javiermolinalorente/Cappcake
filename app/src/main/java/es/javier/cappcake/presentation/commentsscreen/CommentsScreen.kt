@@ -1,7 +1,6 @@
 package es.javier.cappcake.presentation.commentsscreen
 
 import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -16,26 +15,19 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
-import es.javier.cappcake.R
 import es.javier.cappcake.domain.comment.Comment
 import es.javier.cappcake.domain.user.User
 import es.javier.cappcake.presentation.components.ProfileImage
-import es.javier.cappcake.presentation.ui.theme.CappcakeTheme
 import es.javier.cappcake.utils.OnBottomReached
 import es.javier.cappcake.utils.ScreenState
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
@@ -68,7 +60,7 @@ fun CommentsScreen(navController: NavController, viewModel: CommentsScreenViewMo
     if (viewModel.showRemoveCommentAlert.value) {
         DeleteCommentAlert(showAlert = viewModel.showRemoveCommentAlert) {
             coroutineScope.launch {
-                viewModel.deleteComment(recipeId, viewModel.deletedCommentId)
+                viewModel.deleteComment(recipeId)
                 viewModel.showRemoveCommentAlert.value = false
             }
         }
@@ -120,18 +112,27 @@ fun CommentsScreen(navController: NavController, viewModel: CommentsScreenViewMo
                 ) {
 
                     items(viewModel.comments, key = { it.commentId }) {
-                        CommentItem(
-                            modifier = Modifier.fillMaxWidth(),
-                            comment = it,
-                            currentUserId = viewModel.getCurrentId(),
-                            owner = owner,
-                            loadUser = { viewModel.loadUser(it.userId) },
-                            onEditClick = { },
-                            onRemoveClick = {
-                                viewModel.deletedCommentId = it.commentId
-                                viewModel.showRemoveCommentAlert.value = true
-                            }
-                        )
+
+                        if (viewModel.currentEditingCommentId == it.commentId) {
+                            EditComment(
+                                modifier = Modifier.fillMaxWidth(),
+                                value = it.comment,
+                                onUpdateClick = { coroutineScope.launch { viewModel.updateComment(it, recipeId) } },
+                                onCancelClick = { viewModel.currentEditingCommentId = "" })
+                        } else {
+                            CommentItem(
+                                modifier = Modifier.fillMaxWidth(),
+                                comment = it,
+                                currentUserId = viewModel.getCurrentId(),
+                                owner = owner,
+                                loadUser = { viewModel.loadUser(it.userId) },
+                                onEditClick = { viewModel.currentEditingCommentId = it.commentId },
+                                onRemoveClick = {
+                                    viewModel.lastFocusCommentId = it.commentId
+                                    viewModel.showRemoveCommentAlert.value = true
+                                }
+                            )
+                        }
                     }
 
                 }
@@ -250,6 +251,62 @@ fun CommentItem(modifier: Modifier,
                 color = MaterialTheme.colors.primary,
                 overflow = TextOverflow.Ellipsis
             )
+        }
+
+        Divider()
+    }
+}
+
+@Composable
+fun EditComment(modifier: Modifier,
+                value: String,
+                onUpdateClick: (String) -> Unit,
+                onCancelClick: () -> Unit) {
+
+    var comment by remember {
+        mutableStateOf(value)
+    }
+
+    Column(modifier = modifier) {
+        Box(modifier = Modifier.padding(top = 20.dp), contentAlignment = Alignment.CenterStart) {
+            Column {
+                BasicTextField(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 10.dp, vertical = 4.dp),
+                    value = comment,
+                    onValueChange = { comment = it },
+                    maxLines = 4,
+                    textStyle = TextStyle(fontSize = 16.sp)
+                )
+
+                Divider(modifier = Modifier.padding(horizontal = 10.dp))
+            }
+
+            if (value.isBlank()) {
+                Text(
+                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
+                    text = "¿Qué opinas de esta receta?",
+                    fontSize = 16.sp,
+                    color = Color.Gray
+                )
+            }
+        }
+
+        Row {
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            TextButton(onClick = onCancelClick) {
+                Text(text = "Cancelar", color = Color.Red)
+            }
+
+            TextButton(onClick = {
+                if (value.isNotBlank())
+                    onUpdateClick(comment)
+            }) {
+                Text(text = "Editar", color = MaterialTheme.colors.primary)
+            }
         }
 
         Divider()

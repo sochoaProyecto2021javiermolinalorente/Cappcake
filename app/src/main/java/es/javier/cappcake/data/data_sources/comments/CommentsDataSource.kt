@@ -7,7 +7,8 @@ import javax.inject.Inject
 class CommentsDataSource @Inject constructor(
     private val getAllCommentsOf: GetAllCommentsOf,
     private val addComment: AddComment,
-    private val deleteComment: DeleteComment
+    private val deleteComment: DeleteComment,
+    private val updateComment: UpdateComment
 ) {
 
     suspend fun getAllCommentsOf(recipeId: String, lastCommentId: String?) : Response<Pair<List<Comment>, String>> {
@@ -20,6 +21,10 @@ class CommentsDataSource @Inject constructor(
 
     suspend fun deleteComment(recipeId: String, commentId: String) : Response<Boolean> {
         return deleteComment.deleteComment(recipeId, commentId)
+    }
+
+    suspend fun updateComment(comment: String, recipeId: String, commentId: String) : Response<Boolean> {
+        return updateComment.updateComment(comment, recipeId, commentId)
     }
 
 }

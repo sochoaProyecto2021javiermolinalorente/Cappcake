@@ -19,4 +19,12 @@ class ImplCommentsRepository @Inject constructor(private val dataSource: Comment
     override suspend fun removeComment(recipeId: String, commentId: String): Response<Boolean> {
         return dataSource.deleteComment(recipeId, commentId)
     }
+
+    override suspend fun updateComment(
+        comment: String,
+        recipeId: String,
+        commentId: String
+    ): Response<Boolean> {
+        return dataSource.updateComment(comment, recipeId, commentId)
+    }
 }
