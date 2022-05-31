@@ -42,6 +42,7 @@ import es.javier.cappcake.presentation.profilescreen.ProfileScreen
 import es.javier.cappcake.presentation.recipedetailscreen.RecipeDetailScreen
 import es.javier.cappcake.presentation.registerscreen.RegisterScreen
 import es.javier.cappcake.presentation.searchscreen.SearchScreen
+import es.javier.cappcake.presentation.searchscreen.SearchUserScreen
 import es.javier.cappcake.presentation.ui.theme.CappcakeTheme
 import java.lang.Exception
 
@@ -145,6 +146,11 @@ fun NavGraphBuilder.ApplicationGraph(navController: NavController) {
         composable(Navigation.SearchScreen.navigationRoute) {
             SearchScreen(navController = navController, viewModel = hiltViewModel())
         }
+
+        composable(Navigation.SearchUserScreen.navigationRoute) {
+            SearchUserScreen(navController = navController, viewModel = hiltViewModel())
+        }
+
         composable(Navigation.AddRecipeScreen.navigationRoute) {
             AddRecipeScreen(navController = navController, hiltViewModel())
         }

@@ -2,7 +2,7 @@ package es.javier.cappcake.data.repositories
 
 import android.graphics.Bitmap
 import android.net.Uri
-import es.javier.cappcake.data.data_sources.UserDataSource
+import es.javier.cappcake.data.data_sources.user.UserDataSource
 import es.javier.cappcake.domain.Response
 import es.javier.cappcake.domain.user.User
 import es.javier.cappcake.domain.repositories.UserRepository
@@ -23,6 +23,10 @@ class ImplUserRepository @Inject constructor(
     override suspend fun getUserProfile(uid: String): Response<Pair<User, Boolean>?> = userDataSource.getUserProfile(uid = uid)
 
     override suspend fun loadProfileImage(url: String): Response<Bitmap?> = userDataSource.loadProfileImage(url)
+
+    override suspend fun getUsersWhereName(username: String): Response<List<User>> {
+        return userDataSource.getUsersWhereName(username)
+    }
 
     override suspend fun getFollowersCount(uid: String): Response<Int?> = userDataSource.getFollowersCount(uid = uid)
 

@@ -1,7 +1,6 @@
-package es.javier.cappcake.data.data_sources
+package es.javier.cappcake.data.data_sources.recipe
 
 import android.net.Uri
-import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.Source
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase

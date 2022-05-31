@@ -1,7 +1,6 @@
-package es.javier.cappcake.data.data_sources
+package es.javier.cappcake.data.data_sources.user
 
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.Source
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase

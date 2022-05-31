@@ -1,7 +1,6 @@
-package es.javier.cappcake.data.data_sources
+package es.javier.cappcake.data.data_sources.recipe
 
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase

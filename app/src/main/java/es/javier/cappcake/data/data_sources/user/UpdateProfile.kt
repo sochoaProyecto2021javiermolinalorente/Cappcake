@@ -1,10 +1,11 @@
-package es.javier.cappcake.data.data_sources
+package es.javier.cappcake.data.data_sources.user
 
 import android.net.Uri
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import es.javier.cappcake.data.data_sources.ImageUploader
 import es.javier.cappcake.data.entities.FirebaseContracts
 import es.javier.cappcake.domain.Response
 import es.javier.cappcake.utils.ImageCompressor

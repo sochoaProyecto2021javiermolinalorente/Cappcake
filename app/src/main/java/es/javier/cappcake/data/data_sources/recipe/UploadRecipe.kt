@@ -1,4 +1,4 @@
-package es.javier.cappcake.data.data_sources
+package es.javier.cappcake.data.data_sources.recipe
 
 import android.net.Uri
 import com.google.firebase.Timestamp
@@ -7,6 +7,7 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import es.javier.cappcake.data.data_sources.ImageUploader
 import es.javier.cappcake.data.entities.FirebaseContracts
 import es.javier.cappcake.domain.Ingredient
 import es.javier.cappcake.domain.Response

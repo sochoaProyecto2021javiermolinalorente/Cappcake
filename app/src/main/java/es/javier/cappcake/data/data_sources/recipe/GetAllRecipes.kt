@@ -1,8 +1,7 @@
-package es.javier.cappcake.data.data_sources
+package es.javier.cappcake.data.data_sources.recipe
 
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.Query
-import com.google.firebase.firestore.Source
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import es.javier.cappcake.data.entities.FirebaseContracts
