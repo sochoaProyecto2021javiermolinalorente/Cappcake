@@ -10,6 +10,7 @@ import es.javier.cappcake.domain.Response
 import es.javier.cappcake.domain.recipe.Recipe
 import es.javier.cappcake.domain.recipe.use_cases.GetRecipeUseCase
 import es.javier.cappcake.domain.recipe.use_cases.LikeRecipeUseCase
+import es.javier.cappcake.domain.recipe.use_cases.UnlikeRecipeUseCase
 import es.javier.cappcake.domain.user.use_cases.GetCurrentUserIdUseCase
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -18,7 +19,8 @@ import javax.inject.Inject
 class RecipeDetailScreenViewModel @Inject constructor(
     private val getRecipeUseCase: GetRecipeUseCase,
     private val getCurrentUserIdUseCase: GetCurrentUserIdUseCase,
-    private val likeRecipeUseCase: LikeRecipeUseCase
+    private val likeRecipeUseCase: LikeRecipeUseCase,
+    private val unlikeRecipeUseCase: UnlikeRecipeUseCase
 ) : ViewModel() {
 
     var recipe: Recipe? by mutableStateOf(null)
@@ -48,7 +50,14 @@ class RecipeDetailScreenViewModel @Inject constructor(
     }
 
     suspend fun unlikeRecipe(recipeId: String) {
-        recipeLiked = false
+        val response = unlikeRecipeUseCase(recipeId)
+
+        when (response) {
+            is Response.Failiure -> { }
+            is Response.Success -> {
+                recipeLiked = false
+            }
+        }
     }
 
     fun getCurrentId() : String? = getCurrentUserIdUseCase()

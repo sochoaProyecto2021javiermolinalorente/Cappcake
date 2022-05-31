@@ -19,5 +19,6 @@ interface RecipeRepository {
     suspend fun getLastRecipe() : Response<String?>
 
     suspend fun likeRecipe(recipeId: String) : Response<Boolean>
+    suspend fun unlikeRecipe(recipeId: String) : Response<Boolean>
 
 }
