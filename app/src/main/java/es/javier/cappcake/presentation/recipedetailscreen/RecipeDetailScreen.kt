@@ -5,6 +5,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Comment
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -79,11 +80,22 @@ fun RecipeDetailScreen(navController: NavController, viewModel: RecipeDetailScre
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 2
                 )
-                Icon(
-                    imageVector = Icons.Filled.FavoriteBorder,
-                    contentDescription = null,
-                    modifier = Modifier.padding(start = 10.dp, end = 5.dp)
-                )
+                IconButton(
+                    modifier = Modifier.padding(start = 10.dp, end = 5.dp),
+                    onClick = {
+                        scope.launch {
+                            if (viewModel.recipeLiked) {
+                                viewModel.unlikeRecipe(recipeId)
+                            } else
+                                viewModel.likeRecipe(recipeId)
+                        }
+                    }
+                ) {
+                    Icon(
+                        imageVector = if (viewModel.recipeLiked) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
+                        contentDescription = null
+                    )
+                }
 
                 IconButton(
                     modifier = Modifier.padding(start = 5.dp, end = 10.dp),

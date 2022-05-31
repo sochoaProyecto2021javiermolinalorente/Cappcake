@@ -18,4 +18,6 @@ interface RecipeRepository {
 
     suspend fun getLastRecipe() : Response<String?>
 
+    suspend fun likeRecipe(recipeId: String) : Response<Boolean>
+
 }

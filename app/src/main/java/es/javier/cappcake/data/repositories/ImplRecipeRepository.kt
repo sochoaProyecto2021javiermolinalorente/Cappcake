@@ -26,4 +26,8 @@ class ImplRecipeRepository @Inject constructor(private val dataSource: RecipeDat
     override suspend fun getLastRecipe(): Response<String?> {
         return dataSource.getLastRecipe()
     }
+
+    override suspend fun likeRecipe(recipeId: String): Response<Boolean> {
+        return dataSource.likeRecipe(recipeId)
+    }
 }
