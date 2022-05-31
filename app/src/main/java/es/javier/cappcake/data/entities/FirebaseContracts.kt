@@ -32,6 +32,13 @@ object FirebaseContracts {
     const val RECIPE_PROCESS = "recipeProcess"
     const val RECIPE_TIMESTAMP = "recipeTimestamp"
 
+    // Comments collection
+    const val COMMENT_COLLECTION = "comments"
+    const val COMMENT_RECIPE_ID = "recipeId"
+    const val COMMENT_USER_ID = "userId"
+    const val COMMENT_TIMESTAMP = "commentTimestamp"
+    const val COMMENT_MESSAGE = "comment"
+
     // Ingredients
     const val INGREDIENT_ID = "id"
     const val INGREDIENT_AMOUNT = "amount"

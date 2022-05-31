@@ -15,7 +15,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 
 @Composable
-fun LoadingAlert(title: @Composable (() -> Unit)?, text: @Composable (() -> Unit)?) {
+fun LoadingAlert(title: @Composable (() -> Unit)? = null, text: @Composable (() -> Unit)?) {
 
     Dialog(onDismissRequest = { }) {
         Box(
