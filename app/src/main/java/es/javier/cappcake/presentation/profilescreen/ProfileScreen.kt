@@ -14,9 +14,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Logout
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -75,16 +73,40 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileScreenViewMode
             }
         }
     }
+
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     
     Scaffold(
+        scaffoldState = rememberScaffoldState(drawerState = drawerState),
         drawerContent = if (viewModel.getCurrentUserId() == uid) {
             {
-                DrawerProfileSettings(navController = navController, viewModel = viewModel)
+                DrawerProfileSettings(navController = navController)
             }
         } else null
     ) {
         Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
             Box {
+
+                if (uid == viewModel.getCurrentUserId()) {
+                    IconButton(onClick = {
+                        coroutineScope.launch { drawerState.open() }
+                    }) {
+                        Icon(
+                            imageVector = Icons.Filled.Menu,
+                            contentDescription = null,
+                            tint = MaterialTheme.colors.primary
+                        )
+                    }
+                } else {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(
+                            imageVector = Icons.Filled.ArrowBack,
+                            contentDescription = null,
+                            tint = MaterialTheme.colors.primary
+                        )
+                    }
+                }
+
                 Column(modifier = Modifier.padding(top = 10.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                     ProfileScreenProfileImage(
                         modifier = Modifier.size(90.dp),
@@ -171,7 +193,9 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileScreenViewMode
                         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                             Text(text = stringResource(id = R.string.profile_screen_no_recipes_text))
 
-                            Column(modifier = Modifier.fillMaxSize().scrollable(rememberScrollState(), Orientation.Vertical)) {}
+                            Column(modifier = Modifier
+                                .fillMaxSize()
+                                .scrollable(rememberScrollState(), Orientation.Vertical)) {}
                         }
                     }
 
@@ -245,8 +269,8 @@ fun UnfollowUserAlert(username: String, showAlert: MutableState<Boolean>, onConf
 }
 
 @Composable
-fun DrawerProfileSettings(navController: NavController, viewModel: ProfileScreenViewModel) {
-    
+fun DrawerProfileSettings(navController: NavController) {
+
     Column(modifier = Modifier.fillMaxWidth()) {
 
         Surface(

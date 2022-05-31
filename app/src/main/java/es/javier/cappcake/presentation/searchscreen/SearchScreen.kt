@@ -53,7 +53,7 @@ fun SearchScreen(navController: NavController, viewModel: SearchScreenViewModel)
         SearchBar(modifier = Modifier
             .fillMaxWidth()
             .height(70.dp)
-            .padding(horizontal = 20.dp)) {}
+            .padding(horizontal = 20.dp)) { navController.navigate(Navigation.SearchUserScreen.navigationRoute) }
 
         Divider(thickness = 1.dp, color = Color.Black)
 

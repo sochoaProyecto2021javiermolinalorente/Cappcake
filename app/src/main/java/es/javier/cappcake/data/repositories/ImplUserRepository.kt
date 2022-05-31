@@ -24,6 +24,10 @@ class ImplUserRepository @Inject constructor(
 
     override suspend fun loadProfileImage(url: String): Response<Bitmap?> = userDataSource.loadProfileImage(url)
 
+    override suspend fun getUsersWhereName(username: String): Response<List<User>> {
+        return userDataSource.getUsersWhereName(username)
+    }
+
     override suspend fun getFollowersCount(uid: String): Response<Int?> = userDataSource.getFollowersCount(uid = uid)
 
     override suspend fun getFollowedUsers(): Response<List<User>> = userDataSource.getFollowedUsers()

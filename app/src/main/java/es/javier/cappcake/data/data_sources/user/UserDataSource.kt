@@ -17,6 +17,7 @@ class UserDataSource @Inject constructor(
     private val followUser: FollowUser,
     private val unfollowUser: UnfollowUser,
     private val getFollowedUsers: GetFollowedUsers,
+    private val getUsersWhereName: GetUsersWhereName,
     private val loadImage: LoadImage,
     private val updateProfile: UpdateProfile
 ) {
@@ -44,6 +45,10 @@ class UserDataSource @Inject constructor(
 
     suspend fun getUserProfile(uid: String) : Response<Pair<User, Boolean>?> {
         return getProfileInfo.getUserProfile(uid = uid)
+    }
+
+    suspend fun getUsersWhereName(username: String) : Response<List<User>> {
+        return getUsersWhereName.getUsersWhereName(username)
     }
 
     suspend fun loadProfileImage(url: String) : Response<Bitmap?> {
