@@ -111,6 +111,10 @@
     <string name="profile_screen_unfollow_user_alert_confirm_button_text">Dejar de seguir</string>
     <string name="profile_screen_unfollow_user_alert_cancel_button_text">Cancelar</string>
 
+    <!-- Liked recipes scren -->
+    <string name="liked_recipes_screen_top_bar_title">Recetas</string>
+    <string name="liked_recipes_screen_no_recipes_loaded_text">No hay recetas disponibles</string>
+
     <!-- Edit profile screen -->
     <string name="edit_profile_screen_top_bar_title">Editar perfil</string>
     <string name="edit_profile_screen_change_profile_photo_text">cambiar foto de perfil</string>

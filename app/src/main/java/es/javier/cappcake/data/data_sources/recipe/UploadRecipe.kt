@@ -51,6 +51,7 @@ class UploadRecipe @Inject constructor(
         )
 
         val recipeLikeData = hashMapOf(
+            FirebaseContracts.LIKE_RECIPE_USER_ID to auth.uid!!,
             FirebaseContracts.LIKE_RECIPE_ID to recipeDocumentRef.id,
             FirebaseContracts.LIKE_RECIPE_NAME to recipeName,
             FirebaseContracts.LIKE_RECIPE_IMAGE to imageUrl.data,

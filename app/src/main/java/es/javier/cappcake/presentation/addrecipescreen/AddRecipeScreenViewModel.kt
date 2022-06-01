@@ -25,14 +25,14 @@ class AddRecipeScreenViewModel @Inject constructor(
     private val getLastRecipeUseCase: GetLastRecipeUseCase
 ) : ViewModel() {
 
-    var recipeName by mutableStateOf("")
+    var recipeName by mutableStateOf("Tacos")
         private set
     var recipeImageUri: Uri? by mutableStateOf(null)
         private set
     var recipeImage: Bitmap? by mutableStateOf(null)
         private set
-    var recipeProcess by mutableStateOf("")
-    val ingredients = mutableStateListOf(Ingredient(name = "", amount = 0f, amountType = AmountType.NONE))
+    var recipeProcess by mutableStateOf("foaevndklewds")
+    val ingredients = mutableStateListOf(Ingredient(name = "Tacos", amount = 1f, amountType = AmountType.AMOUNT))
     var recipeFinished by mutableStateOf(false)
 
     var showLoadingAlert = mutableStateOf(false)

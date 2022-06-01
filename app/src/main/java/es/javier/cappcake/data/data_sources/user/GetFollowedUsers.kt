@@ -24,7 +24,6 @@ class GetFollowedUsers @Inject constructor() {
         return suspendCoroutine { continuation ->
 
             query.whereArrayContains(FirebaseContracts.FOLLOWERS_USERS, auth.uid!!)
-                .limit(10)
                 .get()
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {

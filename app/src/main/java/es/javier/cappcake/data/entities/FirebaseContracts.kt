@@ -43,6 +43,7 @@ object FirebaseContracts {
     // Recipe likes collection
     const val LIKES_COLLECTION = "recipeLikes"
     const val LIKE_RECIPE_IMAGE = "recipeImage"
+    const val LIKE_RECIPE_USER_ID = "userId"
     const val LIKE_RECIPE_ID = "recipeId"
     const val LIKE_RECIPE_NAME = "recipeName"
     const val LIKE_USERS = "users"

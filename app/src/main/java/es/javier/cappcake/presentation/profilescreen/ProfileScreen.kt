@@ -276,7 +276,7 @@ fun DrawerProfileSettings(navController: NavController) {
         Surface(
             modifier = Modifier
                 .padding(5.dp)
-                .clickable { },
+                .clickable { navController.navigate(Navigation.LikedRecipesScreen.navigationRoute) },
             color = primarydrawervariant,
             shape = RoundedCornerShape(8.dp)
         ) {

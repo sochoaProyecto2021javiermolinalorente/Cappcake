@@ -22,7 +22,8 @@ class RecipeDataSource @Inject constructor(
     private val getLastRecipe: GetLastRecipe,
     private val likeRecipe: LikeRecipe,
     private val unlikeRecipe: UnlikeRecipe,
-    private val getRecipe: GetRecipe
+    private val getRecipe: GetRecipe,
+    private val getLikedRecipes: GetLikedRecipes
 ) {
     
     private val firestore = Firebase.firestore
@@ -37,6 +38,10 @@ class RecipeDataSource @Inject constructor(
 
     suspend fun getAllRecipes(lastRecipeId: String?) : Response<Pair<List<Recipe>, String>> {
         return getAllRecipes.getAllRecipes(lastRecipeId)
+    }
+
+    suspend fun getLikedRecipes(lastRecipeId: String?) : Response<Pair<List<Recipe>, String>> {
+        return getLikedRecipes.getLikedRecipes(lastRecipeId)
     }
 
     suspend fun getRecipe(recipeId: String) : Response<Pair<Recipe, Boolean>?> {
