@@ -23,10 +23,9 @@ class RecipeDataSource @Inject constructor(
     private val likeRecipe: LikeRecipe,
     private val unlikeRecipe: UnlikeRecipe,
     private val getRecipe: GetRecipe,
-    private val getLikedRecipes: GetLikedRecipes
+    private val getLikedRecipes: GetLikedRecipes,
+    private val deleteRecipe: DeleteRecipe
 ) {
-    
-    private val firestore = Firebase.firestore
 
     suspend fun uploadRecipe(recipeName: String, recipeImageUri: Uri?, recipeProcess: String, ingredients: List<Ingredient>) : Response<Boolean> {
         return uploadRecipe.uploadRecipe(recipeName, recipeImageUri, recipeProcess, ingredients)
@@ -58,6 +57,10 @@ class RecipeDataSource @Inject constructor(
 
     suspend fun unlikeRecipe(recipeId: String) : Response<Boolean> {
         return unlikeRecipe.unlikeRecipe(recipeId)
+    }
+
+    suspend fun deleteRecipe(recipeId: String) : Response<Boolean> {
+        return deleteRecipe.deleteRecipe(recipeId)
     }
 
 }
