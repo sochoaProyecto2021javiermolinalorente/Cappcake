@@ -32,7 +32,8 @@ class RecipeDetailScreenViewModel @Inject constructor(
         when (response) {
             is Response.Failiure -> { }
             is Response.Success -> {
-                recipe = response.data
+                recipe = response.data!!.first
+                recipeLiked = response.data.second
             }
         }
 

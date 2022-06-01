@@ -7,6 +7,6 @@ import javax.inject.Inject
 
 class GetRecipeUseCase @Inject constructor(private val repository: RecipeRepository) {
 
-    suspend operator fun invoke(recipeId: String) : Response<Recipe?> = repository.getRecipe(recipeId = recipeId)
+    suspend operator fun invoke(recipeId: String) : Response<Pair<Recipe, Boolean>?> = repository.getRecipe(recipeId = recipeId)
 
 }
