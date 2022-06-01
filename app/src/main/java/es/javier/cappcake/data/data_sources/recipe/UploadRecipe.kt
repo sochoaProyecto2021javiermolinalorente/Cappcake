@@ -1,6 +1,7 @@
 package es.javier.cappcake.data.data_sources.recipe
 
 import android.net.Uri
+import android.util.Log
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FieldValue
@@ -29,6 +30,7 @@ class UploadRecipe @Inject constructor(
 
         val recipeDocumentRef = firestore.collection(FirebaseContracts.RECIPE_COLLECTION).document()
         val userRef = firestore.collection(FirebaseContracts.USER_COLLECTION).document(auth.uid!!)
+        val recipeLikesRef = firestore.collection(FirebaseContracts.LIKES_COLLECTION).document()
 
         val recipeImageRef = "/recipes/${UUID.randomUUID()}.jpg"
 
@@ -38,20 +40,32 @@ class UploadRecipe @Inject constructor(
             quality = ImageCompressor.MID_QUALITY
         )
 
-        val data = hashMapOf(
+        val recipeData = hashMapOf(
             FirebaseContracts.RECIPE_USER_ID to auth.uid,
             FirebaseContracts.RECIPE_NAME to recipeName,
             FirebaseContracts.RECIPE_IMAGE to imageUrl.data,
             FirebaseContracts.RECIPE_INGREDIENTS to ingredients,
             FirebaseContracts.RECIPE_PROCESS to recipeProcess,
-            FirebaseContracts.RECIPE_TIMESTAMP to Timestamp.now()
+            FirebaseContracts.RECIPE_TIMESTAMP to Timestamp.now(),
+            FirebaseContracts.RECIPE_LIKES_REF to recipeLikesRef
+        )
+
+        val recipeLikeData = hashMapOf(
+            FirebaseContracts.LIKE_RECIPE_USER_ID to auth.uid!!,
+            FirebaseContracts.LIKE_RECIPE_ID to recipeDocumentRef.id,
+            FirebaseContracts.LIKE_RECIPE_NAME to recipeName,
+            FirebaseContracts.LIKE_RECIPE_IMAGE to imageUrl.data,
+            FirebaseContracts.LIKE_USERS to emptyList<String>()
         )
 
         return suspendCoroutine { continuation ->
             firestore.runBatch { batch ->
 
-                batch.set(recipeDocumentRef, data)
+                Log.i("upload_recipe", "recipeId: ${recipeDocumentRef.id}")
+
+                batch.set(recipeDocumentRef, recipeData)
                 batch.update(userRef, FirebaseContracts.USER_POSTS, FieldValue.increment(1))
+                batch.set(recipeLikesRef, recipeLikeData)
 
             }.addOnCompleteListener { task ->
                 if (task.isSuccessful) {

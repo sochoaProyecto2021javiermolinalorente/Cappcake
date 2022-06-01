@@ -36,6 +36,7 @@ import es.javier.cappcake.presentation.addrecipescreen.RecipeProcessScreen
 import es.javier.cappcake.presentation.commentsscreen.CommentsScreen
 import es.javier.cappcake.presentation.editprofilescreen.EditProfileScreen
 import es.javier.cappcake.presentation.feedscreen.FeedScreen
+import es.javier.cappcake.presentation.likedrecipesscreen.LikedRecipesScreen
 import es.javier.cappcake.presentation.loadingscreen.LoadingScreen
 import es.javier.cappcake.presentation.loginscreen.LoginScreen
 import es.javier.cappcake.presentation.profilescreen.ProfileScreen
@@ -180,6 +181,10 @@ fun NavGraphBuilder.ApplicationGraph(navController: NavController) {
 
         composable(Navigation.EditProfileScreen.navigationRoute) {
             EditProfileScreen(navController = navController, viewModel = hiltViewModel())
+        }
+
+        composable(Navigation.LikedRecipesScreen.navigationRoute) {
+            LikedRecipesScreen(navController = navController, viewModel = hiltViewModel())
         }
 
         composable("${Navigation.RecipeDetailScreen.navigationRoute}?recipeId={recipeId}", arguments = listOf(

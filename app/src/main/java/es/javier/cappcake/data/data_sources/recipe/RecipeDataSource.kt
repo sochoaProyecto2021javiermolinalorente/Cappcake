@@ -19,7 +19,11 @@ class RecipeDataSource @Inject constructor(
     private val uploadRecipe: UploadRecipe,
     private val getAllRecipes: GetAllRecipes,
     private val getRecipesOf: GetRecipesOf,
-    private val getLastRecipe: GetLastRecipe
+    private val getLastRecipe: GetLastRecipe,
+    private val likeRecipe: LikeRecipe,
+    private val unlikeRecipe: UnlikeRecipe,
+    private val getRecipe: GetRecipe,
+    private val getLikedRecipes: GetLikedRecipes
 ) {
     
     private val firestore = Firebase.firestore
@@ -36,36 +40,24 @@ class RecipeDataSource @Inject constructor(
         return getAllRecipes.getAllRecipes(lastRecipeId)
     }
 
-    suspend fun getRecipe(recipeId: String) : Response<Recipe?> {
-        val ref = firestore.collection(FirebaseContracts.RECIPE_COLLECTION).document(recipeId)
-        val query = ref.get(Source.SERVER)
+    suspend fun getLikedRecipes(lastRecipeId: String?) : Response<Pair<List<Recipe>, String>> {
+        return getLikedRecipes.getLikedRecipes(lastRecipeId)
+    }
 
-        return suspendCoroutine { continuation ->
-            query.addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    val document = task.result
-                    val userId = document.getString(FirebaseContracts.RECIPE_USER_ID)
-                    val recipeName = document.getString(FirebaseContracts.RECIPE_NAME)
-                    val imagePath = document.getString(FirebaseContracts.RECIPE_IMAGE)
-                    val recipeProcess = document.getString(FirebaseContracts.RECIPE_PROCESS)
-                    val ingrediets = (document[FirebaseContracts.RECIPE_INGREDIENTS] as ArrayList<HashMap<String, Any>>).map {
-                        val ingredientId = it[FirebaseContracts.INGREDIENT_ID] as String
-                        val amount = it[FirebaseContracts.INGREDIENT_AMOUNT] as Double
-                        val amountType = it[FirebaseContracts.INGREDIENT_AMOUNT_TYPE] as String
-                        val name = it[FirebaseContracts.INGREDIENT_NAME] as String
-                        Ingredient(id = ingredientId, name = name, amount = amount.toFloat(), amountType = AmountType.valueOf(amountType))
-                    }
-                    val recipe = Recipe(recipeId = recipeId, userId = userId!!, image = imagePath, ingredients = ingrediets, title = recipeName!!, recipeProcess = recipeProcess!!)
-                    continuation.resume(Response.Success(data = recipe))
-                } else {
-                    continuation.resume(Response.Failiure(data = null, message = null))
-                }
-            }
-        }
+    suspend fun getRecipe(recipeId: String) : Response<Pair<Recipe, Boolean>?> {
+        return getRecipe.getRecipe(recipeId)
     }
 
     suspend fun getLastRecipe() : Response<String?> {
         return getLastRecipe.getLastRecipe()
+    }
+
+    suspend fun likeRecipe(recipeId: String) : Response<Boolean> {
+        return likeRecipe.likeRecipe(recipeId)
+    }
+
+    suspend fun unlikeRecipe(recipeId: String) : Response<Boolean> {
+        return unlikeRecipe.unlikeRecipe(recipeId)
     }
 
 }

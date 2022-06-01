@@ -26,7 +26,8 @@ sealed class Navigation(val navigationRoute: String) {
 
     // Profile screen navigtion
     object ProfileScreen: Navigation("profile_screen")
-    object EditProfileScreen: Navigation("edit_prfile_screen")
+    object EditProfileScreen: Navigation("edit_profile_screen")
+    object LikedRecipesScreen : Navigation("liked_recipes_screen")
 
     object RecipeDetailScreen: Navigation("recipeDetailScreen")
     object CommentsScreen: Navigation("comments_screen")

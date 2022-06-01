@@ -31,6 +31,7 @@ object FirebaseContracts {
     const val RECIPE_INGREDIENTS = "ingredients"
     const val RECIPE_PROCESS = "recipeProcess"
     const val RECIPE_TIMESTAMP = "recipeTimestamp"
+    const val RECIPE_LIKES_REF = "recipeLikesRef"
 
     // Comments collection
     const val COMMENT_COLLECTION = "comments"
@@ -38,6 +39,14 @@ object FirebaseContracts {
     const val COMMENT_USER_ID = "userId"
     const val COMMENT_TIMESTAMP = "commentTimestamp"
     const val COMMENT_MESSAGE = "comment"
+
+    // Recipe likes collection
+    const val LIKES_COLLECTION = "recipeLikes"
+    const val LIKE_RECIPE_IMAGE = "recipeImage"
+    const val LIKE_RECIPE_USER_ID = "userId"
+    const val LIKE_RECIPE_ID = "recipeId"
+    const val LIKE_RECIPE_NAME = "recipeName"
+    const val LIKE_USERS = "users"
 
     // Ingredients
     const val INGREDIENT_ID = "id"
