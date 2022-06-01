@@ -10,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import es.javier.cappcake.domain.recipe.Recipe
 import es.javier.cappcake.domain.Response
+import es.javier.cappcake.domain.recipe.use_cases.DeleteRecipeUseCase
 import es.javier.cappcake.domain.recipe.use_cases.GetRecipeUseCase
 import es.javier.cappcake.domain.user.User
 import es.javier.cappcake.domain.recipe.use_cases.GetRecipesOfUseCase
@@ -26,16 +27,21 @@ class ProfileScreenViewModel @Inject constructor(
     private val getCurrentUserIdUseCase: GetCurrentUserIdUseCase,
     private val followUserUseCase: FollowUserUseCase,
     private val unfollowUserUseCase: UnfollowUserUseCase,
-    private val getFollowersCountUseCase: GetFollowersCountUseCase
+    private val getFollowersCountUseCase: GetFollowersCountUseCase,
+    private val deleteRecipeUseCase: DeleteRecipeUseCase
 ) : ViewModel() {
 
     var user: User? by mutableStateOf(null)
     var followers: Int? by mutableStateOf(null)
     var recipes: SnapshotStateList<Recipe> = mutableStateListOf()
     var lastRecipeId: String? by mutableStateOf(null)
+    var selectedRecipe by mutableStateOf("")
+
+
     var userFollowed: Boolean by mutableStateOf(false)
     var screenStatus: ScreenState by mutableStateOf(ScreenState.LoadingData)
     var showUnFollowUserAlert = mutableStateOf(false)
+    var showDeleteRecipeAlert = mutableStateOf(false)
     var isRefreshing by mutableStateOf(false)
 
     suspend fun loadUser(uid: String) {
@@ -122,6 +128,24 @@ class ProfileScreenViewModel @Inject constructor(
         when (response) {
             is Response.Failiure -> {  }
             is Response.Success -> userFollowed = false
+        }
+    }
+
+    suspend fun deleteRecipe() {
+
+        val response = deleteRecipeUseCase(selectedRecipe)
+
+        when (response) {
+            is Response.Failiure -> {
+                selectedRecipe = ""
+                showDeleteRecipeAlert.value = false
+            }
+            is Response.Success -> {
+                val deletedRecipe = recipes.filter { it.recipeId == selectedRecipe }.first()
+                recipes.remove(deletedRecipe)
+                selectedRecipe = ""
+                showDeleteRecipeAlert.value = false
+            }
         }
     }
 

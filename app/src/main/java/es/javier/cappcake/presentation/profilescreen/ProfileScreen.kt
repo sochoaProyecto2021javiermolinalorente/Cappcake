@@ -74,6 +74,14 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileScreenViewMode
         }
     }
 
+    if (viewModel.showDeleteRecipeAlert.value) {
+        DeleteRecipeAlert(showAlert = viewModel.showDeleteRecipeAlert) {
+            coroutineScope.launch {
+                viewModel.deleteRecipe()
+            }
+        }
+    }
+
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     
     Scaffold(
@@ -165,7 +173,6 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileScreenViewMode
                     onRefresh = {
                         coroutineScope.launch {
                             viewModel.loadUser(uid)
-                            //viewModel.recipes.clear()
                             viewModel.loadRecipesAgain(uid)
                         }
                     }
@@ -185,7 +192,15 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileScreenViewMode
                                     modifier = Modifier.padding(20.dp),
                                     recipe = it,
                                     loadUser = { viewModel.user },
-                                    onRecipeClick = { navController.navigate(Navigation.RecipeDetailScreen.navigationRoute + "?recipeId=${it.recipeId}") }
+                                    onRecipeClick = { navController.navigate(Navigation.RecipeDetailScreen.navigationRoute + "?recipeId=${it.recipeId}") },
+                                    showRecipeOptions = viewModel.getCurrentUserId() == it.userId,
+                                    onEditClick = {
+
+                                    },
+                                    onDeleteClick = {
+                                        viewModel.selectedRecipe = it
+                                        viewModel.showDeleteRecipeAlert.value = true
+                                    }
                                 )
                             }
                         }
@@ -262,6 +277,31 @@ fun UnfollowUserAlert(username: String, showAlert: MutableState<Boolean>, onConf
         dismissButton = {
             TextButton(onClick = { showAlert.value = false }) {
                 Text(text = stringResource(id = R.string.profile_screen_unfollow_user_alert_cancel_button_text))
+            }
+        }
+    )
+
+}
+
+@Composable
+fun DeleteRecipeAlert(showAlert: MutableState<Boolean>, onConfirmClick: () -> Unit) {
+
+    AlertDialog(
+        onDismissRequest = { showAlert.value = false },
+        title = {
+            Text(text = stringResource(id = R.string.profile_screen_delete_alert_title))
+        },
+        text = {
+            Text(text = stringResource(id = R.string.profile_screen_delete_alert_text))
+        },
+        confirmButton = {
+            TextButton(onClick = onConfirmClick) {
+                Text(text = stringResource(id = R.string.profile_screen_delete_alert_confirm_button_text).uppercase(), color = Color.Red)
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = { showAlert.value = false }) {
+                Text(text = stringResource(id = R.string.profile_screen_delete_alert_cancel_button_text).uppercase())
             }
         }
     )
