@@ -34,21 +34,21 @@ class GetRecipe @Inject constructor() {
 
                 return@runTransaction Pair(recipe, recipeLiked)
             }.addOnCompleteListener { task ->
-                val document = task.result.first
-                val userId = document.getString(FirebaseContracts.RECIPE_USER_ID)
-                val recipeName = document.getString(FirebaseContracts.RECIPE_NAME)
-                val imagePath = document.getString(FirebaseContracts.RECIPE_IMAGE)
-                val recipeProcess = document.getString(FirebaseContracts.RECIPE_PROCESS)
-                val ingrediets = (document[FirebaseContracts.RECIPE_INGREDIENTS] as ArrayList<HashMap<String, Any>>).map {
-                    val ingredientId = it[FirebaseContracts.INGREDIENT_ID] as String
-                    val amount = it[FirebaseContracts.INGREDIENT_AMOUNT] as Double
-                    val amountType = it[FirebaseContracts.INGREDIENT_AMOUNT_TYPE] as String
-                    val name = it[FirebaseContracts.INGREDIENT_NAME] as String
-                    Ingredient(id = ingredientId, name = name, amount = amount.toFloat(), amountType = AmountType.valueOf(amountType))
-                }
-                val recipe = Recipe(recipeId = recipeId, userId = userId!!, image = imagePath, ingredients = ingrediets, title = recipeName!!, recipeProcess = recipeProcess!!)
-
                 if (task.isSuccessful) {
+                    val document = task.result.first
+                    val userId = document.getString(FirebaseContracts.RECIPE_USER_ID)
+                    val recipeName = document.getString(FirebaseContracts.RECIPE_NAME)
+                    val imagePath = document.getString(FirebaseContracts.RECIPE_IMAGE)
+                    val recipeProcess = document.getString(FirebaseContracts.RECIPE_PROCESS)
+                    val ingrediets = (document[FirebaseContracts.RECIPE_INGREDIENTS] as ArrayList<HashMap<String, Any>>).map {
+                        val ingredientId = it[FirebaseContracts.INGREDIENT_ID] as String
+                        val amount = it[FirebaseContracts.INGREDIENT_AMOUNT] as Double
+                        val amountType = it[FirebaseContracts.INGREDIENT_AMOUNT_TYPE] as String
+                        val name = it[FirebaseContracts.INGREDIENT_NAME] as String
+                        Ingredient(id = ingredientId, name = name, amount = amount.toFloat(), amountType = AmountType.valueOf(amountType))
+                    }
+                    val recipe = Recipe(recipeId = recipeId, userId = userId!!, image = imagePath, ingredients = ingrediets, title = recipeName!!, recipeProcess = recipeProcess!!)
+
                     continuation.resume(Response.Success(data = Pair(recipe, task.result.second)))
                 } else {
                     continuation.resume(Response.Failiure(data = null, message = null))

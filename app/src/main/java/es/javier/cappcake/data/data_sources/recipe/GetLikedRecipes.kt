@@ -27,7 +27,11 @@ class GetLikedRecipes @Inject constructor() {
                 firestore.collection(FirebaseContracts.LIKES_COLLECTION).whereEqualTo(FirebaseContracts.LIKE_RECIPE_ID, lastRecipeId)
                     .get().addOnCompleteListener { task ->
                         if (task.isSuccessful) {
-                            continuation.resume(task.result.first())
+                            if (task.result.isEmpty) {
+                                continuation.resume(null)
+                            } else {
+                                continuation.resume(task.result.first())
+                            }
                         } else {
                             continuation.resume(null)
                         }
