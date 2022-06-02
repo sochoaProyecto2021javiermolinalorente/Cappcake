@@ -14,6 +14,7 @@ import es.javier.cappcake.domain.user.User
 import es.javier.cappcake.domain.user.use_cases.GetFollowedUserUseCase
 import es.javier.cappcake.domain.user.use_cases.GetUserProfileUseCase
 import es.javier.cappcake.utils.ScreenState
+import java.lang.IllegalArgumentException
 import javax.inject.Inject
 
 @HiltViewModel
@@ -126,7 +127,11 @@ class FeedScreenViewModel @Inject constructor(
             val response = getRecipesOfUseCase(ids, lastRecipeId)
 
             when (response) {
-                is Response.Failiure -> {  }
+                is Response.Failiure -> {
+                    if (response.throwable is IllegalArgumentException) {
+                        lastRecipeId = recipes.last().recipeId
+                    }
+                }
                 is Response.Success -> {
                     recipes.addAll(response.data!!.first.toTypedArray())
                     lastRecipeId = response.data.second

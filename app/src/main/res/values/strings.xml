@@ -112,7 +112,7 @@
     <string name="profile_screen_unfollow_user_alert_question_text">¿Estás seguro?</string>
     <string name="profile_screen_unfollow_user_alert_confirm_button_text">Dejar de seguir</string>
     <string name="profile_screen_unfollow_user_alert_cancel_button_text">Cancelar</string>
-    <!-- Delete receta alert -->
+    <!-- Delete recipe alert -->
     <string name="profile_screen_delete_alert_title">Eliminar receta</string>
     <string name="profile_screen_delete_alert_text">¿Quieres eliminar esta receta? Estacción será permanente</string>
     <string name="profile_screen_delete_alert_confirm_button_text">Eliminar</string>

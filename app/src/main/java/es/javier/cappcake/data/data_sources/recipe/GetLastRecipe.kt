@@ -44,12 +44,12 @@ class GetLastRecipe @Inject constructor() {
                         Recipe(recipeId = recipeId, userId = userId!!, image = imagePath, ingredients = ingrediets, title = recipeName!!, recipeProcess = recipeProcess!!)
                     }
                     if (recipeList.isEmpty()) {
-                        continuation.resume(Response.Failiure(data = null, message = null))
+                        continuation.resume(Response.Failiure(data = null, throwable = null))
                     } else {
                         continuation.resume(Response.Success(data = recipeList.first().recipeId))
                     }
                 } else {
-                    continuation.resume(Response.Failiure(data = null, message = null))
+                    continuation.resume(Response.Failiure(data = null, throwable = task.exception))
                 }
             }
         }

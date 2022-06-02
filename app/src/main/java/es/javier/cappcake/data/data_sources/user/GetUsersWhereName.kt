@@ -45,10 +45,10 @@ class GetUsersWhereName @Inject constructor() {
                     if (result.isNotEmpty()) {
                         continuation.resume(Response.Success(data =result))
                     } else {
-                        continuation.resume(Response.Failiure(data = emptyList(), message = null))
+                        continuation.resume(Response.Failiure(data = emptyList(), throwable = task.exception))
                     }
                 } else {
-                    continuation.resume(Response.Failiure(data = emptyList(), message = null))
+                    continuation.resume(Response.Failiure(data = emptyList(), throwable = null))
                 }
             }
         }

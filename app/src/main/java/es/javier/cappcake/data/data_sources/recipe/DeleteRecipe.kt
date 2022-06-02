@@ -4,6 +4,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import es.javier.cappcake.data.entities.FirebaseContracts
 import es.javier.cappcake.domain.Response
 import javax.inject.Inject
@@ -14,11 +15,18 @@ class DeleteRecipe @Inject constructor() {
 
     private val firestore = Firebase.firestore
     private val auth = Firebase.auth
+    private val storage = Firebase.storage
 
     suspend fun deleteRecipe(recipeId: String) : Response<Boolean> {
 
         val recipeRef = firestore.collection(FirebaseContracts.RECIPE_COLLECTION).document(recipeId)
         val userRef = firestore.collection(FirebaseContracts.USER_COLLECTION).document(auth.uid!!)
+
+        suspendCoroutine<Boolean> { continuation ->
+            storage.reference.child("${auth.uid!!}/recipes/$recipeId.jpg").delete().addOnCompleteListener { task ->
+                continuation.resume(task.isSuccessful)
+            }
+        }
 
         return suspendCoroutine { continuation ->
             firestore.runTransaction { transaction ->
@@ -34,7 +42,7 @@ class DeleteRecipe @Inject constructor() {
                 if (task.isSuccessful) {
                     continuation.resume(Response.Success(data = true))
                 } else {
-                    continuation.resume(Response.Failiure(data = false, message = null))
+                    continuation.resume(Response.Failiure(data = false, throwable = task.exception))
                 }
             }
         }

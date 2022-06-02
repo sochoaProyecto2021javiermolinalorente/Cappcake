@@ -43,7 +43,7 @@ class GetFollowedUsers @Inject constructor() {
                         continuation.resume(Response.Success(data = users))
 
                     } else {
-                        continuation.resume(Response.Failiure(data = emptyList(), message = task.exception?.message))
+                        continuation.resume(Response.Failiure(data = emptyList(), throwable = task.exception))
                     }
             }
         }

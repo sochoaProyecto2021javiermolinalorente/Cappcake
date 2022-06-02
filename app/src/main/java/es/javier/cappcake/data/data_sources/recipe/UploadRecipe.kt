@@ -13,7 +13,6 @@ import es.javier.cappcake.data.entities.FirebaseContracts
 import es.javier.cappcake.domain.Ingredient
 import es.javier.cappcake.domain.Response
 import es.javier.cappcake.utils.ImageCompressor
-import java.util.*
 import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -32,7 +31,7 @@ class UploadRecipe @Inject constructor(
         val userRef = firestore.collection(FirebaseContracts.USER_COLLECTION).document(auth.uid!!)
         val recipeLikesRef = firestore.collection(FirebaseContracts.LIKES_COLLECTION).document()
 
-        val recipeImageRef = "/recipes/${UUID.randomUUID()}.jpg"
+        val recipeImageRef = "/recipes/${recipeDocumentRef.id}.jpg"
 
         val imageUrl = imageUploader.uploadImage(
             imageUri = recipeImageUri,
@@ -71,12 +70,9 @@ class UploadRecipe @Inject constructor(
                 if (task.isSuccessful) {
                     continuation.resume(Response.Success(data = true))
                 } else {
-                    val exception = task.exception
                     storage.reference.child(recipeImageRef).delete()
-                    if (exception != null)
-                        continuation.resume(Response.Failiure(data = false, message = exception.message))
-                    else
-                        continuation.resume(Response.Failiure(data = false, message = null))
+                    continuation.resume(Response.Failiure(data = false, throwable = task.exception))
+
                 }
             }
         }

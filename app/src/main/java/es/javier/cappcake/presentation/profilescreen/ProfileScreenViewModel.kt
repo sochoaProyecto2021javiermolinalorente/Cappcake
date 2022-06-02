@@ -18,6 +18,7 @@ import es.javier.cappcake.domain.user.use_cases.*
 import es.javier.cappcake.utils.ScreenState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.lang.IllegalArgumentException
 import javax.inject.Inject
 
 @HiltViewModel
@@ -103,7 +104,11 @@ class ProfileScreenViewModel @Inject constructor(
         val response = getRecipesOfUseCase(arrayOf(uid), lastRecipeId)
 
         when (response) {
-            is Response.Failiure -> { }
+            is Response.Failiure -> {
+                if (response.throwable is IllegalArgumentException) {
+                    lastRecipeId = recipes.last().recipeId
+                }
+            }
             is Response.Success -> {
                 recipes.addAll(response.data!!.first.toTypedArray())
                 lastRecipeId = response.data.second
