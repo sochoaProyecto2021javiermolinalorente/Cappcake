@@ -37,7 +37,6 @@ import com.google.firebase.auth.FirebaseAuth
 import es.javier.cappcake.R
 import es.javier.cappcake.Navigation
 import es.javier.cappcake.presentation.components.RecipeComponent
-import es.javier.cappcake.presentation.ui.theme.primaryVariant
 import es.javier.cappcake.presentation.ui.theme.primarydrawervariant
 import es.javier.cappcake.presentation.ui.theme.redvariant
 import es.javier.cappcake.utils.OnBottomReached
@@ -70,6 +69,14 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileScreenViewMode
                 viewModel.showUnFollowUserAlert.value = false
                 viewModel.unfollowUser(uid)
                 viewModel.getFollowersCount(uid)
+            }
+        }
+    }
+
+    if (viewModel.showDeleteRecipeAlert.value) {
+        DeleteRecipeAlert(showAlert = viewModel.showDeleteRecipeAlert) {
+            coroutineScope.launch {
+                viewModel.deleteRecipe()
             }
         }
     }
@@ -165,7 +172,6 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileScreenViewMode
                     onRefresh = {
                         coroutineScope.launch {
                             viewModel.loadUser(uid)
-                            //viewModel.recipes.clear()
                             viewModel.loadRecipesAgain(uid)
                         }
                     }
@@ -185,7 +191,13 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileScreenViewMode
                                     modifier = Modifier.padding(20.dp),
                                     recipe = it,
                                     loadUser = { viewModel.user },
-                                    onRecipeClick = { navController.navigate(Navigation.RecipeDetailScreen.navigationRoute + "?recipeId=${it.recipeId}") }
+                                    onRecipeClick = { navController.navigate(Navigation.RecipeDetailScreen.navigationRoute + "?recipeId=${it.recipeId}") },
+                                    showRecipeOptions = viewModel.getCurrentUserId() == it.userId,
+                                    onEditClick = { recipeId -> navController.navigate(Navigation.WriteRecipeScreen.navigationRoute + "?recipeId=${recipeId}") },
+                                    onDeleteClick = { recipeId ->
+                                        viewModel.selectedRecipe = recipeId
+                                        viewModel.showDeleteRecipeAlert.value = true
+                                    }
                                 )
                             }
                         }
@@ -262,6 +274,31 @@ fun UnfollowUserAlert(username: String, showAlert: MutableState<Boolean>, onConf
         dismissButton = {
             TextButton(onClick = { showAlert.value = false }) {
                 Text(text = stringResource(id = R.string.profile_screen_unfollow_user_alert_cancel_button_text))
+            }
+        }
+    )
+
+}
+
+@Composable
+fun DeleteRecipeAlert(showAlert: MutableState<Boolean>, onConfirmClick: () -> Unit) {
+
+    AlertDialog(
+        onDismissRequest = { showAlert.value = false },
+        title = {
+            Text(text = stringResource(id = R.string.profile_screen_delete_alert_title))
+        },
+        text = {
+            Text(text = stringResource(id = R.string.profile_screen_delete_alert_text))
+        },
+        confirmButton = {
+            TextButton(onClick = onConfirmClick) {
+                Text(text = stringResource(id = R.string.profile_screen_delete_alert_confirm_button_text).uppercase(), color = Color.Red)
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = { showAlert.value = false }) {
+                Text(text = stringResource(id = R.string.profile_screen_delete_alert_cancel_button_text).uppercase())
             }
         }
     )
@@ -349,10 +386,9 @@ fun DrawerProfileSettings(navController: NavController) {
 
 
 private fun signOut(navController: NavController) {
-    FirebaseAuth.getInstance().signOut()
-    navController.clearBackStack(Navigation.FeedScreen.navigationRoute)
     navController.clearBackStack(Navigation.SearchScreen.navigationRoute)
-    navController.clearBackStack(Navigation.AddRecipeScreen.navigationRoute)
-    navController.clearBackStack(Navigation.ProfileScreen.navigationRoute)
+    navController.clearBackStack("${Navigation.WriteRecipeScreen.navigationRoute}?recipeId={recipeId}")
+    navController.clearBackStack(Navigation.ActivityScreen.navigationRoute)
+    FirebaseAuth.getInstance().signOut()
     navController.navigate(navController.graph.findStartDestination().id)
 }

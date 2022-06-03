@@ -36,26 +36,31 @@
     <string name="search_screen_no_recipes_text">No ha recetas disponibles</string>
 
     <!-- Add recipe screen -->
-    <string name="add_recipe_screen_title">Añadir receta</string>
-    <string name="add_recipe_recipe_name_label">Nombre de la receta:</string>
-    <string name="add_recipe_upload_image_text">Subir imagen</string>
-    <string name="add_recipe_recipe_image_label">Imagen de la receta:</string>
-    <string name="add_recipe_ingredients_tab_label">Ingredientes</string>
-    <string name="add_recipe_process_tab_label">Elaboración</string>
-    <string name="add_recipe_ingredient_name_hint">Nombre</string>
-    <string name="add_recipe_ingredient_field_separator">-</string>
-    <string name="add_recipe_process_note_label">Elaboración</string>
-    <string name="add_recipe_uploading_recipe_text">Subiendo receta</string>
+    <string name="write_recipe_screen_add_title">Añadir receta</string>
+    <string name="write_recipe_screen_edit_title">Editar receta</string>
+    <string name="write_recipe_recipe_name_label">Nombre de la receta:</string>
+    <string name="write_recipe_upload_image_text">Subir imagen</string>
+    <string name="write_recipe_recipe_image_label">Imagen de la receta:</string>
+    <string name="write_recipe_ingredients_tab_label">Ingredientes</string>
+    <string name="write_recipe_process_tab_label">Elaboración</string>
+    <string name="write_recipe_ingredient_name_hint">Nombre</string>
+    <string name="write_recipe_ingredient_field_separator">-</string>
+    <string name="write_recipe_process_note_label">Elaboración</string>
+    <string name="write_recipe_uploading_recipe_text">Subiendo receta…</string>
+    <string name="write_recipe_editing_recipe_Text">Aplicando cambios…</string>
     <!-- Recipe process screen -->
     <string name="recipe_process_appbar_title">Elaboración</string>
     <!-- Storage permisison alert -->
-    <string name="add_recipe_storage_alert_title">Permisos necesarios</string>
-    <string name="add_recipe_storage_alert_text">Se requieren permisos de almacenamiento para seleccionar una foto.</string>
-    <string name="add_recipe_storage_alert_confirm_button">Ir a configuración</string>
-    <string name="add_recipe_storage_alert_dismiss_button">Cancel</string>
+    <string name="write_recipe_storage_alert_title">Permisos necesarios</string>
+    <string name="write_recipe_storage_alert_text">Se requieren permisos de almacenamiento para seleccionar una foto.</string>
+    <string name="write_recipe_storage_alert_confirm_button">Ir a configuración</string>
+    <string name="write_recipe_storage_alert_dismiss_button">Cancel</string>
     <!-- Recipe not valid alert -->
-    <string name="add_recipe_recipe_not_valid_alert_title">Receta no válida</string>
-    <string name="add_recipe_recipe_not_valid_alert_text">Hay algunos campos sin completar. Asegúrate de que no has dejado ningún ingrediente incompleto o dejado la imagen sin seleccionar.</string>
+    <string name="write_recipe_not_valid_alert_title">Receta no válida</string>
+    <string name="write_recipe_not_valid_alert_text">Hay algunos campos sin completar. Asegúrate de que no has dejado ningún ingrediente incompleto o dejado la imagen sin seleccionar.</string>
+    <!-- Recipe not changed alert -->
+    <string name="write_recipe_screen_no_changes_alert_title">Sin cambios</string>
+    <string name="write_reciperecipe_scree_no_changes_text">No se ha realziado ningún cambio.</string>
 
     <!-- Recipe detail screen -->
     <string name="recipe_detail_screen_ingredients_tab_label">Ingredientes</string>
@@ -104,12 +109,19 @@
     <string name="profile_screen_liked_recipes_text">Recetas que te gustan</string>
     <string name="profile_screen_edit_profile_text">Editar perfil</string>
     <string name="profile_screen_sign_out_text">Cerrar sesión</string>
+    <string name="profile_screen_delete_menu">Eliminar receta</string>
+    <string name="profile_screen_editar_menu">Editar receta</string>
     <!-- Unfollow user alert -->
     <string name="profile_screen_unfollow_user_alert_title">Dejar de seguir</string>
     <string name="profile_screen_unfollow_user_alert_message_text">Vas a dejar de seguir a </string>
     <string name="profile_screen_unfollow_user_alert_question_text">¿Estás seguro?</string>
     <string name="profile_screen_unfollow_user_alert_confirm_button_text">Dejar de seguir</string>
     <string name="profile_screen_unfollow_user_alert_cancel_button_text">Cancelar</string>
+    <!-- Delete recipe alert -->
+    <string name="profile_screen_delete_alert_title">Eliminar receta</string>
+    <string name="profile_screen_delete_alert_text">¿Quieres eliminar esta receta? Estacción será permanente</string>
+    <string name="profile_screen_delete_alert_confirm_button_text">Eliminar</string>
+    <string name="profile_screen_delete_alert_cancel_button_text">Cancelar</string>
 
     <!-- Liked recipes scren -->
     <string name="liked_recipes_screen_top_bar_title">Recetas</string>

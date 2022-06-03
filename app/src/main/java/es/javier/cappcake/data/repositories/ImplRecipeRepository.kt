@@ -1,5 +1,6 @@
 package es.javier.cappcake.data.repositories
 
+import android.graphics.Bitmap
 import android.net.Uri
 import es.javier.cappcake.data.data_sources.recipe.RecipeDataSource
 import es.javier.cappcake.domain.Ingredient
@@ -15,7 +16,19 @@ class ImplRecipeRepository @Inject constructor(private val dataSource: RecipeDat
         recipeImageUri: Uri?,
         recipeProcess: String,
         ingredients: List<Ingredient>
-    ): Response<Boolean> = dataSource.uploadRecipe(recipeName, recipeImageUri, recipeProcess, ingredients)
+    ): Response<Boolean> {
+        return dataSource.uploadRecipe(recipeName, recipeImageUri, recipeProcess, ingredients)
+    }
+
+    override suspend fun updateRecipe(
+        recipeId: String,
+        recipeName: String,
+        recipeImageUri: Uri?,
+        recipeProcess: String,
+        ingredients: List<Ingredient>
+    ): Response<Boolean> {
+        return dataSource.updateRecipe(recipeId, recipeName, recipeImageUri, recipeProcess, ingredients)
+    }
 
     override suspend fun getRecipesOf(uid: Array<String>, lastRecipeId: String?): Response<Pair<List<Recipe>, String>> = dataSource.getRecipesOf(uid, lastRecipeId)
 
@@ -31,11 +44,19 @@ class ImplRecipeRepository @Inject constructor(private val dataSource: RecipeDat
         return dataSource.getLastRecipe()
     }
 
+    override suspend fun loadRecipeImage(path: String): Response<Bitmap?> {
+        return dataSource.loadRecipeImage(path)
+    }
+
     override suspend fun likeRecipe(recipeId: String): Response<Boolean> {
         return dataSource.likeRecipe(recipeId)
     }
 
     override suspend fun unlikeRecipe(recipeId: String): Response<Boolean> {
         return dataSource.unlikeRecipe(recipeId)
+    }
+
+    override suspend fun deleteRecipe(recipeId: String): Response<Boolean> {
+        return dataSource.deleteRecipe(recipeId)
     }
 }

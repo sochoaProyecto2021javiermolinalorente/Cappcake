@@ -42,7 +42,7 @@ class GetProfileInfo @Inject constructor() {
                 if (task.isSuccessful) {
                     continuation.resume(Response.Success(data = task.result))
                 } else {
-                    continuation.resume(Response.Failiure(data = null, message = null))
+                    continuation.resume(Response.Failiure(data = null, throwable = null))
                 }
             }
         }
@@ -60,7 +60,7 @@ class GetProfileInfo @Inject constructor() {
                     counters.forEach { count += it }
                     continuation.resume(Response.Success(data = count))
                 } else {
-                    continuation.resume(Response.Failiure(data = null, message = task.exception?.message))
+                    continuation.resume(Response.Failiure(data = null, throwable = task.exception))
                 }
             }
         }

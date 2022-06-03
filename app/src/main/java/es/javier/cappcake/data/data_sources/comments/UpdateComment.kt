@@ -25,7 +25,7 @@ class UpdateComment @Inject constructor() {
                 if (task.isSuccessful) {
                     continuation.resume(Response.Success(data = true))
                 } else {
-                    continuation.resume(Response.Failiure(data = false, message = null))
+                    continuation.resume(Response.Failiure(data = false, throwable = task.exception))
                 }
             }
         }

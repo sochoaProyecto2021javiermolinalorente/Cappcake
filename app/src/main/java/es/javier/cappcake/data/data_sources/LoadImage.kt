@@ -25,11 +25,11 @@ class LoadImage @Inject constructor(@ApplicationContext private val context: Con
             if (bitmap != null) {
                 Response.Success(data = bitmap)
             } else {
-                Response.Failiure(data = null, message = null)
+                Response.Failiure(data = null, throwable = null)
             }
         } catch (ex: Exception) {
             ex.printStackTrace()
-            Response.Failiure(data = null, message = ex.message)
+            Response.Failiure(data = null, throwable = ex)
         }
 
     }

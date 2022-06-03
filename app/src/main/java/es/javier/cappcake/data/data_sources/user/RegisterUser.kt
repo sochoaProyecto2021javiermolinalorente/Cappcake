@@ -28,7 +28,7 @@ class RegisterUser @Inject constructor(private val imageUploader: ImageUploader)
                     if (task.isSuccessful) {
                         continuation.resume(Response.Success(data = true))
                     } else {
-                        continuation.resume(Response.Failiure(message = null, data = false))
+                        continuation.resume(Response.Failiure(throwable = task.exception, data = false))
                     }
                 }
         }
@@ -80,13 +80,13 @@ class RegisterUser @Inject constructor(private val imageUploader: ImageUploader)
                         val profileImageRef = storage.reference.child(auth.uid!! + FirebaseContracts.USER_PROFILE_IMAGE_REFERENCE)
                         profileImageRef.delete()
                         auth.currentUser?.delete()
-                        continuation.resume(Response.Failiure(data = false, message = null))
+                        continuation.resume(Response.Failiure(data = false, throwable = null))
                     }
                 }
             }
 
         } else {
-            return Response.Failiure(data = false, message = null)
+            return response
         }
 
     }

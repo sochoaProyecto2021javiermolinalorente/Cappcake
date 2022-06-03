@@ -9,6 +9,7 @@ import es.javier.cappcake.domain.AmountType
 import es.javier.cappcake.domain.Ingredient
 import es.javier.cappcake.domain.Response
 import es.javier.cappcake.domain.recipe.Recipe
+import java.lang.IllegalArgumentException
 import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -35,12 +36,16 @@ class GetRecipesOf @Inject constructor() {
             null
         }
 
-        val query = if (lastDocumentSnapshot != null) {
-            recipesRef.whereIn(FirebaseContracts.RECIPE_USER_ID, uid.asList())
-                .orderBy(FirebaseContracts.RECIPE_TIMESTAMP, Query.Direction.DESCENDING).startAfter(lastDocumentSnapshot).limit(10)
-        } else {
-            recipesRef.whereIn(FirebaseContracts.RECIPE_USER_ID, uid.asList())
-                .orderBy(FirebaseContracts.RECIPE_TIMESTAMP, Query.Direction.DESCENDING).limit(10)
+        val query = try {
+            if (lastDocumentSnapshot != null) {
+                recipesRef.whereIn(FirebaseContracts.RECIPE_USER_ID, uid.asList())
+                    .orderBy(FirebaseContracts.RECIPE_TIMESTAMP, Query.Direction.DESCENDING).startAfter(lastDocumentSnapshot).limit(10)
+            } else {
+                recipesRef.whereIn(FirebaseContracts.RECIPE_USER_ID, uid.asList())
+                    .orderBy(FirebaseContracts.RECIPE_TIMESTAMP, Query.Direction.DESCENDING).limit(10)
+            }
+        } catch (ex: IllegalArgumentException) {
+            return Response.Failiure(data = Pair(emptyList(), ""), throwable = ex)
         }
 
 
@@ -63,12 +68,12 @@ class GetRecipesOf @Inject constructor() {
                         Recipe(recipeId = recipeId, userId = userId!!, image = imagePath, ingredients = ingrediets, title = recipeName!!, recipeProcess = recipeProcess!!)
                     }
                     if (recipeList.isEmpty()) {
-                        continuation.resume(Response.Failiure(data = Pair(emptyList(), ""), message = null))
+                        continuation.resume(Response.Failiure(data = Pair(emptyList(), ""), throwable = null))
                     } else {
                         continuation.resume(Response.Success(data = Pair(recipeList, recipeList.last().recipeId)))
                     }
                 } else {
-                    continuation.resume(Response.Failiure(data = Pair(emptyList(), ""), message = null))
+                    continuation.resume(Response.Failiure(data = Pair(emptyList(), ""), throwable = task.exception))
                 }
             }
         }

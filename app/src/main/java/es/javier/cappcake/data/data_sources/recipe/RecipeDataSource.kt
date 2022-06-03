@@ -1,9 +1,11 @@
 package es.javier.cappcake.data.data_sources.recipe
 
+import android.graphics.Bitmap
 import android.net.Uri
 import com.google.firebase.firestore.Source
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import es.javier.cappcake.data.data_sources.LoadImage
 import es.javier.cappcake.data.entities.FirebaseContracts
 import es.javier.cappcake.domain.AmountType
 import es.javier.cappcake.domain.Ingredient
@@ -17,19 +19,24 @@ import kotlin.coroutines.suspendCoroutine
 
 class RecipeDataSource @Inject constructor(
     private val uploadRecipe: UploadRecipe,
+    private val updateRecipe: UpdateRecipe,
     private val getAllRecipes: GetAllRecipes,
     private val getRecipesOf: GetRecipesOf,
     private val getLastRecipe: GetLastRecipe,
     private val likeRecipe: LikeRecipe,
     private val unlikeRecipe: UnlikeRecipe,
     private val getRecipe: GetRecipe,
-    private val getLikedRecipes: GetLikedRecipes
+    private val getLikedRecipes: GetLikedRecipes,
+    private val deleteRecipe: DeleteRecipe,
+    private val loadImage: LoadImage
 ) {
-    
-    private val firestore = Firebase.firestore
 
     suspend fun uploadRecipe(recipeName: String, recipeImageUri: Uri?, recipeProcess: String, ingredients: List<Ingredient>) : Response<Boolean> {
         return uploadRecipe.uploadRecipe(recipeName, recipeImageUri, recipeProcess, ingredients)
+    }
+
+    suspend fun updateRecipe(recipeId: String, recipeName: String, recipeImageUri: Uri?, recipeProcess: String, ingredients: List<Ingredient>) : Response<Boolean> {
+        return updateRecipe.updateRecipe(recipeId, recipeName, recipeImageUri, recipeProcess, ingredients)
     }
 
     suspend fun getRecipesOf(uid: Array<String>, lastRecipeId: String?) : Response<Pair<List<Recipe>, String>> {
@@ -52,12 +59,20 @@ class RecipeDataSource @Inject constructor(
         return getLastRecipe.getLastRecipe()
     }
 
+    suspend fun loadRecipeImage(path: String) : Response<Bitmap?> {
+        return loadImage.loadImage(path)
+    }
+
     suspend fun likeRecipe(recipeId: String) : Response<Boolean> {
         return likeRecipe.likeRecipe(recipeId)
     }
 
     suspend fun unlikeRecipe(recipeId: String) : Response<Boolean> {
         return unlikeRecipe.unlikeRecipe(recipeId)
+    }
+
+    suspend fun deleteRecipe(recipeId: String) : Response<Boolean> {
+        return deleteRecipe.deleteRecipe(recipeId)
     }
 
 }

@@ -4,10 +4,9 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Divider
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -16,6 +15,7 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -28,9 +28,12 @@ import kotlinx.coroutines.CoroutineScope
 @Composable
 fun RecipeComponent(modifier: Modifier,
                     recipe: Recipe,
+                    showRecipeOptions: Boolean = false,
                     loadUser: suspend CoroutineScope.() -> User?,
                     onUserClick: () -> Unit = {},
-                    onRecipeClick: () -> Unit = {}) {
+                    onRecipeClick: () -> Unit = {},
+                    onDeleteClick: ((String) -> Unit)? = null,
+                    onEditClick: ((String) -> Unit)? = null) {
 
     var user: User? by remember { mutableStateOf(null) }
 
@@ -60,6 +63,15 @@ fun RecipeComponent(modifier: Modifier,
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis
                     )
+                    if (showRecipeOptions) {
+
+                        Spacer(modifier = Modifier.weight(1f))
+
+                        RecipeOptionsDropDownMenu(
+                            onEditClick = { onEditClick?.let { it(recipe.recipeId) } },
+                            onRemoveClick = { onDeleteClick?.let { it(recipe.recipeId) } }
+                        )
+                    }
                 }
                 Divider(color = Color.Black)
             }
@@ -101,4 +113,40 @@ fun RecipeComponent(modifier: Modifier,
             }
         }
     }
+}
+
+@Composable
+fun RecipeOptionsDropDownMenu(onEditClick: () -> Unit, onRemoveClick: () -> Unit) {
+
+    var expanded by remember { mutableStateOf(false) }
+
+    Box {
+
+        IconButton(onClick = { expanded = true }) {
+            Icon(
+                imageVector = Icons.Default.MoreVert,
+                contentDescription = null
+            )
+        }
+
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            DropdownMenuItem(onClick = {
+                expanded = false
+                onEditClick()
+            }) {
+                Text(text = stringResource(id = R.string.profile_screen_editar_menu), color = MaterialTheme.colors.primary)
+            }
+
+            DropdownMenuItem(onClick = {
+                expanded = false
+                onRemoveClick()
+            }) {
+                Text(text = stringResource(id = R.string.profile_screen_delete_menu), color = Color.Red)
+            }
+        }
+    }
+
 }

@@ -30,8 +30,8 @@ import com.google.firebase.firestore.ktx.firestoreSettings
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import es.javier.cappcake.presentation.activityscreen.ActivityScreen
-import es.javier.cappcake.presentation.addrecipescreen.AddRecipeScreen
-import es.javier.cappcake.presentation.addrecipescreen.AddRecipeScreenViewModel
+import es.javier.cappcake.presentation.addrecipescreen.WriteRecipeScreen
+import es.javier.cappcake.presentation.addrecipescreen.WriteRecipeScreenViewModel
 import es.javier.cappcake.presentation.addrecipescreen.RecipeProcessScreen
 import es.javier.cappcake.presentation.commentsscreen.CommentsScreen
 import es.javier.cappcake.presentation.editprofilescreen.EditProfileScreen
@@ -82,7 +82,7 @@ class MainActivity : ComponentActivity() {
                         when (currentBackStackEntry?.destination?.route) {
                             Navigation.FeedScreen.navigationRoute,
                             Navigation.SearchScreen.navigationRoute,
-                            Navigation.AddRecipeScreen.navigationRoute,
+                            Navigation.WriteRecipeScreen.navigationRoute + "?recipeId={recipeId}",
                             Navigation.ActivityScreen.navigationRoute ->
                                 BottomNavigationitems(
                                     navController = navController,
@@ -113,19 +113,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    override fun onBackPressed() {
-        val destination = navController.currentDestination?.route
-        Log.i("Navigation", destination ?: "destination null")
-        destination?.let { currentDestination ->
-            when (currentDestination) {
-                Navigation.FeedScreen.navigationRoute -> finish()
-                Navigation.LoginScreen.navigationRoute -> finish()
-            }
-        }
-
-        super.onBackPressed()
-    }
-
 }
 
 fun NavGraphBuilder.LoginGraph(navController: NavController) {
@@ -152,15 +139,27 @@ fun NavGraphBuilder.ApplicationGraph(navController: NavController) {
             SearchUserScreen(navController = navController, viewModel = hiltViewModel())
         }
 
-        composable(Navigation.AddRecipeScreen.navigationRoute) {
-            AddRecipeScreen(navController = navController, hiltViewModel())
+        composable(
+            "${Navigation.WriteRecipeScreen.navigationRoute}?recipeId={recipeId}",
+            arguments = listOf(
+                navArgument("recipeId") {
+                    type = NavType.StringType
+                    nullable = true
+                }
+            )
+        ) { backStackEntry ->
+            WriteRecipeScreen(
+                navController = navController,
+                viewModel = hiltViewModel(),
+                recipeId = backStackEntry.arguments?.getString("recipeId")
+            )
         }
 
         composable(Navigation.RecipeProcessScreen.navigationRoute) { backStackEntry ->
             val parentBackStackEntry = remember(backStackEntry) {
-                navController.getBackStackEntry(Navigation.AddRecipeScreen.navigationRoute)
+                navController.getBackStackEntry(Navigation.WriteRecipeScreen.navigationRoute + "?recipeId={recipeId}")
             }
-            val parentViewModel = hiltViewModel<AddRecipeScreenViewModel>(parentBackStackEntry)
+            val parentViewModel = hiltViewModel<WriteRecipeScreenViewModel>(parentBackStackEntry)
 
             RecipeProcessScreen(navController = navController, viewModel = parentViewModel)
         }
@@ -249,8 +248,8 @@ fun BottomNavigationitems(navController: NavController, currentBackStackEntry: N
             icon = { Icon(imageVector = Icons.Filled.Search, contentDescription = null)})
 
         BottomNavigationItem(
-            selected = currentDestination?.hierarchy?.any { it.route == Navigation.AddRecipeScreen.navigationRoute } == true,
-            onClick = { navController.navigate(Navigation.AddRecipeScreen.navigationRoute) {
+            selected = currentDestination?.hierarchy?.any { it.route == "${Navigation.WriteRecipeScreen.navigationRoute}?recipeId={recipeId}" } == true,
+            onClick = { navController.navigate(Navigation.WriteRecipeScreen.navigationRoute) {
                 popUpTo(Navigation.FeedScreen.navigationRoute) {
                     inclusive = false
                     this.saveState = false

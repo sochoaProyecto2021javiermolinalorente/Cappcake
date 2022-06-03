@@ -20,10 +20,10 @@ fun StoragePermissionNotGrantedAlert(showAlert: MutableState<Boolean>) {
     AlertDialog(
         onDismissRequest = { showAlert.value = false },
         title = {
-            Text(text = stringResource(id = R.string.add_recipe_storage_alert_title))
+            Text(text = stringResource(id = R.string.write_recipe_storage_alert_title))
         },
         text = {
-            Text(text = stringResource(id = R.string.add_recipe_storage_alert_text))
+            Text(text = stringResource(id = R.string.write_recipe_storage_alert_text))
         },
         confirmButton = {
             TextButton(onClick = {
@@ -35,12 +35,12 @@ fun StoragePermissionNotGrantedAlert(showAlert: MutableState<Boolean>) {
                 context.startActivity(intent)
                 showAlert.value = false
             }) {
-                Text(text = stringResource(id = R.string.add_recipe_storage_alert_confirm_button).uppercase())
+                Text(text = stringResource(id = R.string.write_recipe_storage_alert_confirm_button).uppercase())
             }
         },
         dismissButton = {
             TextButton(onClick = { showAlert.value = false }) {
-                Text(text = stringResource(id = R.string.add_recipe_storage_alert_dismiss_button).uppercase())
+                Text(text = stringResource(id = R.string.write_recipe_storage_alert_dismiss_button).uppercase())
             }
         }
     )

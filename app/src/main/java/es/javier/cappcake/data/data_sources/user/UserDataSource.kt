@@ -33,7 +33,7 @@ class UserDataSource @Inject constructor(
                     if (task.isSuccessful) {
                         continuation.resume(Response.Success(true))
                     } else {
-                        continuation.resume(Response.Failiure(task.exception!!.message!!, false))
+                        continuation.resume(Response.Failiure(task.exception, false))
                     }
                 }
         }

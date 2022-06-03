@@ -1,6 +1,5 @@
 package es.javier.cappcake.data.data_sources.comments
 
-import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
@@ -8,6 +7,7 @@ import com.google.firebase.ktx.Firebase
 import es.javier.cappcake.data.entities.FirebaseContracts
 import es.javier.cappcake.domain.comment.Comment
 import es.javier.cappcake.domain.Response
+import java.lang.IllegalArgumentException
 import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -40,10 +40,14 @@ class GetAllCommentsOf @Inject constructor() {
             null
         }
 
-        val query = if (lastDocumentSnapshot != null) {
-            commentsRef.orderBy(FirebaseContracts.COMMENT_TIMESTAMP, Query.Direction.DESCENDING).startAfter(lastDocumentSnapshot).limit(10)
-        } else {
-            commentsRef.orderBy(FirebaseContracts.COMMENT_TIMESTAMP, Query.Direction.DESCENDING).limit(10)
+        val query = try {
+            if (lastDocumentSnapshot != null) {
+                commentsRef.orderBy(FirebaseContracts.COMMENT_TIMESTAMP, Query.Direction.DESCENDING).startAfter(lastDocumentSnapshot).limit(10)
+            } else {
+                commentsRef.orderBy(FirebaseContracts.COMMENT_TIMESTAMP, Query.Direction.DESCENDING).limit(10)
+            }
+        } catch(ex: IllegalArgumentException) {
+            return Response.Failiure(data = Pair(emptyList(), ""), throwable = ex)
         }
 
         return suspendCoroutine { continuation ->
@@ -64,12 +68,12 @@ class GetAllCommentsOf @Inject constructor() {
 
                 if (task.isSuccessful) {
                     if (result.isEmpty()) {
-                        continuation.resume(Response.Failiure(data = Pair(emptyList(), ""), message = null))
+                        continuation.resume(Response.Failiure(data = Pair(emptyList(), ""), throwable = null))
                     } else {
                         continuation.resume(Response.Success(data = Pair(result, result.last().commentId)))
                     }
                 } else {
-                    continuation.resume(Response.Failiure(data = Pair(emptyList(), ""), message = null))
+                    continuation.resume(Response.Failiure(data = Pair(emptyList(), ""), throwable = task.exception))
                 }
             }
         }

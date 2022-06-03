@@ -12,19 +12,24 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import es.javier.cappcake.domain.AmountType
 import es.javier.cappcake.domain.Ingredient
 import es.javier.cappcake.domain.Response
-import es.javier.cappcake.domain.recipe.use_cases.GetLastRecipeUseCase
-import es.javier.cappcake.domain.recipe.use_cases.UploadRecipeUseCase
+import es.javier.cappcake.domain.recipe.Recipe
+import es.javier.cappcake.domain.recipe.use_cases.*
 import es.javier.cappcake.utils.ImageCompressor
+import es.javier.cappcake.utils.ScreenState
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class AddRecipeScreenViewModel @Inject constructor(
+class WriteRecipeScreenViewModel @Inject constructor(
     private val compressor: ImageCompressor,
+    private val getRecipeUseCase: GetRecipeUseCase,
     private val uploadRecipeUseCase: UploadRecipeUseCase,
-    private val getLastRecipeUseCase: GetLastRecipeUseCase
+    private val updateRecipeUseCase: UpdateRecipeUseCase,
+    private val getLastRecipeUseCase: GetLastRecipeUseCase,
+    private val loadRecipeImageUseCase: LoadRecipeImageUseCase
 ) : ViewModel() {
 
+    var recipeToEdit: Recipe? by mutableStateOf(null)
     var recipeName by mutableStateOf("")
         private set
     var recipeImageUri: Uri? by mutableStateOf(null)
@@ -34,10 +39,12 @@ class AddRecipeScreenViewModel @Inject constructor(
     var recipeProcess by mutableStateOf("")
     val ingredients = mutableStateListOf(Ingredient(name = "", amount = 0f, amountType = AmountType.NONE))
     var recipeFinished by mutableStateOf(false)
+    var screenState: ScreenState by mutableStateOf(ScreenState.LoadingData)
 
-    var showLoadingAlert = mutableStateOf(false)
-    var showStoragePermissionAlert = mutableStateOf(false)
-    var showInvalidRecipeAlert = mutableStateOf(false)
+    val showLoadingAlert = mutableStateOf(false)
+    val showStoragePermissionAlert = mutableStateOf(false)
+    val showInvalidRecipeAlert = mutableStateOf(false)
+    val showNoChangesAlert = mutableStateOf(false)
 
     fun addIngredient() { ingredients.add(Ingredient(name = "", amount = 0f, amountType = AmountType.NONE)) }
 
@@ -78,6 +85,59 @@ class AddRecipeScreenViewModel @Inject constructor(
         }
     }
 
+    fun updateRecipe(recipeId: String) {
+        viewModelScope.launch {
+
+            showLoadingAlert.value = true
+
+            if (!checkValidRecipe()) {
+                showInvalidRecipeAlert.value = true
+                showLoadingAlert.value = false
+                return@launch
+            }
+
+            if (!checkEditedRecipe()) {
+                showNoChangesAlert.value = true
+                showLoadingAlert.value = false
+                return@launch
+            }
+
+            val response = updateRecipeUseCase(recipeId, recipeName, recipeImageUri, recipeProcess, ingredients)
+
+            when (response) {
+                is Response.Failiure -> {
+                    showInvalidRecipeAlert.value = true
+                    showLoadingAlert.value = false
+                }
+                is Response.Success -> {
+                    showLoadingAlert.value = false
+                    recipeFinished = true
+                }
+            }
+        }
+    }
+
+    suspend fun loadRecipe(recipeId: String) {
+        val response = getRecipeUseCase(recipeId)
+
+        when (response) {
+            is Response.Failiure -> { }
+            is Response.Success -> {
+                val recipe = response.data!!.first
+                recipeToEdit = recipe
+                recipeName = recipe.title
+                recipeImageUri = Uri.parse(recipe.image)
+                recipeImageUri?.let {
+                    recipeImage = loadRecipeImageUseCase(it.toString()).data
+                }
+                ingredients.clear()
+                ingredients.addAll(recipe.ingredients)
+                recipeProcess = recipe.recipeProcess
+                screenState = ScreenState.DataLoaded
+            }
+        }
+    }
+
     suspend fun getLastRecipe() : String? = getLastRecipeUseCase().data
 
     private fun checkValidRecipe() : Boolean {
@@ -97,5 +157,13 @@ class AddRecipeScreenViewModel @Inject constructor(
     private fun checkName() : Boolean = recipeName.isNotBlank()
     private fun checkImage() : Boolean = recipeImageUri != null
     private fun checkRecipeProcess() : Boolean = recipeProcess.isNotBlank()
+
+    private fun checkEditedRecipe() : Boolean {
+        if (recipeToEdit?.title != recipeName) return true
+        if (recipeToEdit?.image != recipeImageUri.toString()) return true
+        if (recipeToEdit?.recipeProcess != recipeProcess) return true
+        if (recipeToEdit?.ingredients != ingredients.toList()) return true
+        return false
+    }
 
 }

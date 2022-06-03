@@ -21,7 +21,7 @@ class ImageUploader @Inject constructor(private val compressor: ImageCompressor)
 
         val recipeImageRef = storage.reference.child("${auth.uid}" + referencePath)
 
-        if (imageUri == null) return Response.Failiure(data = null, message = null)
+        if (imageUri == null) return Response.Failiure(data = null, throwable = null)
 
         val recipeImage = compressor.comporessBitmap(quality = quality, imageUri)
         val outputStream = ByteArrayOutputStream()
@@ -44,10 +44,10 @@ class ImageUploader @Inject constructor(private val compressor: ImageCompressor)
                 if (urlTask.path != null) {
                     continuation.resume(Response.Success(data = urlTask))
                 } else {
-                    continuation.resume(Response.Failiure(data = null, message = null))
+                    continuation.resume(Response.Failiure(data = null, throwable = null))
                 }
             }.addOnFailureListener {
-                continuation.resume(Response.Failiure(data = null, message = null))
+                continuation.resume(Response.Failiure(data = null, throwable = null))
             }
 
         }

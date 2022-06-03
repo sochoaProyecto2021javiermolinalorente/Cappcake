@@ -27,7 +27,7 @@ class DeleteComment @Inject constructor() {
                     continuation.resume(Response.Success(data = true))
                 } else {
                     val exception = task.exception
-                    continuation.resume(Response.Failiure(data = false, message = null))
+                    continuation.resume(Response.Failiure(data = false, throwable = task.exception))
                 }
             }
         }
