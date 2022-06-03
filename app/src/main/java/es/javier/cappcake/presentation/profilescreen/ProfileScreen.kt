@@ -386,10 +386,9 @@ fun DrawerProfileSettings(navController: NavController) {
 
 
 private fun signOut(navController: NavController) {
-    FirebaseAuth.getInstance().signOut()
-    navController.clearBackStack(Navigation.FeedScreen.navigationRoute)
     navController.clearBackStack(Navigation.SearchScreen.navigationRoute)
-    navController.clearBackStack(Navigation.WriteRecipeScreen.navigationRoute)
-    navController.clearBackStack(Navigation.ProfileScreen.navigationRoute)
+    navController.clearBackStack("${Navigation.WriteRecipeScreen.navigationRoute}?recipeId={recipeId}")
+    navController.clearBackStack(Navigation.ActivityScreen.navigationRoute)
+    FirebaseAuth.getInstance().signOut()
     navController.navigate(navController.graph.findStartDestination().id)
 }

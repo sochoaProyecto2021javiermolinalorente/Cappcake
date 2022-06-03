@@ -17,9 +17,17 @@ fun LoadingScreen(navController: NavController, viewModel: LoadingScreenViewMode
 
     LaunchedEffect(key1 = Unit) {
         if (userId == null) {
-            navController.navigate(Navigation.AUTHENTCATION_GRAPH)
+            navController.navigate(Navigation.AUTHENTCATION_GRAPH) {
+                popUpTo(Navigation.LoadingScreen.navigationRoute) {
+                    inclusive = true
+                }
+            }
         } else {
-            navController.navigate(Navigation.APPLICATION_GRAPH)
+            navController.navigate(Navigation.APPLICATION_GRAPH) {
+                popUpTo(Navigation.LoadingScreen.navigationRoute) {
+                    inclusive = true
+                }
+            }
         }
     }
 

@@ -113,19 +113,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    override fun onBackPressed() {
-        val destination = navController.currentDestination?.route
-        Log.i("Navigation", destination ?: "destination null")
-        destination?.let { currentDestination ->
-            when (currentDestination) {
-                Navigation.FeedScreen.navigationRoute -> finish()
-                Navigation.LoginScreen.navigationRoute -> finish()
-            }
-        }
-
-        super.onBackPressed()
-    }
-
 }
 
 fun NavGraphBuilder.LoginGraph(navController: NavController) {
@@ -261,7 +248,7 @@ fun BottomNavigationitems(navController: NavController, currentBackStackEntry: N
             icon = { Icon(imageVector = Icons.Filled.Search, contentDescription = null)})
 
         BottomNavigationItem(
-            selected = currentDestination?.hierarchy?.any { it.route == Navigation.WriteRecipeScreen.navigationRoute } == true,
+            selected = currentDestination?.hierarchy?.any { it.route == "${Navigation.WriteRecipeScreen.navigationRoute}?recipeId={recipeId}" } == true,
             onClick = { navController.navigate(Navigation.WriteRecipeScreen.navigationRoute) {
                 popUpTo(Navigation.FeedScreen.navigationRoute) {
                     inclusive = false

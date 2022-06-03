@@ -169,7 +169,7 @@ fun RegisterScreen(navController: NavController, viewModel: RegisterScreenViewMo
                             onClick = { coroutine.launch {
                                 viewModel.checkPasswordsAreEqual()
                                 if (viewModel.createUser()) {
-                                    navController.popBackStack(Navigation.LoadingScreen.navigationRoute, false)
+                                    navController.navigate(Navigation.LoadingScreen.navigationRoute)
                                 } else {
                                     viewModel.showUserNotCreatedAlert.value = true
                                 }
