@@ -36,6 +36,7 @@ import es.javier.cappcake.presentation.components.LoadingAlert
 import es.javier.cappcake.presentation.components.StoragePermissionNotGrantedAlert
 import es.javier.cappcake.presentation.ui.theme.notePageColor
 import es.javier.cappcake.presentation.ui.theme.primary
+import es.javier.cappcake.utils.ScreenState
 import kotlinx.coroutines.launch
 
 private const val INGREDIENTS_TAB = 0
@@ -44,18 +45,28 @@ private const val TABS = 2
 
 @ExperimentalPagerApi
 @Composable
-fun AddRecipeScreen(navController: NavController, viewModel: AddRecipeScreenViewModel) {
+fun WriteRecipeScreen(navController: NavController, viewModel: WriteRecipeScreenViewModel, recipeId: String?) {
 
     val pagerState = rememberPagerState()
     val scope = rememberCoroutineScope()
 
     LaunchedEffect(key1 = viewModel.recipeFinished) {
+
+        if (recipeId != null) {
+            if (viewModel.screenState is ScreenState.LoadingData)
+                viewModel.loadRecipe(recipeId)
+        }
+
         if (viewModel.recipeFinished) {
-            val id = viewModel.getLastRecipe()
-            id?.let {
-                navController.navigate(Navigation.RecipeDetailScreen.navigationRoute + "?recipeId=${it}") {
-                    popUpTo(Navigation.FeedScreen.navigationRoute)
+            if (recipeId == null) {
+                val id = viewModel.getLastRecipe()
+                id?.let {
+                    navController.navigate(Navigation.RecipeDetailScreen.navigationRoute + "?recipeId=${it}") {
+                        popUpTo(Navigation.FeedScreen.navigationRoute)
+                    }
                 }
+            } else {
+                navController.popBackStack()
             }
         }
     }
@@ -81,14 +92,33 @@ fun AddRecipeScreen(navController: NavController, viewModel: AddRecipeScreenView
     if (viewModel.showLoadingAlert.value) {
         LoadingAlert(
             title = null,
-            text = { Text(text = stringResource(id = R.string.add_recipe_uploading_recipe_text)) })
+            text = {
+                Text(
+                    text = stringResource(
+                        id = if (recipeId == null) {
+                            R.string.write_recipe_uploading_recipe_text
+                        } else {
+                            R.string.write_recipe_editing_recipe_Text
+                        }
+                    )
+                )
+            }
+        )
     }
 
     if (viewModel.showInvalidRecipeAlert.value) {
         ErrorDialog(
             showDialog = viewModel.showInvalidRecipeAlert,
-            title = R.string.add_recipe_recipe_not_valid_alert_title,
-            text = R.string.add_recipe_recipe_not_valid_alert_text)
+            title = R.string.write_recipe_not_valid_alert_title,
+            text = R.string.write_recipe_not_valid_alert_text)
+    }
+
+    if (viewModel.showNoChangesAlert.value) {
+        ErrorDialog(
+            showDialog = viewModel.showNoChangesAlert,
+            title = R.string.write_recipe_screen_no_changes_alert_title,
+            text = R.string.write_reciperecipe_scree_no_changes_text
+        )
     }
 
     Scaffold(topBar = {
@@ -97,7 +127,14 @@ fun AddRecipeScreen(navController: NavController, viewModel: AddRecipeScreenView
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(text = stringResource(id = R.string.add_recipe_screen_title),
+                Text(
+                    text = stringResource(
+                        id = if (recipeId == null) {
+                            R.string.write_recipe_screen_add_title
+                        } else {
+                            R.string.write_recipe_screen_edit_title
+                        }
+                    ),
                     style = MaterialTheme.typography.h6,
                     modifier = Modifier
                         .padding(horizontal = 10.dp)
@@ -106,7 +143,12 @@ fun AddRecipeScreen(navController: NavController, viewModel: AddRecipeScreenView
 
                 IconButton(
                     modifier = Modifier.padding(horizontal = 10.dp),
-                    onClick = { viewModel.uploadRecipe() },
+                    onClick = {
+                        if (recipeId == null) {
+                            viewModel.uploadRecipe()
+                        } else {
+                            viewModel.updateRecipe(recipeId)
+                        } },
                 ) {
                     Icon(imageVector = Icons.Filled.Save, contentDescription = null, tint = Color.White)
                 }
@@ -147,12 +189,12 @@ fun AddRecipeScreen(navController: NavController, viewModel: AddRecipeScreenView
 
                 Tab(selected = pagerState.currentPage == INGREDIENTS_TAB,
                     onClick = { scope.launch { pagerState.animateScrollToPage(INGREDIENTS_TAB) } },
-                    text = { Text(text = stringResource(id = R.string.add_recipe_ingredients_tab_label).uppercase(),
+                    text = { Text(text = stringResource(id = R.string.write_recipe_ingredients_tab_label).uppercase(),
                         color = MaterialTheme.colors.onSurface) })
 
                 Tab(selected = pagerState.currentPage == PROCESS_TAB,
                     onClick = { scope.launch { pagerState.animateScrollToPage(PROCESS_TAB) } },
-                    text = { Text(text = stringResource(id = R.string.add_recipe_process_tab_label).uppercase(),
+                    text = { Text(text = stringResource(id = R.string.write_recipe_process_tab_label).uppercase(),
                         color = MaterialTheme.colors.onSurface) })
 
 
@@ -176,7 +218,7 @@ fun RecipeNameField(modifier: Modifier = Modifier, value: String, onNameChange: 
         border = BorderStroke(2.dp, color = MaterialTheme.colors.primary)
     ) {
         Column(modifier = Modifier.padding(10.dp)) {
-            Text(text = stringResource(id = R.string.add_recipe_recipe_name_label), style = MaterialTheme.typography.h6)
+            Text(text = stringResource(id = R.string.write_recipe_recipe_name_label), style = MaterialTheme.typography.h6)
             BasicTextField(
                 modifier = Modifier.fillMaxWidth(),
                 value = value,
@@ -201,17 +243,17 @@ fun UploadRecipeImageField(modifier: Modifier, onClick: () -> Unit) {
                 drawRect(color = primary, style = stroke)
             }
 
-            Text(text = stringResource(id = R.string.add_recipe_upload_image_text))
+            Text(text = stringResource(id = R.string.write_recipe_upload_image_text))
 
         }
     }
 }
 
 @Composable
-fun ImageSelectedView(modifier: Modifier, image: Bitmap?, onClick: () -> Unit, viewModel: AddRecipeScreenViewModel) {
+fun ImageSelectedView(modifier: Modifier, image: Bitmap?, onClick: () -> Unit, viewModel: WriteRecipeScreenViewModel) {
 
     Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
-        Text(text = stringResource(id = R.string.add_recipe_recipe_image_label))
+        Text(text = stringResource(id = R.string.write_recipe_recipe_image_label))
         Spacer(modifier = Modifier.width(10.dp))
         Surface(
             modifier = Modifier
@@ -224,7 +266,7 @@ fun ImageSelectedView(modifier: Modifier, image: Bitmap?, onClick: () -> Unit, v
             Box(modifier = Modifier, contentAlignment = Alignment.Center) {
                 if (image != null) {
                     Image(
-                        bitmap = image!!.asImageBitmap(),
+                        bitmap = image.asImageBitmap(),
                         contentDescription = null,
                         contentScale = ContentScale.Crop)
                 } else {
@@ -237,7 +279,7 @@ fun ImageSelectedView(modifier: Modifier, image: Bitmap?, onClick: () -> Unit, v
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun AddRecipeScreenTabContent(pagerState: PagerState, navController: NavController, viewModel: AddRecipeScreenViewModel) {
+fun AddRecipeScreenTabContent(pagerState: PagerState, navController: NavController, viewModel: WriteRecipeScreenViewModel) {
     HorizontalPager(count = TABS, state = pagerState) { page ->
         when (page) {
             INGREDIENTS_TAB -> IngredientsTab(viewModel = viewModel)

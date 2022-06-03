@@ -20,7 +20,6 @@ class GetRecipe @Inject constructor() {
 
     suspend fun getRecipe(recipeId: String) : Response<Pair<Recipe, Boolean>?> {
         val ref = firestore.collection(FirebaseContracts.RECIPE_COLLECTION).document(recipeId)
-        val query = ref.get(Source.SERVER)
 
         return suspendCoroutine { continuation ->
 

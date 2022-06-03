@@ -25,7 +25,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -38,7 +37,7 @@ import es.javier.cappcake.presentation.utils.toFormattedFloat
 import es.javier.cappcake.presentation.utils.toFormattedString
 
 @Composable
-fun IngredientsTab(viewModel: AddRecipeScreenViewModel) {
+fun IngredientsTab(viewModel: WriteRecipeScreenViewModel) {
     LazyColumn(modifier = Modifier
         .fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
 
@@ -72,7 +71,7 @@ fun IngredientField(modifier: Modifier = Modifier, ingredient: Ingredient, onDel
 
     Surface(modifier = modifier, shape = RoundedCornerShape(8.dp), elevation = 4.dp) {
         Row(modifier = Modifier.wrapContentSize().padding(2.dp), verticalAlignment = Alignment.CenterVertically) {
-            Text(text = stringResource(id = R.string.add_recipe_ingredient_field_separator))
+            Text(text = stringResource(id = R.string.write_recipe_ingredient_field_separator))
             Box(modifier = Modifier.wrapContentSize().padding(5.dp), contentAlignment = Alignment.CenterStart) {
                 BasicTextField(
                     value = ingredientName,
@@ -88,12 +87,12 @@ fun IngredientField(modifier: Modifier = Modifier, ingredient: Ingredient, onDel
                 )
 
                 if (ingredientName.isBlank()) {
-                    Text(text = stringResource(id = R.string.add_recipe_ingredient_name_hint), color = Color.Gray)
+                    Text(text = stringResource(id = R.string.write_recipe_ingredient_name_hint), color = Color.Gray)
                 }
             }
 
             Spacer(modifier = Modifier.width(4.dp))
-            Text(text = stringResource(id = R.string.add_recipe_ingredient_field_separator))
+            Text(text = stringResource(id = R.string.write_recipe_ingredient_field_separator))
             Spacer(modifier = Modifier.width(4.dp))
             BasicTextField(
                 modifier = Modifier.width(40.dp),

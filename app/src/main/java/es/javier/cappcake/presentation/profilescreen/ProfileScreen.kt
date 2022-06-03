@@ -37,7 +37,6 @@ import com.google.firebase.auth.FirebaseAuth
 import es.javier.cappcake.R
 import es.javier.cappcake.Navigation
 import es.javier.cappcake.presentation.components.RecipeComponent
-import es.javier.cappcake.presentation.ui.theme.primaryVariant
 import es.javier.cappcake.presentation.ui.theme.primarydrawervariant
 import es.javier.cappcake.presentation.ui.theme.redvariant
 import es.javier.cappcake.utils.OnBottomReached
@@ -194,11 +193,9 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileScreenViewMode
                                     loadUser = { viewModel.user },
                                     onRecipeClick = { navController.navigate(Navigation.RecipeDetailScreen.navigationRoute + "?recipeId=${it.recipeId}") },
                                     showRecipeOptions = viewModel.getCurrentUserId() == it.userId,
-                                    onEditClick = {
-
-                                    },
-                                    onDeleteClick = {
-                                        viewModel.selectedRecipe = it
+                                    onEditClick = { recipeId -> navController.navigate(Navigation.WriteRecipeScreen.navigationRoute + "?recipeId=${recipeId}") },
+                                    onDeleteClick = { recipeId ->
+                                        viewModel.selectedRecipe = recipeId
                                         viewModel.showDeleteRecipeAlert.value = true
                                     }
                                 )
@@ -392,7 +389,7 @@ private fun signOut(navController: NavController) {
     FirebaseAuth.getInstance().signOut()
     navController.clearBackStack(Navigation.FeedScreen.navigationRoute)
     navController.clearBackStack(Navigation.SearchScreen.navigationRoute)
-    navController.clearBackStack(Navigation.AddRecipeScreen.navigationRoute)
+    navController.clearBackStack(Navigation.WriteRecipeScreen.navigationRoute)
     navController.clearBackStack(Navigation.ProfileScreen.navigationRoute)
     navController.navigate(navController.graph.findStartDestination().id)
 }
