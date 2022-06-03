@@ -22,11 +22,17 @@ class DeleteRecipe @Inject constructor() {
         val recipeRef = firestore.collection(FirebaseContracts.RECIPE_COLLECTION).document(recipeId)
         val userRef = firestore.collection(FirebaseContracts.USER_COLLECTION).document(auth.uid!!)
 
-        suspendCoroutine<Boolean> { continuation ->
+        val recipeImageDeleted = suspendCoroutine<Response<Boolean>> { continuation ->
             storage.reference.child("${auth.uid!!}/recipes/$recipeId.jpg").delete().addOnCompleteListener { task ->
-                continuation.resume(task.isSuccessful)
+                if (task.isSuccessful) {
+                    continuation.resume(Response.Success(data = true))
+                } else {
+                    continuation.resume(Response.Failiure(data = false, throwable = task.exception))
+                }
             }
         }
+
+        if (recipeImageDeleted is Response.Failiure) return recipeImageDeleted
 
         return suspendCoroutine { continuation ->
             firestore.runTransaction { transaction ->
