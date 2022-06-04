@@ -32,6 +32,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import es.javier.cappcake.R
 import es.javier.cappcake.presentation.components.ErrorDialog
@@ -167,7 +168,8 @@ fun EditProfileScreen(navController: NavController, viewModel: EditProfileScreen
                     value = viewModel.username,
                     onValueChange = {
                         coroutineScope.launch { viewModel.setUsername(it) }
-                    }
+                    },
+                    error = viewModel.usernameExistsError
                 )
 
                 Spacer(modifier = Modifier.weight(1f))
@@ -278,33 +280,46 @@ fun ChangeImageAlert(showAlert: MutableState<Boolean>,
 }
 
 @Composable
-fun NewUsernameTextField(modifier: Modifier, value: String, onValueChange: (String) -> Unit) {
+fun NewUsernameTextField(modifier: Modifier, value: String, onValueChange: (String) -> Unit, error: Boolean) {
 
     val focusManager = LocalFocusManager.current
 
-    Box(modifier = modifier.padding(horizontal = 5.dp, vertical = 3.dp),
-        contentAlignment = Alignment.CenterStart
+    Column(
+        modifier = modifier.padding(horizontal = 5.dp, vertical = 10.dp)
     ) {
-        BasicTextField(
-            modifier = Modifier
-                .fillMaxWidth()
-                .shadow(4.dp, shape = RoundedCornerShape(8.dp))
-                .background(color = Color.White, shape = RoundedCornerShape(8.dp))
-                .border(1.dp, color = Color.Black, shape = RoundedCornerShape(8.dp))
-                .padding(8.dp),
-            value = value,
-            onValueChange = onValueChange,
-            maxLines = 1,
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences, imeAction = ImeAction.Done),
-            keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() })
-        )
+        Box(
+            contentAlignment = Alignment.CenterStart
+        ) {
+            BasicTextField(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .shadow(4.dp, shape = RoundedCornerShape(8.dp))
+                    .background(color = Color.White, shape = RoundedCornerShape(8.dp))
+                    .border(1.dp, color = Color.Black, shape = RoundedCornerShape(8.dp))
+                    .padding(8.dp),
+                value = value,
+                onValueChange = onValueChange,
+                maxLines = 1,
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences, imeAction = ImeAction.Done),
+                keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() })
+            )
 
-        if (value.isBlank()) {
+            if (value.isBlank()) {
+                Text(
+                    modifier = Modifier.padding(8.dp),
+                    text = stringResource(id = R.string.edit_profile_screen_username_hint),
+                    color = Color.Gray,
+                )
+            }
+        }
+
+        if (error) {
+            Spacer(modifier = Modifier.height(2.dp))
             Text(
-                modifier = Modifier.padding(8.dp),
-                text = stringResource(id = R.string.edit_profile_screen_username_hint),
-                color = Color.Gray,
+                text = stringResource(id = R.string.register_screen_username_exists_error_text),
+                color = MaterialTheme.colors.error,
+                fontSize = 12.sp
             )
         }
     }

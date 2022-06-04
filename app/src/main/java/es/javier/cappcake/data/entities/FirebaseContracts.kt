@@ -23,6 +23,12 @@ object FirebaseContracts {
     const val USER_FOLLOWER_COUNTERS = 5
     const val USER_PROFILE_IMAGE_REFERENCE = "/profile_image/profile-image.jpg"
 
+    // Index collection
+    const val INDEX_COLLECTION = "index"
+    const val INDEX_USER_DOCUMENT = "user"
+    const val INDEX_USERNAME_COLLECTION = "username"
+    const val INDEX_USERNAME_USER_ID = "userId"
+
     // Recipe collection
     const val RECIPE_COLLECTION = "recipes"
     const val RECIPE_USER_ID = "userId"
@@ -61,5 +67,8 @@ object FirebaseContracts {
     const val ACTIVITY_RECIPE_ID = "recipeId"
     const val ACTIVITY_TYPE = "type"
     const val ACTIVITY_TIMESTAMP = "activityTimestamp"
+
+    // Error codes
+    const val PERMISSION_DENIED = 7
 
 }

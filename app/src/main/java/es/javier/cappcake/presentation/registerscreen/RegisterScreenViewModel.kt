@@ -8,6 +8,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import es.javier.cappcake.domain.PermissionException
 import es.javier.cappcake.domain.Response
 import es.javier.cappcake.domain.user.use_cases.RegisterUserUseCase
 import es.javier.cappcake.utils.ImageCompressor
@@ -46,6 +47,7 @@ class RegisterScreenViewModel @Inject constructor(
         private set
 
     var notEqualPasswordError: Boolean by mutableStateOf(false)
+    var usernameExistsError: Boolean by mutableStateOf(false)
 
     val showStoragePermissionAlert = mutableStateOf(false)
     val showUserNotCreatedAlert = mutableStateOf(false)
@@ -66,6 +68,7 @@ class RegisterScreenViewModel @Inject constructor(
                 response.data!!
             }
             is Response.Failiure -> {
+                usernameExistsError = response.throwable is PermissionException
                 creatingUser.value = false
                 response.data!!
             }

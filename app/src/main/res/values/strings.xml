@@ -30,6 +30,7 @@
     <string name="register_password_hint">Contraseña</string>
     <string name="register_repeat_password_hint">Repetir contraseña</string>
     <string name="register_create_account_text_button">Crear cuenta</string>
+    <string name="register_screen_username_exists_error_text">*Este nombre de usuario ya está cogido</string>
     <!-- User not created error dialog -->
     <string name="user_not_created_title_dialog">Error</string>
     <string name="user_not_created_message_dialog">No se ha podido crear el usuario</string>
@@ -148,9 +149,10 @@
     <string name="edit_profile_screen_send_button_text">enviar</string>
     <string name="edit_profile_screen_username_hint">Nombre de usuario</string>
     <string name="edit_profile_screen_updating_text">Modificando usuario</string>
+    <string name="edit_profile_screen_username_exists_error_text">*Este nombre de usuario ya está cogido</string>
     <!-- Can not update user alert -->
     <string name="can_not_update_user_alert_title">Error al actualizar</string>
-    <string name="can_not_update_user_alert_message">No se ha podido actualizar el usuario. Es posible que el nombre de usuario ya exista</string>
+    <string name="can_not_update_user_alert_message">No se ha podido actualizar el usuario.</string>
     <!-- Change photo alert -->
     <string name="change_photo_alert_title">Cambiar foto de pergil</string>
     <string name="change_photo_alert_change_photo_text">Cambiar foto</string>

@@ -81,7 +81,8 @@ class MainActivity : ComponentActivity() {
 
             LaunchedEffect(key1 = currentBackStackEntry) {
                 Log.i("Navigation", "Current destination: ${navController.currentDestination?.route}")
-                if (currentBackStackEntry?.destination?.route == Navigation.RegisterScreen.navigationRoute) {
+                if (currentBackStackEntry?.destination?.route == Navigation.RegisterScreen.navigationRoute ||
+                    currentBackStackEntry?.destination?.route == Navigation.EditProfileScreen.navigationRoute) {
                     window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
                 } else {
                     window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
