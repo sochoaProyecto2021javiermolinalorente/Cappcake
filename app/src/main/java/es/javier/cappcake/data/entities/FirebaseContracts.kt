@@ -54,4 +54,12 @@ object FirebaseContracts {
     const val INGREDIENT_AMOUNT_TYPE = "amountType"
     const val INGREDIENT_NAME = "name"
 
+    // Activity collection
+    const val ACTIVITY_COLLECTION = "activity"
+    const val ACTIVITY_USER_ID = "userId"
+    const val ACTIVITY_AFFECTED_USER_ID = "affectedUserId"
+    const val ACTIVITY_RECIPE_ID = "recipeId"
+    const val ACTIVITY_TYPE = "type"
+    const val ACTIVITY_TIMESTAMP = "activityTimestamp"
+
 }

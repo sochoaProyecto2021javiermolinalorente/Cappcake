@@ -183,13 +183,16 @@ fun CommentItem(modifier: Modifier,
                 onEditClick: () -> Unit,
                 onRemoveClick: () -> Unit) {
 
-    var user: User? by remember { mutableStateOf(null) }
+    var user: User? by remember { mutableStateOf(comment.user) }
     var expanded by remember { mutableStateOf(false) }
     val ownRecipe = owner == currentUserId
     val ownComment = currentUserId == comment.userId
 
     LaunchedEffect(key1 = Unit) {
-        user = loadUser()
+        if (user == null) {
+            comment.user = loadUser()
+            user = comment.user
+        }
     }
 
     Column(modifier = modifier.animateContentSize()) {
