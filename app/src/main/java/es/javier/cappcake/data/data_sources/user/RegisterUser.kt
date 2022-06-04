@@ -2,11 +2,13 @@ package es.javier.cappcake.data.data_sources.user
 
 import android.net.Uri
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import es.javier.cappcake.data.data_sources.ImageUploader
 import es.javier.cappcake.data.entities.FirebaseContracts
+import es.javier.cappcake.domain.PermissionException
 import es.javier.cappcake.domain.Response
 import es.javier.cappcake.utils.ImageCompressor
 import javax.inject.Inject
@@ -53,6 +55,10 @@ class RegisterUser @Inject constructor(private val imageUploader: ImageUploader)
                 FirebaseContracts.FOLLOWERS_USERS to emptyList<String>()
             )
 
+            val usernameIndexData = hashMapOf(
+                FirebaseContracts.INDEX_USERNAME_USER_ID to auth.uid
+            )
+
             return suspendCoroutine { continuation ->
                 firestore.runBatch { batch ->
 
@@ -67,6 +73,12 @@ class RegisterUser @Inject constructor(private val imageUploader: ImageUploader)
                     }
 
                     // Add Username index
+                    val usernameIndexRef = firestore.collection(FirebaseContracts.INDEX_COLLECTION)
+                        .document(FirebaseContracts.INDEX_USER_DOCUMENT)
+                        .collection(FirebaseContracts.INDEX_USERNAME_COLLECTION)
+                        .document(username)
+                    batch.set(usernameIndexRef, usernameIndexData)
+
 
                     // Add followers data
                     val followersRef = firestore.collection(FirebaseContracts.FOLLOWERS_COLLECTION).document(username)
@@ -76,11 +88,19 @@ class RegisterUser @Inject constructor(private val imageUploader: ImageUploader)
                     if (task.isSuccessful) {
                         continuation.resume(Response.Success(data = true))
                     } else {
-                        val ex = task.exception
+                        val exception = if (task.exception is FirebaseFirestoreException) {
+                            val exception = task.exception as FirebaseFirestoreException
+                            if (exception.code.value() == FirebaseContracts.PERMISSION_DENIED)
+                                PermissionException()
+                            else
+                                task.exception
+                        } else {
+                            task.exception
+                        }
                         val profileImageRef = storage.reference.child(auth.uid!! + FirebaseContracts.USER_PROFILE_IMAGE_REFERENCE)
                         profileImageRef.delete()
                         auth.currentUser?.delete()
-                        continuation.resume(Response.Failiure(data = false, throwable = null))
+                        continuation.resume(Response.Failiure(data = false, throwable = exception))
                     }
                 }
             }

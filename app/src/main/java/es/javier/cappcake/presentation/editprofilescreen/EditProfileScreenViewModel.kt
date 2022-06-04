@@ -8,6 +8,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import es.javier.cappcake.domain.PermissionException
 import es.javier.cappcake.domain.Response
 import es.javier.cappcake.domain.user.User
 import es.javier.cappcake.domain.user.use_cases.GetCurrentUserIdUseCase
@@ -36,6 +37,7 @@ class EditProfileScreenViewModel @Inject constructor(
 
     private var _screenState: MutableStateFlow<EditProfileScreenState> = MutableStateFlow(EditProfileScreenState.LoadBaseDate)
     val screenState : StateFlow<EditProfileScreenState> get() = _screenState
+    var usernameExistsError by mutableStateOf(false)
     var showImageOptionAlert = mutableStateOf(false)
     var showCanNotUpdateAlert = mutableStateOf(false)
 
@@ -94,6 +96,7 @@ class EditProfileScreenViewModel @Inject constructor(
 
         when (response) {
             is Response.Failiure -> {
+                usernameExistsError = response.throwable is PermissionException
                 showCanNotUpdateAlert.value = true
                 _screenState.emit(EditProfileScreenState.DataChanged)
             }

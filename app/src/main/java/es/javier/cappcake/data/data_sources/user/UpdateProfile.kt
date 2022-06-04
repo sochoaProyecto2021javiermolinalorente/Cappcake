@@ -2,11 +2,13 @@ package es.javier.cappcake.data.data_sources.user
 
 import android.net.Uri
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import es.javier.cappcake.data.data_sources.ImageUploader
 import es.javier.cappcake.data.entities.FirebaseContracts
+import es.javier.cappcake.domain.PermissionException
 import es.javier.cappcake.domain.Response
 import es.javier.cappcake.utils.ImageCompressor
 import javax.inject.Inject
@@ -56,9 +58,9 @@ class UpdateProfile @Inject constructor(
                 val followersRef = firestore.collection(FirebaseContracts.FOLLOWERS_COLLECTION).document(userDocument.getString(FirebaseContracts.USER_NAME)!!)
                 val followersDocument = transaction.get(followersRef)
 
-                // Create username index
-
-                // Delete username index
+                val usernameIndexRef = firestore.collection(FirebaseContracts.INDEX_COLLECTION)
+                    .document(FirebaseContracts.INDEX_USER_DOCUMENT)
+                    .collection(FirebaseContracts.INDEX_USERNAME_COLLECTION)
 
                 if (userDocument.getString(FirebaseContracts.USER_NAME) == username) {
                     // Update followers document
@@ -72,6 +74,15 @@ class UpdateProfile @Inject constructor(
                             FirebaseContracts.FOLLOWERS_USERS
                         )
                     )
+
+                    // Delete username index
+                    transaction.delete(usernameIndexRef.document(userDocument.getString(FirebaseContracts.USER_NAME)!!))
+
+                    // Create username index
+                    transaction.set(usernameIndexRef.document(username), hashMapOf(
+                        FirebaseContracts.INDEX_USERNAME_USER_ID to auth.uid
+                    ))
+
 
                     val newFollowersRef = firestore.collection(FirebaseContracts.FOLLOWERS_COLLECTION).document(username)
                     transaction.set(newFollowersRef, followersData)
@@ -93,7 +104,16 @@ class UpdateProfile @Inject constructor(
                 if (task.isSuccessful) {
                     continuation.resume(Response.Success(data = true))
                 } else {
-                    continuation.resume(Response.Failiure(data = false, throwable = task.exception))
+                    val exception = if (task.exception is FirebaseFirestoreException) {
+                        val exception = task.exception as FirebaseFirestoreException
+                        if (exception.code.value() == FirebaseContracts.PERMISSION_DENIED)
+                            PermissionException()
+                        else
+                            task.exception
+                    } else {
+                        task.exception
+                    }
+                    continuation.resume(Response.Failiure(data = false, throwable = exception))
                 }
 
             }

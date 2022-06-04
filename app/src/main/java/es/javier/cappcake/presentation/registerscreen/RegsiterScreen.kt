@@ -44,6 +44,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.unit.sp
 import es.javier.cappcake.Navigation
 import es.javier.cappcake.presentation.components.EmailOutlinedTextField
 import es.javier.cappcake.presentation.components.ErrorDialog
@@ -134,6 +135,7 @@ fun RegisterScreen(navController: NavController, viewModel: RegisterScreenViewMo
 
                     UsernameTextField(
                         value = viewModel.usernameField,
+                        error = viewModel.usernameExistsError,
                         onValueChange = {
                             viewModel.usernameField = it
                             viewModel.checkAllFieldsAreFilled() },
@@ -225,27 +227,42 @@ fun RegisterAddProfileImage(modifier: Modifier = Modifier, profileImage: Bitmap?
 }
 
 @Composable
-fun UsernameTextField(modifier: Modifier = Modifier, value: String, onValueChange: (String) -> Unit, enabled: Boolean = true) {
+fun UsernameTextField(modifier: Modifier = Modifier, value: String, onValueChange: (String) -> Unit, error: Boolean, enabled: Boolean = true) {
 
     var isFocused by remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
 
-    OutlinedTextField(
-        modifier = modifier.onFocusChanged { isFocused = it.isFocused },
-        value = value,
-        onValueChange = onValueChange,
-        enabled = enabled,
-        label = { Text(text = stringResource(id = R.string.register_username_hint)) },
-        leadingIcon = { Icon(imageVector = Icons.Filled.Person, contentDescription = "") },
-        keyboardActions = KeyboardActions(onNext = {focusManager.moveFocus(FocusDirection.Down)}),
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Next),
-        singleLine = true,
-        maxLines = 1,
-        colors = if (isFocused) TextFieldDefaults.outlinedTextFieldColors(
-            focusedLabelColor = MaterialTheme.colors.primary,
-            leadingIconColor = MaterialTheme.colors.primary
-        ) else TextFieldDefaults.outlinedTextFieldColors()
-    )
+    Column {
+        OutlinedTextField(
+            modifier = modifier.onFocusChanged { isFocused = it.isFocused },
+            value = value,
+            onValueChange = onValueChange,
+            isError = error,
+            enabled = enabled,
+            label = { Text(text = stringResource(id = R.string.register_username_hint)) },
+            leadingIcon = { Icon(imageVector = Icons.Filled.Person, contentDescription = "") },
+            keyboardActions = KeyboardActions(onNext = {focusManager.moveFocus(FocusDirection.Down)}),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Next),
+            singleLine = true,
+            maxLines = 1,
+            colors = if (!isFocused) TextFieldDefaults.outlinedTextFieldColors() else {
+                TextFieldDefaults.outlinedTextFieldColors(
+                    focusedLabelColor = MaterialTheme.colors.primary,
+                    leadingIconColor = MaterialTheme.colors.primary,
+                    trailingIconColor = MaterialTheme.colors.primary
+                )
+            }
+        )
+
+        if (error) {
+            Text(
+                modifier = Modifier.padding(top = 2.dp),
+                text = stringResource(id = R.string.register_screen_username_exists_error_text),
+                color = MaterialTheme.colors.error,
+                fontSize = 12.sp
+            )
+        }
+    }
 }
 
 @Composable
