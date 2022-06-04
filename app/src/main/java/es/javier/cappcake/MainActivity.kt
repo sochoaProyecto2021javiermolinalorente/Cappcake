@@ -2,8 +2,10 @@
 
 package es.javier.cappcake
 
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.padding
@@ -73,12 +75,22 @@ class MainActivity : ComponentActivity() {
 
         setContent {
 
+            navController = rememberNavController()
+
+            val currentBackStackEntry by navController.currentBackStackEntryAsState()
+
+            LaunchedEffect(key1 = currentBackStackEntry) {
+                if (currentBackStackEntry?.destination?.route == Navigation.RegisterScreen.navigationRoute) {
+                    window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
+                } else {
+                    window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+                }
+            }
+
             CappcakeTheme {
-                navController = rememberNavController()
                 Scaffold(
                     bottomBar = {
-                        val currentBackStackEntry by navController.currentBackStackEntryAsState()
-                        Log.i("Navigation", "Current destination: ${navController.currentDestination?.route}")
+
                         when (currentBackStackEntry?.destination?.route) {
                             Navigation.FeedScreen.navigationRoute,
                             Navigation.SearchScreen.navigationRoute,
