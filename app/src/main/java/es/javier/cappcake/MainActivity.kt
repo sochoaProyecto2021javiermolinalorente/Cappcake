@@ -165,7 +165,7 @@ fun NavGraphBuilder.ApplicationGraph(navController: NavController) {
         }
 
         composable(Navigation.ActivityScreen.navigationRoute) {
-            ActivityScreen(navController = navController)
+            ActivityScreen(navController = navController, viewModel = hiltViewModel())
         }
         composable("${Navigation.ProfileScreen.navigationRoute}?userId={userId}", arguments = listOf(navArgument(name = "userId") {
             type = NavType.StringType

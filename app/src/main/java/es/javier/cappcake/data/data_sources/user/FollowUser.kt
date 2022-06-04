@@ -1,11 +1,13 @@
 package es.javier.cappcake.data.data_sources.user
 
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import es.javier.cappcake.data.entities.FirebaseContracts
 import es.javier.cappcake.domain.Response
+import es.javier.cappcake.domain.activity.ActivityType
 import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -44,6 +46,15 @@ class FollowUser @Inject constructor() {
                     FirebaseContracts.USER_FOLLOWERS_COUNTER,
                     FieldValue.increment(1)
                 )
+
+                // Add activity data
+                val activity = firestore.collection(FirebaseContracts.ACTIVITY_COLLECTION).document()
+                transaction.set(activity, hashMapOf(
+                    FirebaseContracts.ACTIVITY_USER_ID to auth.uid!!,
+                    FirebaseContracts.ACTIVITY_AFFECTED_USER_ID to followedUserId,
+                    FirebaseContracts.ACTIVITY_TYPE to ActivityType.FOLLOW.name,
+                    FirebaseContracts.ACTIVITY_TIMESTAMP to Timestamp.now()
+                ))
 
             }.addOnCompleteListener { task ->
                 if (task.isSuccessful) {

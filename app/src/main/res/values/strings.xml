@@ -96,7 +96,13 @@
     <string name="delete_comment_error_alert_text">No se ha podido eliminar el comentario</string>
     <string name="edit_comment_error_alert_title">Error al editar</string>
     <string name="edit_comment_error_alert_text">No se ha podido editar el cometnario</string>
-    
+
+    <!-- Activity screen -->
+    <string name="activity_screen_follow_text">te ha seguido.</string>
+    <string name="activity_screen_like_text">ha dado me gusta a una receta.</string>
+    <string name="activity_screen_comment_text">ha dejado un comentario en una receta.</string>
+    <string name="activity_scree_no_recent_activity_text">Sin actividad reciente</string>
+
     <!-- Profile screen -->
     <string name="profile_screen_posts_text">Publicaciones</string>
     <string name="profile_screen_followers_text">Seguidores</string>

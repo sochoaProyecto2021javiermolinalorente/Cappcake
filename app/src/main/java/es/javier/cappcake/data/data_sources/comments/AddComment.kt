@@ -6,6 +6,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import es.javier.cappcake.data.entities.FirebaseContracts
 import es.javier.cappcake.domain.Response
+import es.javier.cappcake.domain.activity.ActivityType
 import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -31,7 +32,26 @@ class AddComment @Inject constructor() {
         )
 
         return suspendCoroutine { continuation ->
-            commentRef.set(data).addOnCompleteListener { task ->
+
+            firestore.runTransaction { transaction ->
+
+                val recipeDocument = transaction.get(firestore.collection(FirebaseContracts.RECIPE_COLLECTION).document(recipeId))
+
+                transaction.set(commentRef, data)
+
+                if (recipeDocument.getString(FirebaseContracts.RECIPE_USER_ID) != auth.uid!!) {
+                    // Add activity data
+                    val activity = firestore.collection(FirebaseContracts.ACTIVITY_COLLECTION).document()
+                    transaction.set(activity, hashMapOf(
+                        FirebaseContracts.ACTIVITY_USER_ID to auth.uid!!,
+                        FirebaseContracts.ACTIVITY_AFFECTED_USER_ID to recipeDocument.getString(FirebaseContracts.RECIPE_USER_ID),
+                        FirebaseContracts.ACTIVITY_TYPE to ActivityType.COMMENT.name,
+                        FirebaseContracts.ACTIVITY_TIMESTAMP to Timestamp.now(),
+                        FirebaseContracts.ACTIVITY_RECIPE_ID to recipeId
+                    ))
+                }
+
+            }.addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     continuation.resume(Response.Success(data = true))
                 } else {
