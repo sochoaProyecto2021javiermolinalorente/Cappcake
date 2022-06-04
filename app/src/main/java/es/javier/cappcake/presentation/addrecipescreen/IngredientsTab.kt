@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.toSize
 import es.javier.cappcake.R
 import es.javier.cappcake.domain.AmountType
 import es.javier.cappcake.domain.Ingredient
+import es.javier.cappcake.presentation.components.getAmountTypeText
 import es.javier.cappcake.presentation.utils.toFormattedFloat
 import es.javier.cappcake.presentation.utils.toFormattedString
 
@@ -70,9 +71,13 @@ fun IngredientField(modifier: Modifier = Modifier, ingredient: Ingredient, onDel
     var ingredientAmount by remember { mutableStateOf(ingredient.amount.toFormattedString()) }
 
     Surface(modifier = modifier, shape = RoundedCornerShape(8.dp), elevation = 4.dp) {
-        Row(modifier = Modifier.wrapContentSize().padding(2.dp), verticalAlignment = Alignment.CenterVertically) {
+        Row(modifier = Modifier
+            .wrapContentSize()
+            .padding(2.dp), verticalAlignment = Alignment.CenterVertically) {
             Text(text = stringResource(id = R.string.write_recipe_ingredient_field_separator))
-            Box(modifier = Modifier.wrapContentSize().padding(5.dp), contentAlignment = Alignment.CenterStart) {
+            Box(modifier = Modifier
+                .wrapContentSize()
+                .padding(5.dp), contentAlignment = Alignment.CenterStart) {
                 BasicTextField(
                     value = ingredientName,
                     onValueChange = {
@@ -149,7 +154,7 @@ fun AmountTypeDropDownManeu(modifier: Modifier = Modifier, ingredient: Ingredien
             }
             .clickable { expanded = !expanded }, verticalAlignment = Alignment.CenterVertically) {
             BasicText(
-                text = selectedItem.name,
+                text = getAmountTypeText(amountType = selectedItem),
                 modifier = Modifier
                     .width(80.dp))
 
@@ -165,12 +170,15 @@ fun AmountTypeDropDownManeu(modifier: Modifier = Modifier, ingredient: Ingredien
             })) {
 
             items.forEach { amountType ->
-                DropdownMenuItem(onClick = {
-                    expanded = false
-                    selectedItem = amountType
-                    ingredient.amountType = amountType}) {
+                DropdownMenuItem(
+                    onClick = {
+                        expanded = false
+                        selectedItem = amountType
+                        ingredient.amountType = amountType
+                    }
+                ) {
                     items = AmountType.values().filter { it != selectedItem }
-                    Text(text = amountType.name)
+                    Text(text = getAmountTypeText(amountType = amountType))
                 }
             }
 

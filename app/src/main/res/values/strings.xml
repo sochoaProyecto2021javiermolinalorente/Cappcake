@@ -4,6 +4,14 @@
     <!-- Error dialog -->
     <string name="error_dialog_accept_button">Aceptar</string>
 
+    <string name="ingredient_none">Ninguno</string>
+    <string name="ingredient_ml">ml</string>
+    <string name="ingredient_l">l</string>
+    <string name="ingredient_mg">mg</string>
+    <string name="ingredient_g">g</string>
+    <string name="ingredient_kg">kg</string>
+    <string name="ingredient_amount">Cantidad</string>
+
     <!-- Login screen -->
     <string name="login_title_text">Iniciar sesión</string>
     <string name="welcome_text">Bienvenido a cappcake</string>

@@ -13,9 +13,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import es.javier.cappcake.R
+import es.javier.cappcake.domain.AmountType
 import es.javier.cappcake.domain.Ingredient
+import es.javier.cappcake.presentation.components.getAmountTypeText
 import es.javier.cappcake.presentation.ui.theme.notePageColor
 import es.javier.cappcake.presentation.ui.theme.noteRedLine
 
@@ -63,7 +67,10 @@ fun Ingredient(modifier: Modifier, ingredient: Ingredient) {
 
     Column(modifier = modifier) {
         Row(modifier = Modifier.padding(vertical = 8.dp, horizontal = 10.dp)) {
-            Text(text = "- ${ingredient.name}: ${ingredient.amount} ${ingredient.amountType.name}", fontSize = 18.sp)
+            Text(text = "- ${ingredient.name}: " +
+                    "${ingredient.amount} " +
+                    getAmountTypeText(amountType = ingredient.amountType),
+                fontSize = 18.sp)
         }
     }
 
