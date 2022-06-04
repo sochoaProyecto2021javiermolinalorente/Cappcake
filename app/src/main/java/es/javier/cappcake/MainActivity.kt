@@ -80,6 +80,7 @@ class MainActivity : ComponentActivity() {
             val currentBackStackEntry by navController.currentBackStackEntryAsState()
 
             LaunchedEffect(key1 = currentBackStackEntry) {
+                Log.i("Navigation", "Current destination: ${navController.currentDestination?.route}")
                 if (currentBackStackEntry?.destination?.route == Navigation.RegisterScreen.navigationRoute) {
                     window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
                 } else {

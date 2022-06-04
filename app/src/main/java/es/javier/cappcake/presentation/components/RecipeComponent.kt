@@ -35,10 +35,13 @@ fun RecipeComponent(modifier: Modifier,
                     onDeleteClick: ((String) -> Unit)? = null,
                     onEditClick: ((String) -> Unit)? = null) {
 
-    var user: User? by remember { mutableStateOf(null) }
+    var user by remember { mutableStateOf(recipe.user) }
 
     LaunchedEffect(key1 = Unit) {
-        user = loadUser()
+        if (user == null) {
+            recipe.user = loadUser()
+            user = recipe.user
+        }
     }
 
     Surface(

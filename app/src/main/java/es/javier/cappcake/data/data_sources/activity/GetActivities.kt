@@ -28,7 +28,7 @@ class GetActivities @Inject constructor(private val calendarUtil: CalendarUtil) 
 
         val lastDocumentSnapshot: DocumentSnapshot? = if (lastActivityId != null) {
             suspendCoroutine { continuation ->
-                firestore.collection(FirebaseContracts.RECIPE_COLLECTION)
+                activityCollection
                     .document(lastActivityId)
                     .get().addOnCompleteListener { task ->
                         if (task.isSuccessful) {
@@ -49,13 +49,13 @@ class GetActivities @Inject constructor(private val calendarUtil: CalendarUtil) 
                     .whereGreaterThanOrEqualTo(FirebaseContracts.ACTIVITY_TIMESTAMP, Timestamp(calendarUtil.getLastWeekDate()))
                     .orderBy(FirebaseContracts.ACTIVITY_TIMESTAMP, Query.Direction.DESCENDING)
                     .startAfter(lastDocumentSnapshot)
-                    .limit(10)
+                    .limit(20)
             } else {
                 activityCollection
                     .whereEqualTo(FirebaseContracts.ACTIVITY_AFFECTED_USER_ID, auth.uid!!)
                     .whereGreaterThanOrEqualTo(FirebaseContracts.ACTIVITY_TIMESTAMP, Timestamp(calendarUtil.getLastWeekDate()))
                     .orderBy(FirebaseContracts.ACTIVITY_TIMESTAMP, Query.Direction.DESCENDING)
-                    .limit(10)
+                    .limit(20)
 
             }
         } catch (ex: IllegalArgumentException) {

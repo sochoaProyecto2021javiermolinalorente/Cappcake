@@ -41,18 +41,20 @@ import kotlinx.coroutines.launch
 @Composable
 fun ActivityScreen(navController: NavController, viewModel: ActivityScreenViewModel) {
 
+    val lazyList = rememberLazyListState()
+    val coroutineScope = rememberCoroutineScope()
+
     LaunchedEffect(key1 = Unit) {
         if (viewModel.screenState == ScreenState.LoadingData) {
             viewModel.loadActivities()
         }
     }
 
-    val lazyList = rememberLazyListState()
-    val coroutineScope = rememberCoroutineScope()
-
     lazyList.OnBottomReached {
         coroutineScope.launch {
-            viewModel.lastActivityId?.let { viewModel.loadMoreActivities() }
+            viewModel.lastActivityId?.let {
+                viewModel.loadMoreActivities()
+            }
         }
     }
 
@@ -109,10 +111,13 @@ fun ActivityComponent(
     loadUser: suspend CoroutineScope.() -> User?
 ) {
 
-    var user: User? by remember { mutableStateOf(null) }
+    var user by remember { mutableStateOf(activity.user) }
 
     LaunchedEffect(key1 = Unit) {
-        user = loadUser()
+        if (user == null) {
+            activity.user = loadUser()
+            user = activity.user
+        }
     }
 
     val text = remember {
