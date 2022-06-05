@@ -1,11 +1,15 @@
 package es.javier.cappcake.presentation.commentsscreen
 
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -88,35 +92,50 @@ fun CommentsScreen(navController: NavController, viewModel: CommentsScreenViewMo
                 state = rememberSwipeRefreshState(isRefreshing = viewModel.isRefreshing),
                 onRefresh = { coroutineScope.launch { viewModel.getAllCommentsAgain(recipeId) } }
             ) {
+                
+                if (viewModel.comments.isEmpty()) {
+                    
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
 
-                LazyColumn(
-                    state = lazyListState
-                ) {
+                        Text(stringResource(id = R.string.comments_screen_no_comments_text))
 
-                    items(viewModel.comments, key = { it.commentId }) {
-
-                        if (viewModel.currentEditingCommentId == it.commentId) {
-                            EditComment(
-                                modifier = Modifier.fillMaxWidth(),
-                                value = it.comment,
-                                onUpdateClick = { coroutineScope.launch { viewModel.updateComment(it, recipeId) } },
-                                onCancelClick = { viewModel.currentEditingCommentId = "" })
-                        } else {
-                            CommentItem(
-                                modifier = Modifier.fillMaxWidth(),
-                                comment = it,
-                                currentUserId = viewModel.getCurrentId(),
-                                owner = owner,
-                                loadUser = { viewModel.loadUser(it.userId) },
-                                onEditClick = { viewModel.currentEditingCommentId = it.commentId },
-                                onRemoveClick = {
-                                    viewModel.lastFocusCommentId = it.commentId
-                                    viewModel.showRemoveCommentAlert.value = true
-                                }
-                            )
-                        }
+                        Column(modifier = Modifier
+                            .fillMaxSize()
+                            .verticalScroll(rememberScrollState())) { }
                     }
+                    
+                } else {
 
+                    LazyColumn(
+                        state = lazyListState
+                    ) {
+
+                        items(viewModel.comments, key = { it.commentId }) {
+
+                            if (viewModel.currentEditingCommentId == it.commentId) {
+                                EditComment(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    value = it.comment,
+                                    onUpdateClick = { coroutineScope.launch { viewModel.updateComment(it, recipeId) } },
+                                    onCancelClick = { viewModel.currentEditingCommentId = "" })
+                            } else {
+                                CommentItem(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    comment = it,
+                                    currentUserId = viewModel.getCurrentId(),
+                                    owner = owner,
+                                    loadUser = { viewModel.loadUser(it.userId) },
+                                    onEditClick = { viewModel.currentEditingCommentId = it.commentId },
+                                    onRemoveClick = {
+                                        viewModel.lastFocusCommentId = it.commentId
+                                        viewModel.showRemoveCommentAlert.value = true
+                                    }
+                                )
+                            }
+                        }
+
+                    }
+                    
                 }
 
             }
@@ -233,9 +252,9 @@ fun CommentItem(modifier: Modifier,
         TextButton(onClick = { expanded = !expanded }) {
             Text(
                 text = if (expanded)
-                    stringResource(id = R.string.comments_screen_read_more_button_text)
+                    stringResource(id = R.string.comments_screen_read_less_button_text)
                 else
-                    stringResource(id = R.string.comments_screen_read_less_button_text),
+                    stringResource(id = R.string.comments_screen_read_more_button_text),
                 color = MaterialTheme.colors.primary,
                 overflow = TextOverflow.Ellipsis
             )

@@ -1,15 +1,12 @@
 package es.javier.cappcake.presentation.profilescreen
 
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -206,7 +203,7 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileScreenViewMode
 
                             Column(modifier = Modifier
                                 .fillMaxSize()
-                                .scrollable(rememberScrollState(), Orientation.Vertical)) {}
+                                .verticalScroll(rememberScrollState())) { }
                         }
                     }
 
@@ -360,7 +357,8 @@ fun DrawerProfileSettings(navController: NavController, viewModel: ProfileScreen
                 .padding(horizontal = 5.dp, vertical = 5.dp)
                 .clickable {
                     viewModel.signOut()
-                    signOut(navController) },
+                    signOut(navController)
+                },
             color = redvariant,
             shape = RoundedCornerShape(8.dp)
         ) {

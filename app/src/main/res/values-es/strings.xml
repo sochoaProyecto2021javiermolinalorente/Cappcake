@@ -86,11 +86,12 @@
     <string name="comments_screen_edit_button_text">Editar</string>
     <string name="comments_screen_edit_menu_text">Editar comentario</string>
     <string name="comments_screen_delete_menu_text">Eliminar comentario</string>
+    <string name="comments_screen_no_comments_text">No hay comentarios</string>
     <!-- Processing -->
     <string name="comment_loading_alert_text">Procesando…</string>
     <!-- Add comment alert -->
     <string name="add_comment_title">Añadir comentario</string>
-    <string name="add_comment_text">¿Quieres publicar este cometnario?</string>
+    <string name="add_comment_text">¿Quieres publicar este comentario?</string>
     <string name="add_comment_accept_button_text">Aceptar</string>
     <string name="add_comment_cancel_button_text">Cancelar</string>
     <!-- Delete comment alert -->

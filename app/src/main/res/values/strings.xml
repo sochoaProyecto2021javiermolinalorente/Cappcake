@@ -86,6 +86,7 @@
     <string name="comments_screen_edit_button_text">Edit</string>
     <string name="comments_screen_edit_menu_text">Edit comment</string>
     <string name="comments_screen_delete_menu_text">Delete comment</string>
+    <string name="comments_screen_no_comments_text">There are no comments</string>
     <!-- Processing -->
     <string name="comment_loading_alert_text">Processing…</string>
     <!-- Add comment alert -->

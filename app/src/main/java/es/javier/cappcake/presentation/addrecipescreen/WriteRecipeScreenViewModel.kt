@@ -131,7 +131,8 @@ class WriteRecipeScreenViewModel @Inject constructor(
                     recipeImage = loadRecipeImageUseCase(it.toString()).data
                 }
                 ingredients.clear()
-                ingredients.addAll(recipe.ingredients)
+                val ingredientsToEdit = recipe.ingredients.map { Ingredient(id = it.id, name = it.name, amount = it.amount, amountType = it.amountType) }
+                ingredients.addAll(ingredientsToEdit)
                 recipeProcess = recipe.recipeProcess
                 screenState = ScreenState.DataLoaded
             }

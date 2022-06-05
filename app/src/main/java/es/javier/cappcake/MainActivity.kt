@@ -268,7 +268,7 @@ fun BottomNavigationitems(navController: NavController, currentBackStackEntry: N
                         saveState = true
                     }
                     launchSingleTop = true
-                    restoreState = true
+                    restoreState = false
                 }
             },
             icon = { Icon(imageVector = Icons.Filled.Favorite, contentDescription = null)})
