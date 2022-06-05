@@ -43,7 +43,14 @@ class UploadRecipe @Inject constructor(
             FirebaseContracts.RECIPE_USER_ID to auth.uid,
             FirebaseContracts.RECIPE_NAME to recipeName,
             FirebaseContracts.RECIPE_IMAGE to imageUrl.data,
-            FirebaseContracts.RECIPE_INGREDIENTS to ingredients,
+            FirebaseContracts.RECIPE_INGREDIENTS to ingredients.map {
+                hashMapOf(
+                    FirebaseContracts.INGREDIENT_ID to it.id,
+                    FirebaseContracts.INGREDIENT_NAME to it.name,
+                    FirebaseContracts.INGREDIENT_AMOUNT to it.amount,
+                    FirebaseContracts.INGREDIENT_AMOUNT_TYPE to it.amountType
+                )
+            },
             FirebaseContracts.RECIPE_PROCESS to recipeProcess,
             FirebaseContracts.RECIPE_TIMESTAMP to Timestamp.now(),
             FirebaseContracts.RECIPE_LIKES_REF to recipeLikesRef

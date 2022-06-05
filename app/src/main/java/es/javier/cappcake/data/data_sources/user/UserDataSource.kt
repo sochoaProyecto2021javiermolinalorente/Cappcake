@@ -30,9 +30,11 @@ class UserDataSource @Inject constructor(
 
     suspend fun authenticateUser(email: String, password: String) : Response<Boolean> {
 
-        Firebase.firestore.firestoreSettings = firestoreSettings {
-            isPersistenceEnabled = false
-        }
+        try {
+            Firebase.firestore.firestoreSettings = firestoreSettings {
+                isPersistenceEnabled = false
+            }
+        } catch (e: Exception) { }
 
         return suspendCoroutine { continuation ->
             auth.signInWithEmailAndPassword(email, password)
