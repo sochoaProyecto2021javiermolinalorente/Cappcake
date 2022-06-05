@@ -68,7 +68,7 @@ class GetAllCommentsOf @Inject constructor() {
 
                 if (task.isSuccessful) {
                     if (result.isEmpty()) {
-                        continuation.resume(Response.Failiure(data = Pair(emptyList(), ""), throwable = null))
+                        continuation.resume(Response.Success(data = Pair(emptyList(), "")))
                     } else {
                         continuation.resume(Response.Success(data = Pair(result, result.last().commentId)))
                     }

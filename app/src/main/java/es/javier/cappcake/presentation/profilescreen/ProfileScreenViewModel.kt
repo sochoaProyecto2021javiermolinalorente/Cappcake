@@ -74,11 +74,15 @@ class ProfileScreenViewModel @Inject constructor(
         val response = getRecipesOfUseCase(arrayOf(uid), null)
 
         when (response) {
-            is Response.Failiure -> {}
+            is Response.Failiure -> { }
             is Response.Success -> {
                 recipes.clear()
-                recipes.addAll(response.data!!.first.toTypedArray())
-                lastRecipeId = response.data.second
+                lastRecipeId = if (response.data!!.first.isEmpty()) {
+                    null
+                } else {
+                    recipes.addAll(response.data!!.first.toTypedArray())
+                    response.data.second
+                }
                 screenStatus = ScreenState.DataLoaded
             }
         }
@@ -93,8 +97,12 @@ class ProfileScreenViewModel @Inject constructor(
             is Response.Success -> {
                 recipes.clear()
                 delay(50L)
-                recipes.addAll(response.data!!.first.toTypedArray())
-                lastRecipeId = response.data.second
+                lastRecipeId = if (response.data!!.first.isEmpty()) {
+                    null
+                } else {
+                    recipes.addAll(response.data!!.first.toTypedArray())
+                    response.data.second
+                }
                 isRefreshing = false
             }
         }
@@ -111,8 +119,10 @@ class ProfileScreenViewModel @Inject constructor(
                 }
             }
             is Response.Success -> {
-                recipes.addAll(response.data!!.first.toTypedArray())
-                lastRecipeId = response.data.second
+                if (response.data!!.first.isNotEmpty()) {
+                    recipes.addAll(response.data.first.toTypedArray())
+                    lastRecipeId = response.data.second
+                }
             }
         }
     }

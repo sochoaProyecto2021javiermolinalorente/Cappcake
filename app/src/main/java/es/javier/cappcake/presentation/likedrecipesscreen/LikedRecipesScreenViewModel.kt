@@ -14,6 +14,7 @@ import es.javier.cappcake.domain.user.User
 import es.javier.cappcake.domain.user.use_cases.GetCurrentUserIdUseCase
 import es.javier.cappcake.domain.user.use_cases.GetUserProfileUseCase
 import es.javier.cappcake.utils.ScreenState
+import java.lang.IllegalArgumentException
 import javax.inject.Inject
 
 @HiltViewModel
@@ -35,8 +36,12 @@ class LikedRecipesScreenViewModel @Inject constructor(
             is Response.Failiure -> { }
             is Response.Success -> {
                 recipes.clear()
-                recipes.addAll(response.data!!.first)
-                lastRecipeId = response.data.second
+                lastRecipeId = if (response.data!!.first.isEmpty()) {
+                    null
+                } else {
+                    recipes.addAll(response.data.first.toTypedArray())
+                    response.data.second
+                }
                 screenState = ScreenState.DataLoaded
             }
         }
@@ -54,8 +59,12 @@ class LikedRecipesScreenViewModel @Inject constructor(
             }
             is Response.Success -> {
                 recipes.clear()
-                recipes.addAll(response.data!!.first)
-                lastRecipeId = response.data.second
+                lastRecipeId = if (response.data!!.first.isEmpty()) {
+                    null
+                } else {
+                    recipes.addAll(response.data.first.toTypedArray())
+                    response.data.second
+                }
                 refreshing = false
             }
         }
@@ -65,10 +74,16 @@ class LikedRecipesScreenViewModel @Inject constructor(
         val response = getLikedRecipesUseCase(lastRecipeId)
 
         when (response) {
-            is Response.Failiure -> { }
+            is Response.Failiure -> {
+                if (response.throwable is IllegalArgumentException) {
+                    lastRecipeId = recipes.last().recipeId
+                }
+            }
             is Response.Success -> {
-                recipes.addAll(response.data!!.first)
-                lastRecipeId = response.data.second
+                if (response.data!!.first.isNotEmpty()) {
+                    recipes.addAll(response.data.first.toTypedArray())
+                    lastRecipeId = response.data.second
+                }
             }
         }
     }

@@ -16,6 +16,7 @@ import es.javier.cappcake.domain.user.User
 import es.javier.cappcake.domain.user.use_cases.GetCurrentUserIdUseCase
 import es.javier.cappcake.domain.user.use_cases.GetUserProfileUseCase
 import es.javier.cappcake.utils.ScreenState
+import java.lang.IllegalArgumentException
 import java.util.*
 import javax.inject.Inject
 
@@ -52,8 +53,12 @@ class CommentsScreenViewModel @Inject constructor(
             is Response.Failiure -> {  }
             is Response.Success -> {
                 comments.clear()
-                comments.addAll(response.data!!.first)
-                lastCommentId = response.data.second
+                lastCommentId = if (response.data!!.first.isEmpty()) {
+                    null
+                } else {
+                    comments.addAll(response.data.first.toTypedArray())
+                    response.data.second
+                }
                 screenState = ScreenState.DataLoaded
             }
         }
@@ -68,8 +73,12 @@ class CommentsScreenViewModel @Inject constructor(
             is Response.Failiure -> { isRefreshing = false }
             is Response.Success -> {
                 comments.clear()
-                comments.addAll(response.data!!.first)
-                lastCommentId = response.data.second
+                lastCommentId = if (response.data!!.first.isEmpty()) {
+                    null
+                } else {
+                    comments.addAll(response.data.first.toTypedArray())
+                    response.data.second
+                }
                 isRefreshing = false
             }
         }
@@ -79,10 +88,16 @@ class CommentsScreenViewModel @Inject constructor(
         val response = getAllCommentsOfUseCase(recipeId, lastCommentId)
 
         when (response) {
-            is Response.Failiure -> {  }
+            is Response.Failiure -> {
+                if (response.throwable is IllegalArgumentException) {
+                    lastFocusCommentId = comments.last().recipeId
+                }
+            }
             is Response.Success -> {
-                comments.addAll(response.data!!.first.toTypedArray())
-                lastCommentId = response.data.second
+                if (response.data!!.first.isNotEmpty()) {
+                    comments.addAll(response.data.first.toTypedArray())
+                    lastCommentId = response.data.second
+                }
             }
         }
     }
