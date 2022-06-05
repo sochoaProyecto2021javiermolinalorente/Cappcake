@@ -34,11 +34,15 @@ class SearchScreenViewModel @Inject constructor(
         val response = getAllRecipesUseCase(null)
 
         when (response) {
-            is Response.Failiure -> Unit
+            is Response.Failiure -> { }
             is Response.Success -> {
                 recipes.clear()
-                recipes.addAll(response.data!!.first.toTypedArray())
-                lastRecipeId = response.data.second
+                lastRecipeId = if (response.data!!.first.isEmpty()) {
+                    null
+                } else {
+                    recipes.addAll(response.data!!.first.toTypedArray())
+                    response.data.second
+                }
                 screenStatus = ScreenState.DataLoaded
             }
         }
@@ -52,8 +56,12 @@ class SearchScreenViewModel @Inject constructor(
             is Response.Failiure -> { isRefreshing = false }
             is Response.Success -> {
                 recipes.clear()
-                recipes.addAll(response.data!!.first.toTypedArray())
-                lastRecipeId = response.data.second
+                lastRecipeId = if (response.data!!.first.isEmpty()) {
+                    null
+                } else {
+                    recipes.addAll(response.data!!.first.toTypedArray())
+                    response.data.second
+                }
                 isRefreshing = false
             }
         }
@@ -69,8 +77,10 @@ class SearchScreenViewModel @Inject constructor(
                 }
             }
             is Response.Success -> {
-                recipes.addAll(response.data!!.first.toTypedArray())
-                lastRecipeId = response.data.second
+                if (response.data!!.first.isNotEmpty()) {
+                    recipes.addAll(response.data.first.toTypedArray())
+                    lastRecipeId = response.data.second
+                }
             }
         }
     }

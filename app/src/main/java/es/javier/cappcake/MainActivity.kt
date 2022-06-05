@@ -216,63 +216,76 @@ fun BottomNavigationitems(navController: NavController, currentBackStackEntry: N
     BottomNavigation(elevation = 4.dp) {
         BottomNavigationItem(
             selected = currentDestination?.hierarchy?.any { it.route == Navigation.FeedScreen.navigationRoute } == true,
-            onClick = { navController.navigate(Navigation.FeedScreen.navigationRoute) {
-                popUpTo(Navigation.FeedScreen.navigationRoute) {
-                    inclusive = false
-                    this.saveState = true
+            onClick =
+            {
+                navController.navigate(Navigation.FeedScreen.navigationRoute) {
+                    popUpTo(Navigation.FeedScreen.navigationRoute) {
+                        saveState = true
+                    }
+                    launchSingleTop = true
+                    restoreState = true
                 }
-                launchSingleTop = true
-                restoreState = true
-            } },
+            },
             icon = { Icon(imageVector = Icons.Filled.Home, contentDescription = null)})
 
         BottomNavigationItem(
             selected = currentDestination?.hierarchy?.any { it.route == Navigation.SearchScreen.navigationRoute } == true,
-            onClick = { navController.navigate(Navigation.SearchScreen.navigationRoute) {
-                popUpTo(Navigation.FeedScreen.navigationRoute) {
-                    inclusive = false
-                    this.saveState = true
+            onClick =
+            {
+
+                navController.navigate(Navigation.SearchScreen.navigationRoute) {
+                    popUpTo(Navigation.FeedScreen.navigationRoute) {
+                        saveState = true
+                    }
+                    launchSingleTop = true
+                    restoreState = true
                 }
-                launchSingleTop = true
-                restoreState = true
-            } },
+
+            },
             icon = { Icon(imageVector = Icons.Filled.Search, contentDescription = null)})
 
         BottomNavigationItem(
             selected = currentDestination?.hierarchy?.any { it.route == "${Navigation.WriteRecipeScreen.navigationRoute}?recipeId={recipeId}" } == true,
-            onClick = { navController.navigate(Navigation.WriteRecipeScreen.navigationRoute) {
-                popUpTo(Navigation.FeedScreen.navigationRoute) {
-                    inclusive = false
-                    this.saveState = false
+            onClick =
+            {
+                navController.navigate(Navigation.WriteRecipeScreen.navigationRoute) {
+                    popUpTo(Navigation.FeedScreen.navigationRoute) {
+                        saveState = true
+                    }
+                    launchSingleTop = true
+                    restoreState = false
                 }
-                launchSingleTop = true
-                restoreState = false
-            } },
+
+            },
             icon = { Icon(imageVector = Icons.Filled.Add, contentDescription = null)})
 
         BottomNavigationItem(
             selected = currentDestination?.hierarchy?.any { it.route == Navigation.ActivityScreen.navigationRoute } == true,
-            onClick = { navController.navigate(Navigation.ActivityScreen.navigationRoute) {
-                popUpTo(Navigation.FeedScreen.navigationRoute) {
-                    inclusive = false
-                    this.saveState = true
+            onClick =
+            {
+                navController.navigate(Navigation.ActivityScreen.navigationRoute) {
+                    popUpTo(Navigation.FeedScreen.navigationRoute) {
+                        saveState = true
+                    }
+                    launchSingleTop = true
+                    restoreState = true
                 }
-                launchSingleTop = true
-                restoreState = true
-            } },
+            },
             icon = { Icon(imageVector = Icons.Filled.Favorite, contentDescription = null)})
 
         BottomNavigationItem(
             selected = currentDestination?.hierarchy?.any { it.route == "${Navigation.ProfileScreen.navigationRoute}?userId={userId}" } == true,
-            onClick = { navController.navigate(Navigation.ProfileScreen.navigationRoute) {
-                popUpTo(Navigation.FeedScreen.navigationRoute) {
-                    inclusive = false
-                    this.saveState = true
-                }
+            onClick =
+            {
+                navController.navigate(Navigation.ProfileScreen.navigationRoute) {
+                    popUpTo(Navigation.FeedScreen.navigationRoute) {
+                        saveState = true
+                    }
 
-                launchSingleTop = true
-                restoreState = true
-            } },
+                    launchSingleTop = true
+                    restoreState = true
+                }
+            },
             icon = { Icon(imageVector = Icons.Filled.Person, contentDescription = null)})
     }
 }

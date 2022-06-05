@@ -66,7 +66,7 @@ class GetLikedRecipes @Inject constructor() {
                         Recipe(recipeId = recipeId!!, userId = userId!!, image = imagePath, ingredients = emptyList(), title = recipeName!!, recipeProcess = "")
                     }
                     if (recipeList.isEmpty()) {
-                        continuation.resume(Response.Failiure(data = Pair(emptyList(), ""), throwable = null))
+                        continuation.resume(Response.Success(data = Pair(emptyList(), "")))
                     } else {
                         continuation.resume(Response.Success(data = Pair(recipeList, recipeList.last().recipeId)))
                     }

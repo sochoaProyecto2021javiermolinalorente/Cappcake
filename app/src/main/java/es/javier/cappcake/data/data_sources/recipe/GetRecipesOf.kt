@@ -68,7 +68,7 @@ class GetRecipesOf @Inject constructor() {
                         Recipe(recipeId = recipeId, userId = userId!!, image = imagePath, ingredients = ingrediets, title = recipeName!!, recipeProcess = recipeProcess!!)
                     }
                     if (recipeList.isEmpty()) {
-                        continuation.resume(Response.Failiure(data = Pair(emptyList(), ""), throwable = null))
+                        continuation.resume(Response.Success(data = Pair(emptyList(), "")))
                     } else {
                         continuation.resume(Response.Success(data = Pair(recipeList, recipeList.last().recipeId)))
                     }
