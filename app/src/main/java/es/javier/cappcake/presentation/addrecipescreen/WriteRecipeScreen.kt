@@ -117,7 +117,7 @@ fun WriteRecipeScreen(navController: NavController, viewModel: WriteRecipeScreen
         ErrorDialog(
             showDialog = viewModel.showNoChangesAlert,
             title = R.string.write_recipe_screen_no_changes_alert_title,
-            text = R.string.write_reciperecipe_scree_no_changes_text
+            text = R.string.write_recipe_scree_no_changes_text
         )
     }
 
