@@ -2,7 +2,6 @@
 
 package es.javier.cappcake
 
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.WindowManager
@@ -24,13 +23,8 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.pager.ExperimentalPagerApi
 import dagger.hilt.android.AndroidEntryPoint
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.firestore.ktx.firestoreSettings
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.FirebaseStorage
 import es.javier.cappcake.presentation.activityscreen.ActivityScreen
 import es.javier.cappcake.presentation.addrecipescreen.WriteRecipeScreen
 import es.javier.cappcake.presentation.addrecipescreen.WriteRecipeScreenViewModel
@@ -47,28 +41,11 @@ import es.javier.cappcake.presentation.registerscreen.RegisterScreen
 import es.javier.cappcake.presentation.searchscreen.SearchScreen
 import es.javier.cappcake.presentation.searchscreen.SearchUserScreen
 import es.javier.cappcake.presentation.ui.theme.CappcakeTheme
-import java.lang.Exception
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    companion object {
-        const val IP_ADDRESS = "10.0.2.2"
-    }
-
     private lateinit var navController: NavHostController
-
-    init {
-        try {
-
-            FirebaseAuth.getInstance().useEmulator(IP_ADDRESS, 9099)
-            FirebaseFirestore.getInstance().useEmulator(IP_ADDRESS, 8080)
-            Firebase.firestore.firestoreSettings = firestoreSettings {
-                isPersistenceEnabled = false
-            }
-            FirebaseStorage.getInstance().useEmulator(IP_ADDRESS, 9199)
-        } catch (e: Exception) { }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

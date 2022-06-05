@@ -33,7 +33,6 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
-import com.google.firebase.auth.FirebaseAuth
 import es.javier.cappcake.R
 import es.javier.cappcake.Navigation
 import es.javier.cappcake.presentation.components.RecipeComponent
@@ -87,7 +86,7 @@ fun ProfileScreen(navController: NavController, viewModel: ProfileScreenViewMode
         scaffoldState = rememberScaffoldState(drawerState = drawerState),
         drawerContent = if (viewModel.getCurrentUserId() == uid) {
             {
-                DrawerProfileSettings(navController = navController)
+                DrawerProfileSettings(navController = navController, viewModel)
             }
         } else null
     ) {
@@ -306,7 +305,7 @@ fun DeleteRecipeAlert(showAlert: MutableState<Boolean>, onConfirmClick: () -> Un
 }
 
 @Composable
-fun DrawerProfileSettings(navController: NavController) {
+fun DrawerProfileSettings(navController: NavController, viewModel: ProfileScreenViewModel) {
 
     Column(modifier = Modifier.fillMaxWidth()) {
 
@@ -359,7 +358,9 @@ fun DrawerProfileSettings(navController: NavController) {
         Surface(
             modifier = Modifier
                 .padding(horizontal = 5.dp, vertical = 5.dp)
-                .clickable { signOut(navController) },
+                .clickable {
+                    viewModel.signOut()
+                    signOut(navController) },
             color = redvariant,
             shape = RoundedCornerShape(8.dp)
         ) {
@@ -389,6 +390,5 @@ private fun signOut(navController: NavController) {
     navController.clearBackStack(Navigation.SearchScreen.navigationRoute)
     navController.clearBackStack("${Navigation.WriteRecipeScreen.navigationRoute}?recipeId={recipeId}")
     navController.clearBackStack(Navigation.ActivityScreen.navigationRoute)
-    FirebaseAuth.getInstance().signOut()
     navController.navigate(navController.graph.findStartDestination().id)
 }
