@@ -2,161 +2,161 @@
     <string name="app_name">Cappcake</string>
 
     <!-- Error dialog -->
-    <string name="error_dialog_accept_button">Aceptar</string>
+    <string name="error_dialog_accept_button">Accept</string>
 
-    <string name="ingredient_none">Ninguno</string>
+    <string name="ingredient_none">None</string>
     <string name="ingredient_ml">ml</string>
     <string name="ingredient_l">l</string>
     <string name="ingredient_mg">mg</string>
     <string name="ingredient_g">g</string>
     <string name="ingredient_kg">kg</string>
-    <string name="ingredient_amount">Cantidad</string>
+    <string name="ingredient_amount">Amount</string>
 
     <!-- Login screen -->
-    <string name="login_title_text">Iniciar sesión</string>
-    <string name="welcome_text">Bienvenido a cappcake</string>
+    <string name="login_title_text">Log in</string>
+    <string name="welcome_text">Welcome to cappcake</string>
     <string name="login_email_hint">Email</string>
-    <string name="login_password_hint">Contraseña</string>
-    <string name="login_button_text">Iniciar sesión</string>
-    <string name="have_no_account_text">¿No tienes una cuenta?</string>
-    <string name="signup_text">Regístrate aquí</string>
+    <string name="login_password_hint">Password</string>
+    <string name="login_button_text">Log in</string>
+    <string name="have_no_account_text">You do not have an account?</string>
+    <string name="signup_text">Sign up here</string>
     <!-- Login screen dialog -->
-    <string name="user_incorrect_title_dialog">Usuario incorrecto</string>
-    <string name="user_incorrect_message_dialog">El email o la contraseña son incorrectos</string>
+    <string name="user_incorrect_title_dialog">Incorrect user</string>
+    <string name="user_incorrect_message_dialog">Incorrect email or password</string>
 
     <!-- Register screen -->
-    <string name="register_username_hint">Nombre de usuario</string>
+    <string name="register_username_hint">Username</string>
     <string name="register_email_hint">Email</string>
-    <string name="register_password_hint">Contraseña</string>
-    <string name="register_repeat_password_hint">Repetir contraseña</string>
-    <string name="register_create_account_text_button">Crear cuenta</string>
-    <string name="register_screen_username_exists_error_text">*Este nombre de usuario ya está cogido</string>
+    <string name="register_password_hint">Password</string>
+    <string name="register_repeat_password_hint">Repeat password</string>
+    <string name="register_create_account_text_button">Create account</string>
+    <string name="register_screen_username_exists_error_text">*This username is already taken</string>
     <!-- User not created error dialog -->
     <string name="user_not_created_title_dialog">Error</string>
-    <string name="user_not_created_message_dialog">No se ha podido crear el usuario</string>
+    <string name="user_not_created_message_dialog">User could not been created</string>
 
     <!-- Feed screen -->
-    <string name="feed_screen_loading_users_text">Cargando usuarios…</string>
-    <string name="feed_screen_no_users_text">No sigues a ningún usuario</string>
-    <string name="feed_screen_no_recipes_text">No hay recetas disponibles</string>
+    <string name="feed_screen_loading_users_text">Loading users…</string>
+    <string name="feed_screen_no_users_text">You do not follow any user</string>
+    <string name="feed_screen_no_recipes_text">There is no available recipes</string>
 
     <!-- Search screen -->
-    <string name="search_search_hint">Buscar…</string>
-    <string name="search_screen_no_recipes_text">No ha recetas disponibles</string>
+    <string name="search_search_hint">Search…</string>
+    <string name="search_screen_no_recipes_text">There is not available recipes</string>
 
     <!-- Add recipe screen -->
-    <string name="write_recipe_screen_add_title">Añadir receta</string>
-    <string name="write_recipe_screen_edit_title">Editar receta</string>
-    <string name="write_recipe_recipe_name_label">Nombre de la receta:</string>
-    <string name="write_recipe_upload_image_text">Subir imagen</string>
-    <string name="write_recipe_recipe_image_label">Imagen de la receta:</string>
-    <string name="write_recipe_ingredients_tab_label">Ingredientes</string>
-    <string name="write_recipe_process_tab_label">Elaboración</string>
-    <string name="write_recipe_ingredient_name_hint">Nombre</string>
+    <string name="write_recipe_screen_add_title">Add recipe</string>
+    <string name="write_recipe_screen_edit_title">Edit recipe</string>
+    <string name="write_recipe_recipe_name_label">Recipe name:</string>
+    <string name="write_recipe_upload_image_text">Upload image</string>
+    <string name="write_recipe_recipe_image_label">Recipe image:</string>
+    <string name="write_recipe_ingredients_tab_label">Ingredients</string>
+    <string name="write_recipe_process_tab_label">Elaboration</string>
+    <string name="write_recipe_ingredient_name_hint">Name</string>
     <string name="write_recipe_ingredient_field_separator">-</string>
-    <string name="write_recipe_process_note_label">Elaboración</string>
-    <string name="write_recipe_uploading_recipe_text">Subiendo receta…</string>
-    <string name="write_recipe_editing_recipe_Text">Aplicando cambios…</string>
+    <string name="write_recipe_process_note_label">Elaboration</string>
+    <string name="write_recipe_uploading_recipe_text">Uploading recipe…</string>
+    <string name="write_recipe_editing_recipe_Text">Applying changes…</string>
     <!-- Recipe process screen -->
-    <string name="recipe_process_appbar_title">Elaboración</string>
-    <!-- Storage permisison alert -->
-    <string name="write_recipe_storage_alert_title">Permisos necesarios</string>
-    <string name="write_recipe_storage_alert_text">Se requieren permisos de almacenamiento para seleccionar una foto.</string>
-    <string name="write_recipe_storage_alert_confirm_button">Ir a configuración</string>
+    <string name="recipe_process_appbar_title">Elaboration</string>
+    <!-- Storage permission alert -->
+    <string name="write_recipe_storage_alert_title">Permissions needed</string>
+    <string name="write_recipe_storage_alert_text">Storage permissions are needed to pick a photo.</string>
+    <string name="write_recipe_storage_alert_confirm_button">Go to settings</string>
     <string name="write_recipe_storage_alert_dismiss_button">Cancel</string>
     <!-- Recipe not valid alert -->
-    <string name="write_recipe_not_valid_alert_title">Receta no válida</string>
-    <string name="write_recipe_not_valid_alert_text">Hay algunos campos sin completar. Asegúrate de que no has dejado ningún ingrediente incompleto o dejado la imagen sin seleccionar.</string>
+    <string name="write_recipe_not_valid_alert_title">Invalid recipe</string>
+    <string name="write_recipe_not_valid_alert_text">There are some fields uncompleted. Make sure you have not left any ingredient incomplete or left the image unselected.</string>
     <!-- Recipe not changed alert -->
-    <string name="write_recipe_screen_no_changes_alert_title">Sin cambios</string>
-    <string name="write_reciperecipe_scree_no_changes_text">No se ha realziado ningún cambio.</string>
+    <string name="write_recipe_screen_no_changes_alert_title">Without changes</string>
+    <string name="write_recipe_scree_no_changes_text">No change has been made.</string>
 
     <!-- Recipe detail screen -->
-    <string name="recipe_detail_screen_ingredients_tab_label">Ingredientes</string>
-    <string name="recipe_detail_screen_process_tab_label">Elaboración</string>
+    <string name="recipe_detail_screen_ingredients_tab_label">Ingredients</string>
+    <string name="recipe_detail_screen_process_tab_label">Elaboration</string>
     
     <!-- Comments screen -->
-    <string name="comments_screen_topbar_title">Comentarios</string>
-    <string name="comments_screen_add_recipe_hint">¿Qué opinas de esta receta?</string>
-    <string name="comments_screen_send_button_text">Enviar</string>
-    <string name="comments_screen_read_more_button_text">Leer más</string>
-    <string name="comments_screen_read_less_button_text">Leer menos</string>
-    <string name="comments_screen_edit_comment_hint">Comentario</string>
-    <string name="comments_screen_cancel_button_text">Cancelar</string>
-    <string name="comments_screen_edit_button_text">Editar</string>
-    <string name="comments_screen_edit_menu_text">Editar comentario</string>
-    <string name="comments_screen_delete_menu_text">Eliminar comentario</string>
+    <string name="comments_screen_topbar_title">Comments</string>
+    <string name="comments_screen_add_recipe_hint">¿What is your opinion about the recipe?</string>
+    <string name="comments_screen_send_button_text">Send</string>
+    <string name="comments_screen_read_more_button_text">Read more</string>
+    <string name="comments_screen_read_less_button_text">Read less</string>
+    <string name="comments_screen_edit_comment_hint">Comment</string>
+    <string name="comments_screen_cancel_button_text">Cancel</string>
+    <string name="comments_screen_edit_button_text">Edit</string>
+    <string name="comments_screen_edit_menu_text">Edit comment</string>
+    <string name="comments_screen_delete_menu_text">Delete comment</string>
     <!-- Processing -->
-    <string name="comment_loading_alert_text">Procesando…</string>
+    <string name="comment_loading_alert_text">Processing…</string>
     <!-- Add comment alert -->
-    <string name="add_comment_title">Añadir comentario</string>
-    <string name="add_comment_text">¿Quieres publicar este cometnario?</string>
-    <string name="add_comment_accept_button_text">Aceptar</string>
-    <string name="add_comment_cancel_button_text">Cancelar</string>
+    <string name="add_comment_title">Add comment</string>
+    <string name="add_comment_text">Do you want to publish this comment?</string>
+    <string name="add_comment_accept_button_text">Accept</string>
+    <string name="add_comment_cancel_button_text">Cancel</string>
     <!-- Delete comment alert -->
-    <string name="delete_comment_title">Eliminar comentario</string>
-    <string name="delete_comment_text">Quieres eliminar este cometnario?</string>
-    <string name="delete_comment_accept_button_text">Aceptar</string>
-    <string name="delete_comment_cancel_button_text">Cancelar</string>
+    <string name="delete_comment_title">Delete comment</string>
+    <string name="delete_comment_text">Do you want to delete this comment?</string>
+    <string name="delete_comment_accept_button_text">Accept</string>
+    <string name="delete_comment_cancel_button_text">Cancel</string>
     <!-- Comment process error alert -->
-    <string name="add_comment_error_alert_title">Error al añadir comentario</string>
-    <string name="add_comment_error_alert_text">No se ha pdodio añadir el comentario de la receta.</string>
-    <string name="delete_comment_error_alert_title">Erro al eliminar cometnario</string>
-    <string name="delete_comment_error_alert_text">No se ha podido eliminar el comentario</string>
-    <string name="edit_comment_error_alert_title">Error al editar</string>
-    <string name="edit_comment_error_alert_text">No se ha podido editar el cometnario</string>
+    <string name="add_comment_error_alert_title">Error adding the comment</string>
+    <string name="add_comment_error_alert_text">It has not been possible to add the comment of the recipe.</string>
+    <string name="delete_comment_error_alert_title">Error deleting the comment</string>
+    <string name="delete_comment_error_alert_text">It has not been possible to delete the comment</string>
+    <string name="edit_comment_error_alert_title">Error editing</string>
+    <string name="edit_comment_error_alert_text">It has not been possible to edit the comment</string>
 
     <!-- Activity screen -->
-    <string name="activity_screen_follow_text">te ha seguido.</string>
-    <string name="activity_screen_like_text">ha dado me gusta a una receta.</string>
-    <string name="activity_screen_comment_text">ha dejado un comentario en una receta.</string>
-    <string name="activity_scree_no_recent_activity_text">Sin actividad reciente</string>
+    <string name="activity_screen_follow_text">has follow you.</string>
+    <string name="activity_screen_like_text">has liked a recipe.</string>
+    <string name="activity_screen_comment_text">has left a comment in a recipe.</string>
+    <string name="activity_scree_no_recent_activity_text">No recent activity</string>
 
     <!-- Profile screen -->
-    <string name="profile_screen_posts_text">Publicaciones</string>
-    <string name="profile_screen_followers_text">Seguidores</string>
-    <string name="profile_screen_following_text">Siguiendo</string>
-    <string name="profile_screen_follow_button_text">Seguir</string>
-    <string name="profile_screen_unfollow_button_text">Dejar de seguir</string>
-    <string name="profile_screen_username_text">Nombre de usuario</string>
-    <string name="profile_screen_loading_recipes_text">Cargando recetas…</string>
-    <string name="profile_screen_no_recipes_text">No se han subido recetas</string>
-    <string name="profile_screen_liked_recipes_text">Recetas que te gustan</string>
-    <string name="profile_screen_edit_profile_text">Editar perfil</string>
-    <string name="profile_screen_sign_out_text">Cerrar sesión</string>
-    <string name="profile_screen_delete_menu">Eliminar receta</string>
-    <string name="profile_screen_editar_menu">Editar receta</string>
+    <string name="profile_screen_posts_text">Posts</string>
+    <string name="profile_screen_followers_text">Followers</string>
+    <string name="profile_screen_following_text">Following</string>
+    <string name="profile_screen_follow_button_text">Follow</string>
+    <string name="profile_screen_unfollow_button_text">Stop following</string>
+    <string name="profile_screen_username_text">Username</string>
+    <string name="profile_screen_loading_recipes_text">Loading recipes…</string>
+    <string name="profile_screen_no_recipes_text">No recipes has been uploaded</string>
+    <string name="profile_screen_liked_recipes_text">Liked recipes</string>
+    <string name="profile_screen_edit_profile_text">Edit profile</string>
+    <string name="profile_screen_sign_out_text">Sign out</string>
+    <string name="profile_screen_delete_menu">Delete recipe</string>
+    <string name="profile_screen_editar_menu">Edit recipe</string>
     <!-- Unfollow user alert -->
-    <string name="profile_screen_unfollow_user_alert_title">Dejar de seguir</string>
-    <string name="profile_screen_unfollow_user_alert_message_text">Vas a dejar de seguir a </string>
-    <string name="profile_screen_unfollow_user_alert_question_text">¿Estás seguro?</string>
-    <string name="profile_screen_unfollow_user_alert_confirm_button_text">Dejar de seguir</string>
-    <string name="profile_screen_unfollow_user_alert_cancel_button_text">Cancelar</string>
+    <string name="profile_screen_unfollow_user_alert_title">Stop following</string>
+    <string name="profile_screen_unfollow_user_alert_message_text">You are going to stop following to</string>
+    <string name="profile_screen_unfollow_user_alert_question_text">Are you sure?</string>
+    <string name="profile_screen_unfollow_user_alert_confirm_button_text">Stop following</string>
+    <string name="profile_screen_unfollow_user_alert_cancel_button_text">Cancel</string>
     <!-- Delete recipe alert -->
-    <string name="profile_screen_delete_alert_title">Eliminar receta</string>
-    <string name="profile_screen_delete_alert_text">¿Quieres eliminar esta receta? Estacción será permanente</string>
-    <string name="profile_screen_delete_alert_confirm_button_text">Eliminar</string>
-    <string name="profile_screen_delete_alert_cancel_button_text">Cancelar</string>
+    <string name="profile_screen_delete_alert_title">Delete recipe</string>
+    <string name="profile_screen_delete_alert_text">Do you want to delete this recipe? This action can not be undone.</string>
+    <string name="profile_screen_delete_alert_confirm_button_text">Delete</string>
+    <string name="profile_screen_delete_alert_cancel_button_text">Cancel</string>
 
     <!-- Liked recipes scren -->
-    <string name="liked_recipes_screen_top_bar_title">Recetas</string>
-    <string name="liked_recipes_screen_no_recipes_loaded_text">No hay recetas disponibles</string>
+    <string name="liked_recipes_screen_top_bar_title">Recipes</string>
+    <string name="liked_recipes_screen_no_recipes_loaded_text">No recipes available</string>
 
     <!-- Edit profile screen -->
-    <string name="edit_profile_screen_top_bar_title">Editar perfil</string>
-    <string name="edit_profile_screen_change_profile_photo_text">cambiar foto de perfil</string>
-    <string name="edit_profile_screen_change_username_text">cambiar nombre de ususario</string>
-    <string name="edit_profile_screen_send_button_text">enviar</string>
-    <string name="edit_profile_screen_username_hint">Nombre de usuario</string>
-    <string name="edit_profile_screen_updating_text">Modificando usuario</string>
-    <string name="edit_profile_screen_username_exists_error_text">*Este nombre de usuario ya está cogido</string>
+    <string name="edit_profile_screen_top_bar_title">Edit profile</string>
+    <string name="edit_profile_screen_change_profile_photo_text">change profile image</string>
+    <string name="edit_profile_screen_change_username_text">change username</string>
+    <string name="edit_profile_screen_send_button_text">send</string>
+    <string name="edit_profile_screen_username_hint">Username</string>
+    <string name="edit_profile_screen_updating_text">Modifying user</string>
+    <string name="edit_profile_screen_username_exists_error_text">*This username is already taken</string>
     <!-- Can not update user alert -->
-    <string name="can_not_update_user_alert_title">Error al actualizar</string>
-    <string name="can_not_update_user_alert_message">No se ha podido actualizar el usuario.</string>
+    <string name="can_not_update_user_alert_title">Error updating</string>
+    <string name="can_not_update_user_alert_message">Failed to update the user.</string>
     <!-- Change photo alert -->
-    <string name="change_photo_alert_title">Cambiar foto de pergil</string>
-    <string name="change_photo_alert_change_photo_text">Cambiar foto</string>
-    <string name="change_photo_alert_delete_photo_text">Eliminar foto</string>
-    <string name="change_photo_alert_cancel_text">Canclear</string>
+    <string name="change_photo_alert_title">Change profile image</string>
+    <string name="change_photo_alert_change_photo_text">Change photo</string>
+    <string name="change_photo_alert_delete_photo_text">Delete photo</string>
+    <string name="change_photo_alert_cancel_text">Cancel</string>
 
 </resources>

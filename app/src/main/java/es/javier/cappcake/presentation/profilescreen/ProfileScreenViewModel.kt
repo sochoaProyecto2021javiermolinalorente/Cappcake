@@ -29,7 +29,8 @@ class ProfileScreenViewModel @Inject constructor(
     private val followUserUseCase: FollowUserUseCase,
     private val unfollowUserUseCase: UnfollowUserUseCase,
     private val getFollowersCountUseCase: GetFollowersCountUseCase,
-    private val deleteRecipeUseCase: DeleteRecipeUseCase
+    private val deleteRecipeUseCase: DeleteRecipeUseCase,
+    private val signOutUseCase: SignOutUseCase
 ) : ViewModel() {
 
     var user: User? by mutableStateOf(null)
@@ -151,6 +152,12 @@ class ProfileScreenViewModel @Inject constructor(
                 selectedRecipe = ""
                 showDeleteRecipeAlert.value = false
             }
+        }
+    }
+
+    fun signOut() {
+        viewModelScope.launch {
+            signOutUseCase()
         }
     }
 

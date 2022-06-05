@@ -3,6 +3,8 @@ package es.javier.cappcake.data.data_sources.user
 import android.graphics.Bitmap
 import android.net.Uri
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.ktx.firestoreSettings
 import com.google.firebase.ktx.Firebase
 import es.javier.cappcake.data.data_sources.*
 import es.javier.cappcake.domain.Response
@@ -27,6 +29,11 @@ class UserDataSource @Inject constructor(
     fun getCurrentUserId() : String? = auth.uid
 
     suspend fun authenticateUser(email: String, password: String) : Response<Boolean> {
+
+        Firebase.firestore.firestoreSettings = firestoreSettings {
+            isPersistenceEnabled = false
+        }
+
         return suspendCoroutine { continuation ->
             auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener { task ->
@@ -37,6 +44,11 @@ class UserDataSource @Inject constructor(
                     }
                 }
         }
+    }
+
+    suspend fun signOut() : Response<Boolean> {
+        auth.signOut()
+        return Response.Success(data = true)
     }
 
     suspend fun registerUser(username: String, email: String, password: String, profileImage: Uri?) : Response<Boolean> {

@@ -17,6 +17,10 @@ class ImplUserRepository @Inject constructor(
     override suspend fun authenticateUser(email: String, password: String) : Response<Boolean> =
         userDataSource.authenticateUser(email, password)
 
+    override suspend fun signOut(): Response<Boolean> {
+        return userDataSource.signOut()
+    }
+
     override suspend fun registerUser(username: String, email: String, password: String, image: Uri?) : Response<Boolean> =
         userDataSource.registerUser(username, email, password, image)
 
