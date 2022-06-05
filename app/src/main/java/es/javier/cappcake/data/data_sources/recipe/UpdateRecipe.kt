@@ -50,7 +50,14 @@ class UpdateRecipe @Inject constructor(private val imageUploader: ImageUploader)
         val newRecipeData = hashMapOf(
             FirebaseContracts.RECIPE_NAME to recipeName,
             FirebaseContracts.RECIPE_IMAGE to newRecipeImage,
-            FirebaseContracts.RECIPE_INGREDIENTS to ingredients,
+            FirebaseContracts.RECIPE_INGREDIENTS to ingredients.map {
+                hashMapOf(
+                    FirebaseContracts.INGREDIENT_ID to it.id,
+                    FirebaseContracts.INGREDIENT_NAME to it.name,
+                    FirebaseContracts.INGREDIENT_AMOUNT to it.amount,
+                    FirebaseContracts.INGREDIENT_AMOUNT_TYPE to it.amountType
+                )
+            },
             FirebaseContracts.RECIPE_PROCESS to recipeProcess
         )
 
