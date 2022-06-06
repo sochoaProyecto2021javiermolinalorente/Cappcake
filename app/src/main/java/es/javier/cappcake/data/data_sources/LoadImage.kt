@@ -11,6 +11,12 @@ import javax.inject.Inject
 
 class LoadImage @Inject constructor(@ApplicationContext private val context: Context) {
 
+    /**
+     * Method to load an image from url path
+     *
+     * @param url THe url path of the image
+     * @return The response with the bitmap of the image
+     */
     suspend fun loadImage(url: String) : Response<Bitmap?> {
 
         val imageLoader = ImageLoader.Builder(context)

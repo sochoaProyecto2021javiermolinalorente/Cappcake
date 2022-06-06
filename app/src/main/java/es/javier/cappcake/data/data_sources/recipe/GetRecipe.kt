@@ -18,6 +18,13 @@ class GetRecipe @Inject constructor() {
     private val firestore = Firebase.firestore
     private val auth = Firebase.auth
 
+    /**
+     * Method to get a recipe from firestore and if the current user has liked the recipe
+     *
+     * @param recipeId The id of the recipe
+     * @return The response with the recipe and a boolean thar marks if the user has liked the
+     * recipe or not
+     */
     suspend fun getRecipe(recipeId: String) : Response<Pair<Recipe, Boolean>?> {
         val ref = firestore.collection(FirebaseContracts.RECIPE_COLLECTION).document(recipeId)
 

@@ -17,6 +17,12 @@ class DeleteRecipe @Inject constructor() {
     private val auth = Firebase.auth
     private val storage = Firebase.storage
 
+    /**
+     * Method to delete a recipe document in firestore and its image in storage
+     *
+     * @param recipeId The id of the recipe to delete
+     * @return The response with the status of the operation
+     */
     suspend fun deleteRecipe(recipeId: String) : Response<Boolean> {
 
         val recipeRef = firestore.collection(FirebaseContracts.RECIPE_COLLECTION).document(recipeId)

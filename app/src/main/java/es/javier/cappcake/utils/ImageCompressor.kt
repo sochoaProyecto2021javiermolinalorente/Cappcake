@@ -21,6 +21,7 @@ class ImageCompressor @Inject constructor(@ApplicationContext private val contex
         const val LOW_QUALITY = 10
     }
 
+
     suspend fun comporessBitmap(quality: Int, imageUri: Uri) : Bitmap {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             val source = ImageDecoder.createSource(context.contentResolver, imageUri)

@@ -5,6 +5,11 @@ import javax.inject.Inject
 
 class GetCurrentUserIdUseCase @Inject constructor(private val repository: UserRepository) {
 
+    /**
+     * Method to get the current user id
+     *
+     * @return The current user id
+     */
     operator fun invoke() : String? = repository.getCurrentUserId()
 
 }

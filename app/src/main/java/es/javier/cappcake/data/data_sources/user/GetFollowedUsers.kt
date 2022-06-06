@@ -17,6 +17,11 @@ class GetFollowedUsers @Inject constructor() {
     private val storage = Firebase.storage
     private val auth = Firebase.auth
 
+    /**
+     * Method to get the user that current user follows
+     *
+     * @return The response with the list of users
+     */
     suspend fun getFollowedUsers() : Response<List<User>> {
 
         val query = firestore.collection(FirebaseContracts.FOLLOWERS_COLLECTION)

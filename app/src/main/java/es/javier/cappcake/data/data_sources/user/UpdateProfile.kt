@@ -22,6 +22,13 @@ class UpdateProfile @Inject constructor(
     private val firestore = Firebase.firestore
     private val auth = Firebase.auth
 
+    /**
+     * Method to update the profile of the current user
+     *
+     * @param username The new username of the user
+     * @param profileImageUri The new image of the user
+     * @return The response with status of the operation
+     */
     suspend fun updateProfile(username: String, profileImage: Uri?) : Response<Boolean> {
 
         val currentProfileImageUrl: Uri? = suspendCoroutine { continuation ->

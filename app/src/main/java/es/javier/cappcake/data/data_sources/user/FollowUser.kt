@@ -18,6 +18,12 @@ class FollowUser @Inject constructor() {
     private val firestore = Firebase.firestore
     private val auth = Firebase.auth
 
+    /**
+     * Method to follow an user
+     *
+     * @param followedUserId The if of the user to follow
+     * @return The response with the status of the operation
+     */
     suspend operator fun invoke(followedUserId: String) : Response<Boolean> {
 
         val followedUserRef = firestore.collection(FirebaseContracts.USER_COLLECTION).document(followedUserId)

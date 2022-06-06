@@ -15,6 +15,12 @@ class UnlikeRecipe @Inject constructor() {
     private val firestore = Firebase.firestore
     private val auth = Firebase.auth
 
+    /**
+     * Method to delete the user id from the liked recipe in frestore
+     *
+     * @param recipeId The if of the recipe to unlike
+     * @return The response with the status of the operation
+     */
     suspend fun unlikeRecipe(recipeId: String) : Response<Boolean> {
 
         val recipeRef = firestore.collection(FirebaseContracts.RECIPE_COLLECTION).document(recipeId)

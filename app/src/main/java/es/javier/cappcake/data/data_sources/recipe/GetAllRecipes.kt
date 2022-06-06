@@ -18,6 +18,12 @@ class GetAllRecipes @Inject constructor() {
 
     private val firestore = Firebase.firestore
 
+    /**
+     * Method to get an amount of all recipes recipes from firestore
+     *
+     * @param lastRecipeId The last recipeId collected by a previous call
+     * @return The response with the list of recipes and the id of the last recipe in the list
+     */
     suspend fun getAllRecipes(lastRecipeId: String?) : Response<Pair<List<Recipe>, String>> {
         val ref = firestore.collection(FirebaseContracts.RECIPE_COLLECTION)
 

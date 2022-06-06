@@ -17,6 +17,12 @@ class GetLikedRecipes @Inject constructor() {
     private val firestore = Firebase.firestore
     private val auth = Firebase.auth
 
+    /**
+     * Method to get an amount of liked recipes by the current user in firestore
+     *
+     * @param lastRecipeId The last recipeId collected by a previous call
+     * @return The response with the list of recipes and the id of the last recipe in the list
+     */
     suspend fun getLikedRecipes(lastRecipeId: String?) : Response<Pair<List<Recipe>, String>> {
         val recipesRef = firestore.collection(FirebaseContracts.LIKES_COLLECTION)
 

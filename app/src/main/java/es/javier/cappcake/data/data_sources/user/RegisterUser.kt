@@ -21,7 +21,15 @@ class RegisterUser @Inject constructor(private val imageUploader: ImageUploader)
     private val firestore = Firebase.firestore
     private val storage = Firebase.storage
 
-
+    /**
+     * Method to register a user
+     *
+     * @param username The username of the new user
+     * @param email The email of the new user
+     * @param password the password of the new user
+     * @param image The uri of the image of the new user
+     * @return The response with the status of the operation
+     */
     suspend fun registerUser(username: String, email: String, password: String, profileImage: Uri?) : Response<Boolean> {
 
         val response = suspendCoroutine<Response<Boolean>> { continuation ->

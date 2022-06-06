@@ -17,6 +17,12 @@ class LikeRecipe @Inject constructor() {
     private val firestore = Firebase.firestore
     private val auth = Firebase.auth
 
+    /**
+     * Method to add the needed metadata thar represents the like of a user
+     *
+     * @param recipeId The id of the recipe to like
+     * @return The response with status of the operation
+     */
     suspend fun likeRecipe(recipeId: String) : Response<Boolean> {
 
       val recipeRef = firestore.collection(FirebaseContracts.RECIPE_COLLECTION).document(recipeId)

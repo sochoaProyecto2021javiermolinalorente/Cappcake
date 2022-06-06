@@ -16,6 +16,12 @@ class UnfollowUser @Inject constructor() {
     private val firestore = Firebase.firestore
     private val auth = Firebase.auth
 
+    /**
+     * Method to unfollow a user
+     *
+     * @param unfollowedUserId The id of the user to unfollow
+     * @return The response with the status of the operation
+     */
     suspend fun unfollowUser(unfollowedUser: String) : Response<Boolean> {
 
         val unfollowedUserRef = firestore.collection(FirebaseContracts.USER_COLLECTION).document(unfollowedUser)

@@ -25,6 +25,15 @@ class UploadRecipe @Inject constructor(
     private val firestore = Firebase.firestore
     private val storage = Firebase.storage
 
+    /**
+     * Method to upload a recipe in firestore
+     *
+     * @param recipeName The recipe name of the recipe
+     * @param recipeImageUri The recipe image of the recipe
+     * @param recipeProcess The recipe process of the recipe
+     * @param ingredients The list of ingredients of the recipe
+     * @return The response with the status of the operation
+     */
     suspend fun uploadRecipe(recipeName: String, recipeImageUri: Uri?, recipeProcess: String, ingredients: List<Ingredient>) : Response<Boolean> {
 
         val recipeDocumentRef = firestore.collection(FirebaseContracts.RECIPE_COLLECTION).document()

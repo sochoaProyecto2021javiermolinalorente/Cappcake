@@ -34,8 +34,8 @@ import es.javier.cappcake.R
 import es.javier.cappcake.domain.AmountType
 import es.javier.cappcake.domain.Ingredient
 import es.javier.cappcake.presentation.components.getAmountTypeText
-import es.javier.cappcake.presentation.utils.toFormattedFloat
-import es.javier.cappcake.presentation.utils.toFormattedString
+import es.javier.cappcake.utils.toFormattedFloat
+import es.javier.cappcake.utils.toFormattedString
 
 @Composable
 fun IngredientsTab(viewModel: WriteRecipeScreenViewModel) {

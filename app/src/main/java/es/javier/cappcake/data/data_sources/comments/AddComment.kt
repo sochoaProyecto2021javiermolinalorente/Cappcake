@@ -16,14 +16,23 @@ class AddComment @Inject constructor() {
     private val firestore = Firebase.firestore
     private val auth = Firebase.auth
 
+    /**
+     * Method to add a comment in a subcollection of a recipe in firestore
+     *
+     * @param comment The body of the comment
+     * @param recipeId The id of the recipe to which the comment belongs
+     * @return The response with the status of the operation
+     */
     suspend fun addComment(comment: String, recipeId: String) : Response<Boolean> {
 
+        // Comment data
         val commentRef = firestore
             .collection(FirebaseContracts.RECIPE_COLLECTION)
             .document(recipeId)
             .collection(FirebaseContracts.COMMENT_COLLECTION)
             .document()
 
+        // Comment data
         val data = hashMapOf(
             FirebaseContracts.COMMENT_RECIPE_ID to recipeId,
             FirebaseContracts.COMMENT_USER_ID to auth.uid!!,

@@ -19,6 +19,16 @@ class UpdateRecipe @Inject constructor(private val imageUploader: ImageUploader)
     private val firestore = Firebase.firestore
     private val auth = Firebase.auth
 
+    /**
+     * Method to update the content of a recipe in firestore
+     *
+     * @param recipeId The id of the recipe to update
+     * @param recipeName The new recipe name of the recipe
+     * @param recipeImageUri The new recipe image of the recipe
+     * @param recipeProcess The new recipe process of the recipe
+     * @param ingredients The new list of ingredients of the recipe
+     * @return The response with the status of the operation
+     */
     suspend fun updateRecipe(recipeId: String,
                              recipeName: String,
                              recipeImageUri: Uri?,

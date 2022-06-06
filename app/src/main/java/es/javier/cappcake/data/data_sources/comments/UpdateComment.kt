@@ -12,6 +12,14 @@ class UpdateComment @Inject constructor() {
 
     private val firestore = Firebase.firestore
 
+    /**
+     * Method to update a comment in firestore
+     *
+     * @param comment The new body of the comment
+     * @param recipeId The id of the recipe to which the comment belongs
+     * @param commentId The id of the comment which is gonna be updated
+     * @return The response with the status of the operation
+     */
     suspend fun updateComment(comment: String, recipeId: String, commentId: String) : Response<Boolean> {
 
         val commentRef = firestore

@@ -18,6 +18,11 @@ class GetLastRecipe @Inject constructor() {
     private val firestore = Firebase.firestore
     private val auth = Firebase.auth
 
+    /**
+     * Method to get the last recipe id of the last recipe uploaded by the current user
+     *
+     * @return The response with the id of the last recipe.
+     */
     suspend fun getLastRecipe() : Response<String?> {
         val ref = firestore.collection(FirebaseContracts.RECIPE_COLLECTION)
 

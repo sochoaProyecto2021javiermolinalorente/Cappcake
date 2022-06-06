@@ -3,6 +3,11 @@ package es.javier.cappcake.utils
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.*
 
+/**
+ * Method to launch a callback when the list associated with the lazy list state reach the bottom
+ *
+ * @param loadMore The callback tha is launched when the lazylist reach the bottom
+ */
 @Composable
 fun LazyListState.OnBottomReached(
     loadMore : () -> Unit

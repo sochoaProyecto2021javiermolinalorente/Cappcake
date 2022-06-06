@@ -5,6 +5,11 @@ import javax.inject.Inject
 
 class CalendarUtil @Inject constructor() {
 
+    /**
+     * Method to get the data of seven days ago
+     *
+     * @return The data of the last week
+     */
     fun getLastWeekDate() : Date {
 
         val calendar = Calendar.getInstance()

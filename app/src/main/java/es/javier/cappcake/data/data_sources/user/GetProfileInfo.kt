@@ -16,6 +16,12 @@ class GetProfileInfo @Inject constructor() {
     private val auth = Firebase.auth
     private val firestore = Firebase.firestore
 
+    /**
+     * Method to get a user
+     *
+     * @param uid The id of the user
+     * @return The response with user and a boolean that represents if the current user follows that user
+     */
     suspend fun getUserProfile(uid: String) : Response<Pair<User, Boolean>?> {
 
         val userRef = firestore.collection(FirebaseContracts.USER_COLLECTION).document(uid)

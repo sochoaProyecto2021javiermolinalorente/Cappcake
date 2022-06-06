@@ -12,6 +12,13 @@ class DeleteComment @Inject constructor() {
 
     private val firestore = Firebase.firestore
 
+    /**
+     * Method to delete a comment document of the subcollection of a recipe in firestore
+     *
+     * @param recipeId  The id of the recipe to which the comment belongs
+     * @param commentId The id of the comment which is gonna be deleted
+     * @return The response with the status of the operation
+     */
     suspend fun deleteComment(recipeId: String, commentId: String) : Response<Boolean> {
 
         val query = firestore

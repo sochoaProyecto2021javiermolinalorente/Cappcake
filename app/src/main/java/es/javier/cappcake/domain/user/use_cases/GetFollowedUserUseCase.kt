@@ -7,6 +7,11 @@ import javax.inject.Inject
 
 class GetFollowedUserUseCase @Inject constructor(private val repository: UserRepository) {
 
+    /**
+     * Method to get the user that current user follows
+     *
+     * @return The response with the list of users
+     */
     suspend operator fun invoke() : Response<List<User>> = repository.getFollowedUsers()
 
 }

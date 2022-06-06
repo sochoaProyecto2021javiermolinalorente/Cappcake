@@ -16,6 +16,13 @@ class GetAllCommentsOf @Inject constructor() {
 
     private val firestore = Firebase.firestore
 
+    /**
+     * Method to get an amount of comments of a recipe from last comment collected in firestore.
+     *
+     * @param recipeId The id of the  recipe to which the comments belongs
+     * @param lastCommentId The last comment id collected by a previous call
+     * @return The response with the List of comments and the last comment id of that list
+     */
     suspend fun getAllCommentsOf(recipeId: String, lastCommentId: String?) : Response<Pair<List<Comment>, String>> {
 
         val commentsRef = firestore.collection(FirebaseContracts.RECIPE_COLLECTION)

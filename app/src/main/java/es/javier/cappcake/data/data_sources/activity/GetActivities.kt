@@ -22,6 +22,12 @@ class GetActivities @Inject constructor(private val calendarUtil: CalendarUtil) 
     private val firestore = Firebase.firestore
     private val auth = Firebase.auth
 
+    /**
+     * Method to get an amount of activities of a user from the activity of the user Id
+     *
+     * @param lastActivityId the last activity id collected by a previous call
+     * @return The response with the list of activities and the id of the last activity in the list
+     */
     suspend fun getActivity(lastActivityId: String?) : Response<Pair<List<Activity>, String>> {
 
         val activityCollection = firestore.collection(FirebaseContracts.ACTIVITY_COLLECTION)

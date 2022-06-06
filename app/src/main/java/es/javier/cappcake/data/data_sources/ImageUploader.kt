@@ -17,6 +17,14 @@ class ImageUploader @Inject constructor(private val compressor: ImageCompressor)
     private val storage = Firebase.storage
     private val auth = Firebase.auth
 
+    /**
+     * Method to upload images to firebase storage
+     *
+     * @param imageUri The uri of the image
+     * @param referencePath The reference path where the image will be saved
+     * @param quality The quality which it will be saved the image
+     * @return The response with uri of the image uploaded
+     */
     suspend fun uploadImage(imageUri: Uri?, referencePath: String, quality: Int) : Response<Uri?> {
 
         val recipeImageRef = storage.reference.child("${auth.uid}" + referencePath)

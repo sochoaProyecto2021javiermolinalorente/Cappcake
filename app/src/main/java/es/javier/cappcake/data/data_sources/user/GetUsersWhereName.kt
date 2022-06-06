@@ -13,6 +13,12 @@ class GetUsersWhereName @Inject constructor() {
 
     private val firestore = Firebase.firestore
 
+    /**
+     * Method to get a list of users whose has the username passed
+     *
+     * @param username The username of the users to search
+     * @return The response with the list of users that matches that username
+     */
     suspend fun getUsersWhereName(username: String) : Response<List<User>> {
 
         val query = firestore
