@@ -1,4 +1,4 @@
-package es.javier.cappcake.presentation.addrecipescreen
+package es.javier.cappcake.presentation.writerecipescreen
 
 import android.util.Log
 import androidx.compose.foundation.clickable

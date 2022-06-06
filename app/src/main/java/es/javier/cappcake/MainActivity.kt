@@ -26,9 +26,9 @@ import dagger.hilt.android.AndroidEntryPoint
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import es.javier.cappcake.presentation.activityscreen.ActivityScreen
-import es.javier.cappcake.presentation.addrecipescreen.WriteRecipeScreen
-import es.javier.cappcake.presentation.addrecipescreen.WriteRecipeScreenViewModel
-import es.javier.cappcake.presentation.addrecipescreen.RecipeProcessScreen
+import es.javier.cappcake.presentation.writerecipescreen.WriteRecipeScreen
+import es.javier.cappcake.presentation.writerecipescreen.WriteRecipeScreenViewModel
+import es.javier.cappcake.presentation.writerecipescreen.RecipeProcessScreen
 import es.javier.cappcake.presentation.commentsscreen.CommentsScreen
 import es.javier.cappcake.presentation.editprofilescreen.EditProfileScreen
 import es.javier.cappcake.presentation.feedscreen.FeedScreen

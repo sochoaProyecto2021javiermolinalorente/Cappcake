@@ -1,4 +1,4 @@
-package es.javier.cappcake.presentation.addrecipescreen
+package es.javier.cappcake.presentation.writerecipescreen
 
 import android.graphics.Bitmap
 import android.net.Uri

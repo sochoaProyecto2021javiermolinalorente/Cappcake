@@ -1,4 +1,4 @@
-package es.javier.cappcake.presentation.addrecipescreen
+package es.javier.cappcake.presentation.writerecipescreen
 
 import android.Manifest
 import android.graphics.Bitmap

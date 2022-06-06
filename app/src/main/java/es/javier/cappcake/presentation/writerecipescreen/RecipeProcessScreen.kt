@@ -1,4 +1,4 @@
-package es.javier.cappcake.presentation.addrecipescreen
+package es.javier.cappcake.presentation.writerecipescreen
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.BasicTextField

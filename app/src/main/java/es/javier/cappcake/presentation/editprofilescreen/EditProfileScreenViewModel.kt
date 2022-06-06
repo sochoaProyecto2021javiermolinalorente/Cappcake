@@ -16,6 +16,7 @@ import es.javier.cappcake.domain.user.use_cases.GetUserProfileUseCase
 import es.javier.cappcake.domain.user.use_cases.LoadProfileImageUseCase
 import es.javier.cappcake.domain.user.use_cases.UpdateProfileUseCase
 import es.javier.cappcake.utils.ImageCompressor
+import es.javier.cappcake.utils.UsernameFieldError
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -37,7 +38,7 @@ class EditProfileScreenViewModel @Inject constructor(
 
     private var _screenState: MutableStateFlow<EditProfileScreenState> = MutableStateFlow(EditProfileScreenState.LoadBaseDate)
     val screenState : StateFlow<EditProfileScreenState> get() = _screenState
-    var usernameExistsError by mutableStateOf(false)
+    var usernameFieldError: UsernameFieldError by mutableStateOf(UsernameFieldError.NoError)
     var showImageOptionAlert = mutableStateOf(false)
     var showCanNotUpdateAlert = mutableStateOf(false)
 
@@ -52,7 +53,7 @@ class EditProfileScreenViewModel @Inject constructor(
                     username = response.data.first.username
                     if (this.user?.profileImage != null)
                         profileImageUri = Uri.parse(response.data.first.profileImage)
-                    _screenState.emit(EditProfileScreenState.BaseData)
+                    _screenState.emit(EditProfileScreenState.UnableToUpdate)
                 }
             }
         }
@@ -74,18 +75,34 @@ class EditProfileScreenViewModel @Inject constructor(
         }
         profileImageUri = uri
         if (user?.username == username && user?.profileImage == profileImageUri?.toString()) {
-            _screenState.emit(EditProfileScreenState.BaseData)
+            _screenState.emit(EditProfileScreenState.UnableToUpdate)
         } else {
-            _screenState.emit(EditProfileScreenState.DataChanged)
+            if (usernameFieldError is UsernameFieldError.NoError)
+                _screenState.emit(EditProfileScreenState.DataChanged)
+            else {
+                _screenState.emit(EditProfileScreenState.UnableToUpdate)
+            }
         }
     }
 
     suspend fun setUsername(newUsername: String) {
         username = newUsername
-        if (user?.username == username && user?.profileImage == profileImageUri?.toString()) {
-            _screenState.emit(EditProfileScreenState.BaseData)
+
+        usernameFieldError = if (username.contains(" ")) {
+            UsernameFieldError.UsernameWithWhiteSpaces
         } else {
-            _screenState.emit(EditProfileScreenState.DataChanged)
+            UsernameFieldError.NoError
+        }
+
+        if (user?.username == username
+            && user?.profileImage == profileImageUri?.toString()) {
+                _screenState.emit(EditProfileScreenState.UnableToUpdate)
+        } else {
+            if (usernameFieldError is UsernameFieldError.NoError)
+                _screenState.emit(EditProfileScreenState.DataChanged)
+            else {
+                _screenState.emit(EditProfileScreenState.UnableToUpdate)
+            }
         }
 
     }
@@ -96,7 +113,7 @@ class EditProfileScreenViewModel @Inject constructor(
 
         when (response) {
             is Response.Failiure -> {
-                usernameExistsError = response.throwable is PermissionException
+                if (response.throwable is PermissionException) usernameFieldError = UsernameFieldError.UserExistsError
                 showCanNotUpdateAlert.value = true
                 _screenState.emit(EditProfileScreenState.DataChanged)
             }
