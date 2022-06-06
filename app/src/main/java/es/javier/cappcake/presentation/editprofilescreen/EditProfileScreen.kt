@@ -38,6 +38,7 @@ import es.javier.cappcake.R
 import es.javier.cappcake.presentation.components.ErrorDialog
 import es.javier.cappcake.presentation.components.LoadingAlert
 import es.javier.cappcake.presentation.ui.theme.orangish
+import es.javier.cappcake.utils.UsernameFieldError
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
@@ -169,7 +170,7 @@ fun EditProfileScreen(navController: NavController, viewModel: EditProfileScreen
                     onValueChange = {
                         coroutineScope.launch { viewModel.setUsername(it) }
                     },
-                    error = viewModel.usernameExistsError
+                    error = viewModel.usernameFieldError
                 )
 
                 Spacer(modifier = Modifier.weight(1f))
@@ -280,7 +281,7 @@ fun ChangeImageAlert(showAlert: MutableState<Boolean>,
 }
 
 @Composable
-fun NewUsernameTextField(modifier: Modifier, value: String, onValueChange: (String) -> Unit, error: Boolean) {
+fun NewUsernameTextField(modifier: Modifier, value: String, onValueChange: (String) -> Unit, error: UsernameFieldError) {
 
     val focusManager = LocalFocusManager.current
 
@@ -314,13 +315,24 @@ fun NewUsernameTextField(modifier: Modifier, value: String, onValueChange: (Stri
             }
         }
 
-        if (error) {
-            Spacer(modifier = Modifier.height(2.dp))
-            Text(
-                text = stringResource(id = R.string.register_screen_username_exists_error_text),
-                color = MaterialTheme.colors.error,
-                fontSize = 12.sp
-            )
+        when (error) {
+            UsernameFieldError.NoError -> { }
+            UsernameFieldError.UserExistsError -> {
+                Text(
+                    modifier = Modifier.padding(top = 2.dp),
+                    text = stringResource(id = R.string.edit_profile_screen_username_exists_error_text),
+                    color = MaterialTheme.colors.error,
+                    fontSize = 12.sp
+                )
+            }
+            UsernameFieldError.UsernameWithWhiteSpaces -> {
+                Text(
+                    modifier = Modifier.padding(top = 2.dp),
+                    text = stringResource(id = R.string.edit_profile_screen_username_whitespaces_error_text),
+                    color = MaterialTheme.colors.error,
+                    fontSize = 12.sp
+                )
+            }
         }
     }
 

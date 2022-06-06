@@ -1,4 +1,4 @@
-package es.javier.cappcake.presentation.addrecipescreen
+package es.javier.cappcake.presentation.writerecipescreen
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column

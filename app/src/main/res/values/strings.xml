@@ -31,6 +31,7 @@
     <string name="register_repeat_password_hint">Repeat password</string>
     <string name="register_create_account_text_button">Create account</string>
     <string name="register_screen_username_exists_error_text">*This username is already taken</string>
+    <string name="register_screen_username_whitespaces_error_text">*Username with whitespaces</string>
     <!-- User not created error dialog -->
     <string name="user_not_created_title_dialog">Error</string>
     <string name="user_not_created_message_dialog">User could not been created</string>
@@ -151,6 +152,7 @@
     <string name="edit_profile_screen_username_hint">Username</string>
     <string name="edit_profile_screen_updating_text">Modifying user</string>
     <string name="edit_profile_screen_username_exists_error_text">*This username is already taken</string>
+    <string name="edit_profile_screen_username_whitespaces_error_text">*Username with whitespaces</string>
     <!-- Can not update user alert -->
     <string name="can_not_update_user_alert_title">Error updating</string>
     <string name="can_not_update_user_alert_message">Failed to update the user.</string>

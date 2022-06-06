@@ -49,6 +49,7 @@ import es.javier.cappcake.Navigation
 import es.javier.cappcake.presentation.components.EmailOutlinedTextField
 import es.javier.cappcake.presentation.components.ErrorDialog
 import es.javier.cappcake.presentation.components.StoragePermissionNotGrantedAlert
+import es.javier.cappcake.utils.UsernameFieldError
 import kotlinx.coroutines.launch
 
 @Composable
@@ -135,8 +136,13 @@ fun RegisterScreen(navController: NavController, viewModel: RegisterScreenViewMo
 
                     UsernameTextField(
                         value = viewModel.usernameField,
-                        error = viewModel.usernameExistsError,
+                        error = viewModel.usernameFieldError,
                         onValueChange = {
+                            if (it.contains(" ")) {
+                                viewModel.usernameFieldError = UsernameFieldError.UsernameWithWhiteSpaces
+                            } else {
+                                viewModel.usernameFieldError = UsernameFieldError.NoError
+                            }
                             viewModel.usernameField = it
                             viewModel.checkAllFieldsAreFilled() },
                         modifier = Modifier.fillMaxWidth(), enabled = viewModel.userFieldEnabled)
@@ -227,7 +233,7 @@ fun RegisterAddProfileImage(modifier: Modifier = Modifier, profileImage: Bitmap?
 }
 
 @Composable
-fun UsernameTextField(modifier: Modifier = Modifier, value: String, onValueChange: (String) -> Unit, error: Boolean, enabled: Boolean = true) {
+fun UsernameTextField(modifier: Modifier = Modifier, value: String, onValueChange: (String) -> Unit, error: UsernameFieldError, enabled: Boolean = true) {
 
     var isFocused by remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
@@ -237,7 +243,7 @@ fun UsernameTextField(modifier: Modifier = Modifier, value: String, onValueChang
             modifier = modifier.onFocusChanged { isFocused = it.isFocused },
             value = value,
             onValueChange = onValueChange,
-            isError = error,
+            isError = error !is UsernameFieldError.NoError,
             enabled = enabled,
             label = { Text(text = stringResource(id = R.string.register_username_hint)) },
             leadingIcon = { Icon(imageVector = Icons.Filled.Person, contentDescription = "") },
@@ -254,13 +260,24 @@ fun UsernameTextField(modifier: Modifier = Modifier, value: String, onValueChang
             }
         )
 
-        if (error) {
-            Text(
-                modifier = Modifier.padding(top = 2.dp),
-                text = stringResource(id = R.string.register_screen_username_exists_error_text),
-                color = MaterialTheme.colors.error,
-                fontSize = 12.sp
-            )
+        when (error) {
+            UsernameFieldError.NoError -> { }
+            UsernameFieldError.UserExistsError -> {
+                Text(
+                    modifier = Modifier.padding(top = 2.dp),
+                    text = stringResource(id = R.string.register_screen_username_exists_error_text),
+                    color = MaterialTheme.colors.error,
+                    fontSize = 12.sp
+                )
+            }
+            UsernameFieldError.UsernameWithWhiteSpaces -> {
+                Text(
+                    modifier = Modifier.padding(top = 2.dp),
+                    text = stringResource(id = R.string.register_screen_username_whitespaces_error_text),
+                    color = MaterialTheme.colors.error,
+                    fontSize = 12.sp
+                )
+            }
         }
     }
 }

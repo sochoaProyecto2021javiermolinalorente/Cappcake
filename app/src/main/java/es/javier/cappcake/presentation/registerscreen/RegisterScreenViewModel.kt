@@ -12,6 +12,7 @@ import es.javier.cappcake.domain.PermissionException
 import es.javier.cappcake.domain.Response
 import es.javier.cappcake.domain.user.use_cases.RegisterUserUseCase
 import es.javier.cappcake.utils.ImageCompressor
+import es.javier.cappcake.utils.UsernameFieldError
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -47,7 +48,7 @@ class RegisterScreenViewModel @Inject constructor(
         private set
 
     var notEqualPasswordError: Boolean by mutableStateOf(false)
-    var usernameExistsError: Boolean by mutableStateOf(false)
+    var usernameFieldError: UsernameFieldError by mutableStateOf(UsernameFieldError.NoError)
 
     val showStoragePermissionAlert = mutableStateOf(false)
     val showUserNotCreatedAlert = mutableStateOf(false)
@@ -68,7 +69,7 @@ class RegisterScreenViewModel @Inject constructor(
                 response.data!!
             }
             is Response.Failiure -> {
-                usernameExistsError = response.throwable is PermissionException
+                if (response.throwable is PermissionException) usernameFieldError = UsernameFieldError.UserExistsError
                 creatingUser.value = false
                 response.data!!
             }
@@ -111,6 +112,7 @@ class RegisterScreenViewModel @Inject constructor(
 
     fun checkAllFieldsAreFilled() {
         createUserButtonEnabled = usernameField.isNotBlank()
+                && usernameFieldError is UsernameFieldError.NoError
                 && emailField.isNotBlank()
                 && passwordField.isNotBlank()
                 && repeatPasswordField.isNotBlank()
